@@ -1,0 +1,6 @@
+---
+- name: <<PLAYBOOK NAME>>
+  hosts: network
+  gather_facts: no
+  tasks:
+      - debug: var=group_names
