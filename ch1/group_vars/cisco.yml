@@ -1,2 +1,7 @@
 domain: ios.lab.net
 os: ios
+snmp_servers:
+- 10.1.1.1
+- 10.2.1.1
+
+
