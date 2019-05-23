@@ -1,0 +1,31 @@
+mgmt_static_routes:
+  - prefix: 192.168.0.0/24
+    next_hop: "{{ mgmt_net_gw }}"
+  - prefix: 10.8.0.0/24
+    next_hop: "{{ mgmt_net_gw }}"
+
+l2_port_channels:
+  core01:
+    - group: 1
+      members: [Ethernet0/1]
+    - group: 2
+      members: [Ethernet0/2]
+    - group: 10
+      members: [Ethernet0/3, Ethernet1/3]
+  core02:
+    - group: 1
+      members: [Ethernet0/1]
+    - group: 2
+      members: [Ethernet0/2]
+    - group: 10
+      members: [Ethernet0/3, Ethernet1/3]
+  access01:
+    - group: 1
+      members: [Ethernet0/1]
+    - group: 2
+      members: [Ethernet0/2]
+  access02:
+    - group: 1
+      members: [Ethernet0/1]
+    - group: 2
+      members: [Ethernet0/2]

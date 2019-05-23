@@ -1,0 +1,11 @@
+---
+- name: Run IOS ios_commands
+  hosts: ios
+  tasks:
+
+    - name: Run command
+      ios_command:
+        commands: show running-config
+      register: cmd_output
+    - debug: var=cmd_output
+      run_once: yes

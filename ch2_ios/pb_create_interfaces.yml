@@ -1,0 +1,26 @@
+# ---
+# - hosts: access01
+#   tags: debug
+#   tasks:
+#     - debug: msg={{ item.prefix | ipaddr(0) | ipv4(0)}}
+#       loop: "{{ mgmt_static_routes }}"
+#       delegate_to: localhost
+- name: "PLAY 1: Configure All LAN Interfaces"
+  hosts: lan
+  connection: network_cli
+  tasks:
+    - name: "Task 0: Configure Managment Static Routes"
+      ios_static_route:
+        prefix: "{{ item.prefix.split('/')[0] }}"
+        mask: "{{ item.prefix | ipv4('netmask') }}"
+        next_hop: "{{ item.next_hop }}"
+      loop: "{{ mgmt_static_routes }}"
+      register: ios_static_routes
+    - debug: var=ios_static_routes
+    # - name: "TASK 1: Configure Interfaces"
+    # - name: "TASK 2: Configure Link Aggregation"
+    # - name: "TASK 3: Configure L2 Trunks"
+    # - name: "Task 4: Create L2 VLANs"
+    # - name: "Task 5: Create L3 VLANs"
+    # - name: "Task 6: Create VRRP Configs"
+    # - name: 

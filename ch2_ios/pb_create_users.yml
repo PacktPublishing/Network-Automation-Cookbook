@@ -1,0 +1,14 @@
+---
+- name: Add New Users
+  hosts: ios
+  tasks:
+    - name: Create New Users
+      ios_user:
+        name: "{{ item.key }}"
+        configured_password: "{{ item.value}}"
+        update_password: on_create
+        state: present
+      with_dict: "{{ users}}"
+      register: cmds
+
+    - debug: var=cmds
