@@ -17,10 +17,64 @@
       loop: "{{ mgmt_static_routes }}"
       register: ios_static_routes
     - debug: var=ios_static_routes
-    # - name: "TASK 1: Configure Interfaces"
-    # - name: "TASK 2: Configure Link Aggregation"
-    # - name: "TASK 3: Configure L2 Trunks"
-    # - name: "Task 4: Create L2 VLANs"
+
+
+    - name: "TASK 1: Configure Link Aggregation"
+      ios_linkagg:
+        group: "{{ item.group }}"
+        members: "{{ item.members }}"
+        mode: active
+        state: present
+      loop: "{{l2_port_channels[inventory_hostname]}}"
+      register: ios_linkagg
+      notify: print_ios_linkagg_cmds
+    - debug: var=ios_linkagg
+
+    - name: "TASK 2: Configure Interfaces"
+      ios_interface:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        duplex: "{{ intf_duplex }}"
+        mtu: "{{ intf_mtu }}"
+      loop: "{{ interfaces[inventory_hostname] }}"
+      register: ios_intf
+      notify: print_ios_intf_cmds
+    
+    - name: "TASK 4: Configure Port Channels as L2 Trunks"
+      ios_config:
+        lines:
+          - switchport
+        parents: interface {{ item.interface }}
+      loop: "{{l2_interfaces[inventory_hostname]}}"
+
+    - name: "TASK 3: Configure L2 Trunks"
+      ios_l2_interface:
+        name: "{{ item.interface }}"
+        mode: "{{ item.mode }}"
+        trunk_allowed_vlans: 10,20,100 #"{{ vlans | map(attribute='vlan_id') | list }}"
+      loop: "{{ l2_interfaces[inventory_hostname] }}"
+      register: ios_l2_trunks
+    - debug: var=item.commands
+      loop: "{{ ios_l2_trunks.results }}"
+    - name: debug VLAN List
+      debug: msg={{vlans | map(attribute='vlan_id') | list}}
+      delegate_to: local_host
+      run_once: yes
+      tags: debug_vlan, never
+    - name: "Task 4: Create L2 VLANs"
+      ios_vlan:
+        aggregate: "{{ vlans }}"
+      register: ios_vlans
+      tags: vlan
+    - debug: var=ios_vlans
+      tags: vlan
     # - name: "Task 5: Create L3 VLANs"
     # - name: "Task 6: Create VRRP Configs"
-    # - name: 
+    # - name:
+  handlers:
+    - name: print_ios_intf_cmds
+      debug: var=item.commands
+      loop: "{{ ios_intf.results }}"
+    - name: print_ios_linkagg_cmds
+      debug: var=item.commands
+      loop: "{{ ios_linkagg.results }}"

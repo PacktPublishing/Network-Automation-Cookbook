@@ -8,5 +8,7 @@ ansible_become_password: admin123
 ansible_become_method: enable
 
 mgmt_net_gw: 172.20.1.17
+intf_duplex: full
+intf_mtu: 1500
 users:
   core: core123
