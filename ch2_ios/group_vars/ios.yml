@@ -9,6 +9,11 @@ ansible_become_method: enable
 
 mgmt_net_gw: 172.20.1.17
 intf_duplex: full
+domain_name: lab.net
+name_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+  
 intf_mtu: 1500
 users:
   core: core123

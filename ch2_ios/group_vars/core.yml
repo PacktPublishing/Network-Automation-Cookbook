@@ -1,0 +1,17 @@
+grp_core_vlans:
+  - name: l3_core_vlan
+    vlan_id: 200
+    interface: Ethernet0/3
+
+grp_l3_interfaces:
+  Vlan10: 10.1.10.0/24
+  Vlan20: 10.1.20.0/24
+  Vlan100: 10.1.100.0/24
+  Vlan200: 10.1.200.0/24
+
+grp_vrrp_vlans:
+  - Vlan10
+  - Vlan20
+  - Vlan100
+
+

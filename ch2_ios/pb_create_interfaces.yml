@@ -1,15 +1,17 @@
-# ---
-# - hosts: access01
-#   tags: debug
-#   tasks:
-#     - debug: msg={{ item.prefix | ipaddr(0) | ipv4(0)}}
-#       loop: "{{ mgmt_static_routes }}"
-#       delegate_to: localhost
+---
 - name: "PLAY 1: Configure All LAN Interfaces"
   hosts: lan
+  tags: lan
   connection: network_cli
   tasks:
-    - name: "Task 0: Configure Managment Static Routes"
+    - name: "P1T1: Configure Hostname and Domain Name"
+      ios_system:
+        hostname: "{{ inventory_hostname }}"
+        domain_name: "{{ domain_name }}"
+        lookup_enabled: no
+        name_servers: "{{ name_servers }}"
+
+    - name: "P1T2: Configure Managment Static Routes"
       ios_static_route:
         prefix: "{{ item.prefix.split('/')[0] }}"
         mask: "{{ item.prefix | ipv4('netmask') }}"
@@ -18,63 +20,81 @@
       register: ios_static_routes
     - debug: var=ios_static_routes
 
-
-    - name: "TASK 1: Configure Link Aggregation"
-      ios_linkagg:
-        group: "{{ item.group }}"
-        members: "{{ item.members }}"
-        mode: active
-        state: present
-      loop: "{{l2_port_channels[inventory_hostname]}}"
-      register: ios_linkagg
-      notify: print_ios_linkagg_cmds
-    - debug: var=ios_linkagg
-
-    - name: "TASK 2: Configure Interfaces"
+    - name: "P1T3: Configure Interfaces"
       ios_interface:
         name: "{{ item.name }}"
         description: "{{ item.description }}"
         duplex: "{{ intf_duplex }}"
         mtu: "{{ intf_mtu }}"
+        state: up
       loop: "{{ interfaces[inventory_hostname] }}"
       register: ios_intf
-      notify: print_ios_intf_cmds
-    
-    - name: "TASK 4: Configure Port Channels as L2 Trunks"
-      ios_config:
-        lines:
-          - switchport
-        parents: interface {{ item.interface }}
-      loop: "{{l2_interfaces[inventory_hostname]}}"
 
-    - name: "TASK 3: Configure L2 Trunks"
-      ios_l2_interface:
-        name: "{{ item.interface }}"
-        mode: "{{ item.mode }}"
-        trunk_allowed_vlans: 10,20,100 #"{{ vlans | map(attribute='vlan_id') | list }}"
-      loop: "{{ l2_interfaces[inventory_hostname] }}"
-      register: ios_l2_trunks
-    - debug: var=item.commands
-      loop: "{{ ios_l2_trunks.results }}"
-    - name: debug VLAN List
-      debug: msg={{vlans | map(attribute='vlan_id') | list}}
-      delegate_to: local_host
-      run_once: yes
-      tags: debug_vlan, never
-    - name: "Task 4: Create L2 VLANs"
+    - name: "P1T4: Create L2 VLANs"
       ios_vlan:
         aggregate: "{{ vlans }}"
       register: ios_vlans
       tags: vlan
-    - debug: var=ios_vlans
-      tags: vlan
-    # - name: "Task 5: Create L3 VLANs"
-    # - name: "Task 6: Create VRRP Configs"
-    # - name:
-  handlers:
-    - name: print_ios_intf_cmds
-      debug: var=item.commands
-      loop: "{{ ios_intf.results }}"
-    - name: print_ios_linkagg_cmds
-      debug: var=item.commands
-      loop: "{{ ios_linkagg.results }}"
+
+
+    - name: "P1T5: Configure L2 Trunks"
+      ios_l2_interface:
+        name: "{{ item.name }}"
+        mode: trunk
+        trunk_allowed_vlans: "{{ vlans | map(attribute='vlan_id') | join(',') }}"
+        state: present
+      loop: "{{ interfaces[inventory_hostname] }}"
+      tags: add_vlan
+
+    - name: "P1T6: Enable dot1q Trunks"
+      ios_config:
+        lines:
+          - switchport trunk encapsulation dot1q
+        parents: interface {{item.name}}
+      loop: "{{ interfaces[inventory_hostname] }}"
+      tags: dot1q
+
+    - name: "P1T7: Create Core VLANs"
+      ios_vlan:
+        aggregate: "{{ grp_core_vlans }}"
+      when: "'core' in group_names"
+
+    - name: "P1T8: Configure L2 VLANs"
+      ios_l2_interface:
+        name: "{{ item.interface }}"
+        mode: trunk
+        trunk_allowed_vlans: "{{ (vlans + grp_core_vlans) | map(attribute='vlan_id') | join(',') }}"
+        state: present
+      loop: "{{ grp_core_vlans }}"
+      when: "'core' in group_names"
+      tags: add_vlan
+
+
+- name: "PLAY 2: Configure Core L3 Interfaces"
+  hosts: core
+  tags: l3_core
+  tasks:
+    - name: "P2T1: Create L3 VLAN Interfaces"
+      ios_l3_interface:
+        name: "{{item.key }}"
+        ipv4:  "{{item.value | ipv4(hst_ip_suffix)}}"
+      with_dict: "{{grp_l3_interfaces}}"
+
+    - name: "P2T2: Enable the VLAN Interfaces"
+      ios_interface:
+        name: "{{ item.key }}"
+        state: up
+      with_dict: "{{grp_l3_interfaces}}"
+
+    - name: "P2T3: Create VRRP Configs"
+      ios_config:
+        parents: interface {{ item }}
+        lines:
+          - vrrp {{item.split('Vlan')[1]}} priority {{ hst_vrrp_priority }}
+          - vrrp {{item.split('Vlan')[1]}} ip {{grp_l3_interfaces[item] | ipv4(254)|ipaddr('address')}}
+      loop: "{{grp_vrrp_vlans}}"
+
+    # - debug: msg={{grp_l3_interfaces[item] | ipv4(254)|ipaddr('address')}}
+    #   tags: ip
+    #   loop: "{{grp_vrrp_vlans}}"
+    #   delegate_to: localhost
