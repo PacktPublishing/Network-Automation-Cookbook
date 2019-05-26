@@ -32,8 +32,3 @@ interfaces:
     - name: Ethernet0/2
       description: core02_e0/2
 
-mgmt_static_routes:
-  - prefix: 192.168.0.0/24
-    next_hop: "{{ mgmt_net_gw }}"
-  - prefix: 10.8.0.0/24
-    next_hop: "{{ mgmt_net_gw }}"

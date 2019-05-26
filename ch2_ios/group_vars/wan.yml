@@ -1,0 +1,22 @@
+loopback_prefix: 10.100.1.0/24
+grp_l3_links:
+  wan01:
+    - name: GigabitEthernet2
+      description: "core01_e1/0"
+      peer: core01
+      ipv4: 10.3.1.0/30
+      ospf: yes
+      ospf_metric: 100
+    - name: Loopback0
+      ipv4: 10.100.2.1/32
+      ospf: passive
+  wan02:
+    - name: GigabitEthernet2
+      description: "core02_e1/0"
+      peer: core02
+      ipv4: 10.3.1.4/30
+      ospf: yes
+      ospf_metric: 200
+    - name: Loopback0
+      ipv4: 10.100.2.2/32
+      ospf: passive

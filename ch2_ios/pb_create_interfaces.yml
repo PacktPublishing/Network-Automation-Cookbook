@@ -18,7 +18,6 @@
         next_hop: "{{ item.next_hop }}"
       loop: "{{ mgmt_static_routes }}"
       register: ios_static_routes
-    - debug: var=ios_static_routes
 
     - name: "P1T3: Configure Interfaces"
       ios_interface:
@@ -35,7 +34,6 @@
         aggregate: "{{ vlans }}"
       register: ios_vlans
       tags: vlan
-
 
     - name: "P1T5: Configure L2 Trunks"
       ios_l2_interface:
@@ -76,9 +74,10 @@
   tasks:
     - name: "P2T1: Create L3 VLAN Interfaces"
       ios_l3_interface:
-        name: "{{item.key }}"
-        ipv4:  "{{item.value | ipv4(hst_ip_suffix)}}"
-      with_dict: "{{grp_l3_interfaces}}"
+        name: "{{item.name }}"
+        ipv4:  "{{item.ipv4 | ipv4(hst_ip_suffix)}}"
+      loop: "{{grp_l3_interfaces}}"
+      tags: l3_intf
 
     - name: "P2T2: Enable the VLAN Interfaces"
       ios_interface:
@@ -94,7 +93,116 @@
           - vrrp {{item.split('Vlan')[1]}} ip {{grp_l3_interfaces[item] | ipv4(254)|ipaddr('address')}}
       loop: "{{grp_vrrp_vlans}}"
 
-    # - debug: msg={{grp_l3_interfaces[item] | ipv4(254)|ipaddr('address')}}
-    #   tags: ip
-    #   loop: "{{grp_vrrp_vlans}}"
-    #   delegate_to: localhost
+    - name: "P2T4: Create WAN Links"
+      ios_interface:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        duplex: "{{ intf_duplex }}"
+        mtu: "{{ intf_mtu }}"
+        state: up
+      loop: "{{ grp_wan_links[inventory_hostname] }}"
+
+    - name: "P2T5: Make Wan Interfaces as L3 Interfaces"
+      ios_config:
+        parents: interface {{ item.name }}
+        lines:
+          - no switchport
+        save_when: changed
+      loop: "{{grp_wan_links[inventory_hostname]}}" 
+
+    - name: "P2T6: Configure IP Address on WAN Links"
+      ios_l3_interface:
+        name: "{{ item.name }}"
+        ipv4: "{{ item.ipv4 | ipv4(2) }}"
+      loop: "{{ grp_wan_links[inventory_hostname] }}"
+
+    - name: "P2T7: Get Router ID"
+      set_fact:
+        router_id: "{{ grp_l3_interfaces | selectattr('name','equalto','Loopback0') | list | first }}"
+
+    - name: "P2T8: Configure OSPF"
+      ios_config:
+        parents: router ospf {{ ospf_process }}
+        lines:
+          - router-id {{ router_id.ipv4 | ipv4(hst_router_id) | ipaddr('address')}}
+
+    - name: "P2T9: Configure OSPF On Interfaces"
+      ios_config:
+        parents: interface {{ item.name }}
+        lines: 
+          - ip ospf {{ ospf_process }} area {{ ospf_area }}
+          - ip ospf network point-to-point
+          - ip ospf cost {{item.ospf_metric | default(ospf_metric)}}
+      loop: "{{ (grp_l3_interfaces + grp_wan_links[inventory_hostname]) | selectattr('ospf') | list }}"
+
+    - name: "P2T10: Configure OSPF Passive Interfaces"
+      ios_config:
+        parents: router ospf {{ ospf_process }}
+        lines: passive-interface {{item.name}}
+      loop: "{{ (grp_l3_interfaces + grp_wan_links[inventory_hostname]) | selectattr('ospf','equalto','passive') | list }}"
+    # - debug: msg={{ grp_l3_interfaces | selectattr('ospf') | list }}
+    #   tags: test_ospf
+
+
+- name: "PLAY 3: Configure WAN Routers"
+  hosts: wan
+  tags: wan
+  tasks:
+    - name: "P3T1: Configure System parameters"
+      ios_system:
+        hostname: "{{ inventory_hostname }}"
+        domain_name: "{{ domain_name }}"
+        lookup_enabled: no
+        name_servers: "{{ name_servers }}"
+
+    - name: "P3T2: Configure Managment Static Routes"
+      ios_static_route:
+        prefix: "{{ item.prefix.split('/')[0] }}"
+        mask: "{{ item.prefix | ipv4('netmask') }}"
+        next_hop: "{{ item.next_hop }}"
+      loop: "{{ mgmt_static_routes }}"
+      register: ios_static_routes
+
+    - name: "P3T3: Configure All Interfaces"
+      ios_interface:
+        name: "{{ item.name }}"
+        description: "{{ item.description | default('') }}"
+        mtu: "{{ intf_mtu }}"
+        state: up
+      loop: "{{ grp_l3_links[inventory_hostname] }}"
+      register: ios_intf
+
+    - name: "P3T4: Configure Core IP Addresses"
+      ios_l3_interface:
+        name: "{{item.name }}"
+        ipv4:  "{{item.ipv4 | ipv4(1)}}"
+      loop: "{{grp_l3_links[inventory_hostname]}}"
+
+    - name: "P3T5: Get Router ID"
+      set_fact:
+        router_id: "{{ grp_l3_links[inventory_hostname] 
+                      | selectattr('name','equalto','Loopback0') | list | first }}"
+
+    - name: "P3T6: Configure OSPF"
+      ios_config:
+        parents: router ospf {{ ospf_process }}
+        lines:
+          - router-id {{ router_id.ipv4 | ipaddr('address')}}
+
+    - name: "P3T7: Configure OSPF On Interfaces"
+      ios_config:
+        parents: interface {{ item.name }}
+        lines: 
+          - ip ospf {{ ospf_process }} area {{ ospf_area }}
+          - ip ospf network point-to-point
+          - ip ospf cost {{item.ospf_metric | default(ospf_metric)}}
+      loop: "{{ grp_l3_links[inventory_hostname] }}"
+
+    - name: "P3T8: Configure OSPF Passive Interfaces"
+      ios_config:
+        parents: router ospf {{ ospf_process }}
+        lines: passive-interface {{item.name}}
+      loop: "{{ grp_l3_links[inventory_hostname] | selectattr('ospf','equalto','passive') | list }}"
+
+
+

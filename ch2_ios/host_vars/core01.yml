@@ -1,2 +1,3 @@
 hst_ip_suffix: 1
 hst_vrrp_priority: 100
+hst_router_id: 1

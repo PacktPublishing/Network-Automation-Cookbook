@@ -14,6 +14,17 @@ name_servers:
   - 8.8.8.8
   - 8.8.4.4
   
+
 intf_mtu: 1500
 users:
   core: core123
+
+mgmt_static_routes:
+  - prefix: 192.168.0.0/24
+    next_hop: "{{ mgmt_net_gw }}"
+  - prefix: 10.8.0.0/24
+    next_hop: "{{ mgmt_net_gw }}"
+
+ospf_process: 10
+ospf_area: 0
+ospf_metric: 10
