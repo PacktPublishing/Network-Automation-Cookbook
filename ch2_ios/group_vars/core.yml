@@ -28,11 +28,6 @@ grp_l3_interfaces:
     vrrp: no
     ospf: passive
 
-grp_vrrp_vlans:
-  - Vlan10
-  - Vlan20
-  - Vlan100
-
 grp_wan_links:
   core01:
     - name: Ethernet1/0
