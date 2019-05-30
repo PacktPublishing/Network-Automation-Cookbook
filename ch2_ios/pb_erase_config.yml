@@ -5,7 +5,7 @@
   tasks:
     - import_tasks: "tasks/erase_config.yml"
       vars:
-        interface: "{{interfaces[inventory_hostname]}}"
+        INTERFACES: "{{interfaces[inventory_hostname]}}"
 
 - name: Clear All Access config
   hosts: core
@@ -14,4 +14,7 @@
   tasks:
     - import_tasks: "tasks/erase_config.yml"
       vars:
-        interface: "{{interfaces[inventory_hostname] + grp_wan_links[inventory_hostname]}}"
+        INTERFACES: "{{interfaces[inventory_hostname] + 
+                      grp_wan_links[inventory_hostname] +
+                      grp_l3_interfaces }}"
+        VLANS: "{{ vlans + grp_core_vlans }}"

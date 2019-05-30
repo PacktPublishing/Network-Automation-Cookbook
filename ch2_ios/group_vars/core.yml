@@ -1,12 +1,12 @@
 ospf_area: 0
 ospf_metric: 10
 
-grp_core_vlans:
+core_vlans:
   - name: l3_core_vlan
     vlan_id: 200
     interface: Ethernet0/3
 
-grp_l3_interfaces:
+svi_interfaces:
   - name: Vlan10
     ipv4: 10.1.10.0/24
     vrrp: yes
@@ -22,13 +22,9 @@ grp_l3_interfaces:
   - name: Vlan200
     ipv4: 10.1.200.0/24
     ospf: yes
-    vrrp: yes
-  - name: Loopback0
-    ipv4: 10.100.1.0/24
     vrrp: no
-    ospf: passive
 
-grp_wan_links:
+core_l3_links:
   core01:
     - name: Ethernet1/0
       description: wan01_Gi2
@@ -36,6 +32,9 @@ grp_wan_links:
       ospf: yes
       ospf_metric: 100
       peer: wan01
+    - name: Loopback0
+      ipv4: "{{ loopback_prefix | ipv4(hst_router_id)}}"
+      ospf: passive
   core02:
     - name: Ethernet1/0
       description: wan02_Gi2
@@ -43,6 +42,9 @@ grp_wan_links:
       ospf: yes
       ospf_metric: 200
       peer: wan02
+    - name: Loopback0
+      ipv4: "{{ loopback_prefix | ipv4(hst_router_id)}}"
+      ospf: passive
 
 
 

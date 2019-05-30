@@ -1,13 +1,13 @@
 - name: Return all Interfaces to Default
   ios_config:
     lines: default interface {{ item.name }}
-  loop: "{{ interface }}"
+  loop: "{{ INTERFACES }}"
 
 - name: Delete all VLANs
   ios_vlan: 
     vlan_id: "{{ item.vlan_id }}"
     state: absent
-  loop: "{{ vlans }}"
+  loop: "{{ VLANS }}"
 
 - name: Remove OSPF config
   ios_config:

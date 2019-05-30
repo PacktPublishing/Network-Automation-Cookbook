@@ -27,3 +27,5 @@ mgmt_static_routes:
 ospf_process: 10
 ospf_area: 0
 ospf_metric: 10
+
+loopback_prefix: 10.100.1.0/24

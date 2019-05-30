@@ -1,7 +1,7 @@
 ---
-- name: "PLAY 1: Configure All LAN Interfaces"
-  hosts: lan
-  tags: lan
+- name: "PLAY 1: Configure All Access Devices"
+  hosts: access
+  tags: access
   connection: network_cli
   tasks:
     - name: "P1T1: Configure Hostname and Domain Name"
@@ -38,60 +38,68 @@
     - name: "P1T5: Configure L2 Trunks"
       ios_l2_interface:
         name: "{{ item.name }}"
-        mode: trunk
+        mode: "{{ item.mode }}"
         trunk_allowed_vlans: "{{ vlans | map(attribute='vlan_id') | join(',') }}"
         state: present
-      loop: "{{ interfaces[inventory_hostname] }}"
-      tags: add_vlan
+      loop: "{{ interfaces[inventory_hostname] | selectattr('mode','equalto','trunk') }}"
 
     - name: "P1T6: Enable dot1q Trunks"
       ios_config:
         lines:
           - switchport trunk encapsulation dot1q
         parents: interface {{item.name}}
-      loop: "{{ interfaces[inventory_hostname] }}"
+      loop: "{{ interfaces[inventory_hostname] | selectattr('mode','equalto','trunk') }}"
       tags: dot1q
 
-    - name: "P1T7: Create Core VLANs"
-      ios_vlan:
-        aggregate: "{{ grp_core_vlans }}"
-      when: "'core' in group_names"
-
-    - name: "P1T8: Configure L2 VLANs"
+    - name: "P1T7: Configure Access Ports"
       ios_l2_interface:
-        name: "{{ item.interface }}"
-        mode: trunk
-        trunk_allowed_vlans: "{{ (vlans + grp_core_vlans) | map(attribute='vlan_id') | join(',') }}"
+        name: "{{ item.name }}"
+        mode: "{{ item.mode}}"
+        access_vlan: "{{ item.vlan }}"
         state: present
-      loop: "{{ grp_core_vlans }}"
-      when: "'core' in group_names"
-      tags: add_vlan
+      loop: "{{ interfaces[inventory_hostname] | selectattr('mode','equalto','access') }}"
 
-
-- name: "PLAY 2: Configure Core L3 Interfaces"
+- name: "PLAY 2: Configure Core Switches"
   hosts: core
   tags: l3_core
   tasks:
+
+    - name: "P1T1: Create L2 Core VLANs"
+      ios_vlan:
+        aggregate: "{{ vlans + core_vlans }}"
+      tags: vlan
+
+    - name: "P1T2: Allow Core VLANs on Trunk"
+      ios_l2_interface:
+        name: "{{ item.interface }}"
+        mode: trunk
+        trunk_allowed_vlans: "{{ (vlans + grp_core_vlans) | 
+                                  map(attribute='vlan_id') | 
+                                  join(',') }}"
+        state: present
+      loop: "{{ core_vlans }}"
+
+
     - name: "P2T1: Create L3 VLAN Interfaces"
       ios_l3_interface:
         name: "{{item.name }}"
-        ipv4:  "{{item.ipv4 | ipv4(hst_ip_suffix)}}"
-      loop: "{{grp_l3_interfaces}}"
+        ipv4:  "{{item.ipv4 | ipv4(hst_svi_id)}}"
+      loop: "{{svi_interfaces}}"
       tags: l3_intf
 
     - name: "P2T2: Enable the VLAN Interfaces"
       ios_interface:
         name: "{{ item.key }}"
         state: up
-      with_dict: "{{grp_l3_interfaces}}"
+      loop: "{{ svi_interfaces }}"
 
     - name: "P2T3: Create VRRP Configs"
       ios_config:
         parents: interface {{ item }}
         lines:
-          - vrrp {{item.split('Vlan')[1]}} priority {{ hst_vrrp_priority }}
-          - vrrp {{item.split('Vlan')[1]}} ip {{grp_l3_interfaces[item] | ipv4(254)|ipaddr('address')}}
-      loop: "{{grp_vrrp_vlans}}"
+          - vrrp {{item.name.split('Vlan')[1]}} priority {{ hst_vrrp_priority }}
+          - vrrp {{item.name.split('Vlan')[1]}} ip {{svi_interfaces.ipv4 | ipv4(254)|ipaddr('address')}}
+      loop: "{{svi_interfaces | selectattr('vrrp','equalto',true) }}"
 
     - name: "P2T4: Create WAN Links"
       ios_interface:
