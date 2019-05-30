@@ -1,0 +1,17 @@
+---
+- name: Clear All Access config
+  hosts: access
+  connection: network_cli
+  tasks:
+    - import_tasks: "tasks/erase_config.yml"
+      vars:
+        interface: "{{interfaces[inventory_hostname]}}"
+
+- name: Clear All Access config
+  hosts: core
+  tags: core
+  connection: network_cli
+  tasks:
+    - import_tasks: "tasks/erase_config.yml"
+      vars:
+        interface: "{{interfaces[inventory_hostname] + grp_wan_links[inventory_hostname]}}"
