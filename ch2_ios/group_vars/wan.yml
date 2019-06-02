@@ -1,9 +1,9 @@
-grp_wan_l3_links:
+wan_l3_links:
   wan01:
     - name: GigabitEthernet2
       description: "core01_e1/0"
       peer: core01
-      ipv4: 10.3.1.0/30
+      ipv4: 10.3.1.2/30
       ospf: yes
       ospf_metric: 100
     - name: Loopback0
@@ -12,19 +12,20 @@ grp_wan_l3_links:
     - name: GigabitEthernet3
       description: "wan01_Gi3"
       peer: wan01
-      ipv4: 10.3.1.8/30
+      ipv4: 10.3.1.9/30
       ospf: no
   wan02:
     - name: GigabitEthernet2
       description: "core02_e1/0"
       peer: core02
-      ipv4: 10.3.1.4/30
+      ipv4: 10.3.1.6/30
       ospf: yes
       ospf_metric: 200
     - name: Loopback0
+      ipv4: "{{ loopback_prefix | ipv4(hst_router_id)}}"
       ospf: passive
     - name: GigabitEthernet3
       description: "wan01_Gi3"
       peer: wan01
-      ipv4: 10.3.1.8/30
+      ipv4: 10.3.1.10/30
       ospf: no

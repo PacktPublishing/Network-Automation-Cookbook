@@ -1,42 +1,32 @@
 ---
 - name: Gather SSH keys
   hosts: all
-  vars:
-    test: 
-      - 172.20.1.18
-      - 172.20.1.19
   tasks:
-    # - debug: msg={{hostvars[item].ansible_host}}
-    #   loop: "{{hostvars.keys()}}"
-    #   delegate_to: localhost
     - name: scan ssh keys
       command: ssh-keyscan {{ ansible_host }}
       delegate_to: localhost
       register: ssh_keys
-
     - debug: var=ssh_keys
       delegate_to: localhost
-      #run_once: yes
-    - debug: var=groups.all
-      delegate_to: localhost
-      run_once: yes
 
-- name: Record in ssh known files
+- name: Record Keys in in ssh known files
   hosts: localhost
-  #tags: never
   vars:
-    - hosts_file: "~/.ssh/known_hosts"
+    #- hosts_file: "~/.ssh/known_hosts"
+    - hosts_file: "./temp_ssh.txt"
+
   tasks:
     - name: create know hosts file
-      stat:
+      file:
         path: "{{ hosts_file }}"
-      register: host_file_status
+        state: file
       changed_when: false
-    - blockinfile:
+
+    - name: Populate the known_hosts file
+      blockinfile:
         block: |
-          {% for host in groups['all'] if  hostvars[host].ssh_keys.stdout != ''  %} {#hostvars[host].ssh_keys is defined and#}
+          {% for host in groups['all'] if  hostvars[host].ssh_keys.stdout != ''  %}
           {{ hostvars[host].ssh_keys.stdout}}
           {% endfor %}
-        path: "./temp_test.txt"
+        path: "{{ hosts_file }}"
         create: yes
-    - debug: var=host_file_status
