@@ -1,4 +1,4 @@
-grp_wan_l3_links:
+wan_l3_links:
   wan01:
     - name: GigabitEthernet2
       description: "core01_e1/0"
@@ -13,7 +13,6 @@ grp_wan_l3_links:
       description: "wan01_Gi3"
       peer: wan01
       ipv4: 10.3.1.8/30
-      ospf: no
   wan02:
     - name: GigabitEthernet2
       description: "core02_e1/0"
@@ -27,4 +26,3 @@ grp_wan_l3_links:
       description: "wan01_Gi3"
       peer: wan01
       ipv4: 10.3.1.8/30
-      ospf: no
