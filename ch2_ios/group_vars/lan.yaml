@@ -41,8 +41,10 @@ interfaces:
   access02:
     - name: Ethernet0/1
       description: core01_e0/2
+      mode: trunk
     - name: Ethernet0/2
       description: core02_e0/2
+      mode: trunk
     - name: Ethernet0/3
       description: Voice_vlan
       mode: access
