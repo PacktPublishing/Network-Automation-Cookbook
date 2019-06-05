@@ -12,12 +12,8 @@ wan_l3_links:
     - name: GigabitEthernet3
       description: "wan01_Gi3"
       peer: wan01
-<<<<<<< HEAD
       ipv4: 10.3.1.9/30
       ospf: no
-=======
-      ipv4: 10.3.1.8/30
->>>>>>> update_ios_inventory
   wan02:
     - name: GigabitEthernet2
       description: "core02_e1/0"
@@ -31,9 +27,30 @@ wan_l3_links:
     - name: GigabitEthernet3
       description: "wan01_Gi3"
       peer: wan01
-<<<<<<< HEAD
       ipv4: 10.3.1.10/30
       ospf: no
-=======
-      ipv4: 10.3.1.8/30
->>>>>>> update_ios_inventory
+
+bgp_peers:
+  wan01:
+    - peer: 10.100.1.3
+      description: "iBGP sesstion to wan02"
+      redistribute: ospf
+      route_map: to_wan_peer
+    - peer: 192.168.1.2
+      description: "iBGP sesstion to wan02"
+      redistribute: ospf
+      route_map: wan01_to_isp
+  wan02:
+    - peer: 10.100.1.4
+      description: "iBGP sesstion to wan01"
+      redistribute: ospf
+      route_map: to_wan_peer
+    - peer: 192.168.1.2
+      description: "iBGP sesstion to wan02"
+      redistribute: ospf
+      route_map: wan01_to_isp
+
+route_policy:
+  wan01:
+    - 
+  wan02:
