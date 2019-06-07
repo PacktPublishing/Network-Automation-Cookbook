@@ -31,3 +31,6 @@ ospf_area: 0
 ospf_metric: 10
 
 loopback_prefix: 10.100.1.0/24
+
+bgp_as: 65001
+prepend: 4

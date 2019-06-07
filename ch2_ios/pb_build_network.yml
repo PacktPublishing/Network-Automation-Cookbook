@@ -71,14 +71,14 @@
   tags: l3_core
   tasks:
 
-    - name: "P1T1: Create L2 Core VLANs"
+    - name: "P2T1: Create L2 Core VLANs"
       ios_vlan:
         vlan_id : "{{item.vlan_id | int}}"
         interfaces: "{{ item.interface}}"
       loop: "{{ core_vlans }}"
       tags: vlan
 
-    - name: "P1T2: Allow Core VLANs on Core Trunk"
+    - name: "P2T2: Allow Core VLANs on Core Trunk"
       ios_l2_interface:
         name: "{{ item.interface }}"
         mode: trunk
@@ -88,6 +88,12 @@
         state: present
       loop: "{{ core_vlans }}"
 
+    - name: "P2T3: Adjust VLAN Priority"
+      ios_config:
+        lines:
+          - spanning-tree vlan {{ item.vlan_id }} priority {{ hst_vlan_priority }}
+      loop: "{{(vlans + core_vlans) }}"
+      tags: spt
 
     - name: "P2T1: Create L3 VLAN Interfaces"
       ios_l3_interface:
@@ -137,12 +143,12 @@
       loop: "{{ core_l3_links[inventory_hostname] }}"
       when: "'Loopback0' not in item.name"
 
-    - name: "P2T6: Configure IP Address on Loopbacko"
+    - name: "P2T6: Configure IP Address on Loopback"
       ios_l3_interface:
         name: "{{ item.name }}"
-        ipv4: "{{ item.ipv4 | ipv4(hst_router_id) }}"
+        ipv4: "{{ item.ipv4 }}"
       loop: "{{ core_l3_links[inventory_hostname] }}"
-      when: "'Loopback0'  in item.name"
+      when: "'Loopback0' in item.name"
       tags: lo0
 
     - name: "P2T8: Configure OSPF"
@@ -231,4 +237,60 @@
       loop: "{{ wan_l3_links[inventory_hostname] | selectattr('ospf','equalto','passive') | list }}"
 
 
+
+
+
+- name: "PLAY 3: Configure ISP Routers"
+  hosts: isp
+  tags: isp
+  tasks:
+    - name: "P3T1: Configure System parameters"
+      ios_system:
+        hostname: "{{ inventory_hostname }}"
+        domain_name: "{{ domain_name }}"
+        lookup_enabled: no
+        name_servers: "{{ name_servers }}"
+    
+    - name: "P3T2: Configure NTP"
+      ios_ntp:
+        server: "{{ ntp_server }}"
+        logging: true
+        source_int: GigabitEthernet1
+        state: present
+
+    - name: "P3T2: Configure Managment Static Routes"
+      ios_static_route:
+        prefix: "{{ item.prefix.split('/')[0] }}"
+        mask: "{{ item.prefix | ipv4('netmask') }}"
+        next_hop: "{{ item.next_hop }}"
+      loop: "{{ mgmt_static_routes }}"
+
+    - name: "P3T3: Configure All Interfaces"
+      ios_interface:
+        name: "{{ item.name }}"
+        description: "{{ item.description | default('') }}"
+        mtu: "{{ intf_mtu }}"
+        state: up
+      loop: "{{ isp_l3_links }}"
+
+    - name: "P3T4: Configure Interface IP Addresses"
+      ios_l3_interface:
+        name: "{{item.name }}"
+        ipv4:  "{{item.ipv4 }}"
+      loop: "{{isp_l3_links}}"
+
+
+
+- name: "P3T1: Configure System parameters"
+  hosts: network
+  tags: testing,never
+  tasks:
+    - block:
+
+      - debug:
+          msg: " {{loopback_prefix | ipv4(1) | ipaddr('address') + '/'+
+                 loopback_prefix | ipaddr('prefix') | string}}"
+      - debug: msg={{ ((bgp_as| string + ' ') * prepend ) | trim }}
+      run_once: yes
+      delegate_to: localhost
 

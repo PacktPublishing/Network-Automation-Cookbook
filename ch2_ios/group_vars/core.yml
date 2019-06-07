@@ -33,7 +33,7 @@ core_l3_links:
       ospf_metric: 100
       peer: wan01
     - name: Loopback0
-      ipv4: "{{ loopback_prefix | ipv4(hst_router_id)}}"
+      ipv4: "{{ loopback_prefix | ipv4(hst_router_id) | ipaddr('address') + '/32'}}"
       ospf: passive
   core02:
     - name: Ethernet1/0
@@ -43,7 +43,7 @@ core_l3_links:
       ospf_metric: 200
       peer: wan02
     - name: Loopback0
-      ipv4: "{{ loopback_prefix | ipv4(hst_router_id)}}"
+      ipv4: "{{ loopback_prefix | ipv4(hst_router_id) | ipaddr('address') + '/32'}}"
       ospf: passive
 
 
