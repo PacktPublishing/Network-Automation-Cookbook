@@ -51,6 +51,13 @@ bgp_peers:
       route_map: wan01_to_isp
 
 route_policy:
-  wan01:
-    - 
+  wan_peer:
+    - id: 10
+      prefixes: "{{ hostvars[core01].svi_interfaces }}"
+      action: 
+
+  to_isp:
+    - id: 10
+      prefixes:
+      action:  
   wan02:
