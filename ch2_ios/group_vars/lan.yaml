@@ -5,6 +5,8 @@ vlans:
     vlan_id: 20
   - name: Web
     vlan_id: 100
+  - name: Data30
+    vlan_id: 30
 
 interfaces:
   core01:

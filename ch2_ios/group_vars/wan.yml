@@ -61,9 +61,24 @@ bgp_peers:
       route_map: wan01_to_isp
 
 route_policy:
+<<<<<<< HEAD
   wan_peer_export:
     - id: 10
       match: ospf
       set:
         as_path: "{{bgp_as}}"
+||||||| merged common ancestors
+  wan01:
+    - 
+=======
+  wan_peer:
+    - id: 10
+      prefixes: "{{ hostvars[core01].svi_interfaces }}"
+      action: 
+
+  to_isp:
+    - id: 10
+      prefixes:
+      action:  
+>>>>>>> 39fa6692b5df8212ce5c86de6a6299aa8ae7b5cb
   wan02:
