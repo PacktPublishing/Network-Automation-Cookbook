@@ -1,9 +1,0 @@
----
-- name: PLAY >> Gather IOS Facts
-  hosts: lan
-  tasks:
-    - name: TASK >> IOS Facts
-      ios_facts:
-      register: ios_facts
-    - debug: var=ios_facts
-  

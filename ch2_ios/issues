@@ -1,4 +1,0 @@
-- Most of the Modules are not idempotent
-- still not configured the VLANs
-- need to check to use dynamips images (3725)
-- 

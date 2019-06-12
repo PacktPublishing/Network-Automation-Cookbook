@@ -1,0 +1,7 @@
+---
+- name: "Save Running Config"
+  hosts: network
+  tasks:
+    - ios_config:
+        save_when: always
+        
