@@ -1,0 +1,20 @@
+[pe]
+mxpe01    ansible_host=172.20.1.3
+mxpe02    ansible_host=172.20.1.4
+xrpe03    ansible_host=172.20.1.5
+
+[p]
+mxp01     ansible_host=172.20.1.2
+
+[junos]
+mxpe01
+mxpe02
+mxp01
+
+[xr]
+xrpe03
+
+[core:children]
+pe
+p
+

@@ -1,0 +1,102 @@
+{% set node = nodes[inventory_hostname] %}
+!
+hostname {{inventory_hostname}}
+telnet vrf default ipv4 server max-servers 100
+username netconf
+ group sysadmin
+ group root-system
+ group cisco-support
+ password 7 151C0E1807252522796166
+!
+username vagrant
+ group root-lr
+ group cisco-support
+ password 7 120F0410000A0210
+!
+interface Loopback0
+ ipv4 address {{node.rid}} 255.255.255.255
+!
+interface MgmtEth0/0/CPU0/0
+ ipv4 address {{node.mgmt}} 255.255.255.0
+!
+{% for intf,intf_attr in node.links.items() %}
+interface {{intf.split('.')[0]}}
+{%  if intf_attr.vlan  is undefined or intf_attr.vlan == 0 %}
+ ipv4 address {{intf_attr.ip|ipaddr('address')}} {{intf_attr.ip|ipaddr('netmask')}}
+{%  endif %}
+!
+{%  if intf_attr.vlan  is defined and intf_attr.vlan != 0 %}
+interface {{intf}}
+ ipv4 address {{intf_attr.ip|ipaddr('address')}} {{intf_attr.ip|ipaddr('netmask')}}
+ encapsulation dot1q {{intf_attr.vlan}}
+{%  endif %}
+!
+{% endfor %}
+!
+router ospf 1
+ address-family ipv4 unicast
+ area 0
+  interface Loopback0
+   passive enable
+  !
+{% for intf, intf_attr in node.links.items()|sort %}
+  interface {{intf.split('.')[0]}}
+   cost {{intf_attr.cost}}
+   network point-to-point
+  !
+{% endfor %}
+ !
+ mpls traffic-eng router-id Loopback0
+!
+router bgp {{common.bgp_asn}}
+{% if 'inet' in node.bgp.ibgp.af %}
+ address-family ipv4 unicast
+{% endif %}
+ !
+{% if 'inet-vpn' in node.bgp.ibgp.af %}
+ address-family vpnv4 unicast
+{% endif %}
+ !
+{% for peer in node.bgp.ibgp.peers %}
+ neighbor {{peer}}
+  remote-as {{common.bgp_asn}}
+  local address {{node.rid}}
+{%  if 'inet' in node.bgp.ibgp.af  %}
+  address-family ipv4 unicast
+{%  endif %}
+  !
+{%  if 'inet-vpn' in node.bgp.ibgp.af %}
+  address-family vpnv4 unicast
+{%  endif %}
+  !
+{% endfor %}
+ !
+!
+rsvp
+{% for intf, intf_attr in node.links.items()|sort %}
+ interface {{intf.split('.')[0]}}
+{% endfor %}
+ !
+!
+mpls traffic-eng
+{% for intf, intf_attr in node.links.items()|sort %}
+ interface {{intf.split('.')[0]}}
+{% endfor %}
+!
+mpls ldp
+{% for intf, intf_attr in node.links.items()|sort %}
+ interface {{intf.split('.')[0]}}
+{% endfor %}
+!
+lldp
+ subinterfaces enable
+!
+xml agent tty
+ iteration off
+!
+xml agent
+!
+ssh server v2
+ssh server vrf default
+ssh server logging
+ssh server rate-limit 600

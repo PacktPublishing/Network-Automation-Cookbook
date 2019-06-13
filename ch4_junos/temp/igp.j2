@@ -1,0 +1,105 @@
+{% set node_igp = igp[inventory_hostname] %}
+{% set node_intf = nodes_p2p_ip[inventory_hostname] %}
+##### Start IGP and MPLS Config ##########
+groups {
+    GR-ISIS {
+        protocols {
+            isis {
+                interface <*e*> {
+                    hello-padding strict;
+                    ldp-synchronization;
+                    node-link-protection;
+                    point-to-point;
+                    lsp-interval 10;
+                    level 2 {
+                        metric 16777215;
+                        hello-interval 10;
+                        hold-time 30;
+                        hello-authentication-key {{isis_password}};
+                        hello-authentication-type md5;
+                    }
+                }
+            }
+        }
+    }
+}
+interfaces {
+    lo0 {
+        unit 0 {
+            family iso {
+                address {{node_igp.net_id}};
+            }
+        }
+    }
+}
+routing-options {
+    router-id {{node_igp.lo_ipv4|replace('/32','')}};
+    forwarding-table {
+        export LOAD_BALANCE;
+    }
+
+}
+protocols {
+    isis {
+        apply-groups GR-ISIS;
+        level 2 {
+            authentication-key {{isis_password}};
+            authentication-type md5;
+            wide-metrics-only;
+        }
+        backup-spf-options {
+            per-prefix-calculation;
+            remote-backup-calculation;
+            node-link-degradation;
+        }
+        level 1 disable;
+        reference-bandwidth 100g;
+        overload timeout 300;
+{% for intf,int_ip_data in node_intf.links.items()|sort %}
+        interface {{intf}}.0 {
+            level 2 metric {{int_ip_data.metric}};
+        }
+{% endfor%}
+        interface lo0.0 {
+            passive;
+        }
+    }
+    mpls {
+        no-propagate-ttl;
+        ipv6-tunneling;
+        icmp-tunneling;
+{%  for intf,int_ip_data in node_intf.links.items()|sort %}
+        interface {{intf}}.0;
+{%  endfor%}
+        interface fxp0.0 {
+            disable;
+        }
+    }
+    ldp {
+        track-igp-metric;
+        mtu-discovery;
+        deaggregate;
+        transport-address router-id;
+        auto-targeted-session;
+{%  for intf,int_ip_data in node_intf.links.items()|sort %}
+        interface {{intf}}.0;
+{%  endfor%}
+        interface fxp0.0 {
+            disable;
+        }
+        interface lo0.0;
+        session-protection;
+        session-group 10.55.255.0/24 {
+        authentication-key {{ldp_password}};
+        }
+    }
+}
+policy-options {
+    policy-statement LOAD_BALANCE {
+        term 1 {
+            then {
+                load-balance per-packet;
+            }
+        }
+    }
+}

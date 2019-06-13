@@ -1,0 +1,7 @@
+bgp_asn: 65403
+
+bgp_peers:
+    - local_as: 65403
+      peer: 10.100.1.254
+      remote_as: 65501
+
