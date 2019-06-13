@@ -1,0 +1,8 @@
+bgp_peers:
+    - local_as: 65001
+      peer: 172.16.0.6
+      remote_as: 65102
+    - local_as: 65001
+      peer: 172.16.0.0
+      remote_as: 65101
+

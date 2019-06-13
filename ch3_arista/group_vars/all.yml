@@ -1,0 +1,20 @@
+p2p_ip:
+  leaf01:
+    - {port: Ethernet8, ip: 172.16.0.7 , peer: spine02, pport: spine02, peer_ip: 172.16.0.6}
+    - {port: Ethernet9, ip: 172.16.0.1 , peer: spine01, pport: spine01, peer_ip: 172.16.0.0}
+  leaf02:
+    - {port: Ethernet8, ip: 172.16.0.9 , peer: spine02, pport: spine02, peer_ip: 172.16.0.8}
+    - {port: Ethernet9, ip: 172.16.0.3 , peer: spine01, pport: spine01, peer_ip: 172.16.0.2}
+  leaf03:
+    - {port: Ethernet8, ip: 172.16.0.11 , peer: spine02, pport: spine02, peer_ip: 172.16.0.10}
+    - {port: Ethernet9, ip: 172.16.0.5 , peer: spine01, pport: spine01, peer_ip: 172.16.0.4}
+  spine01:
+    - {port: Ethernet1, ip: 172.16.0.0 , peer: leaf01, pport: leaf01, peer_ip: 172.16.0.1}
+    - {port: Ethernet2, ip: 172.16.0.2 , peer: leaf02, pport: leaf02, peer_ip: 172.16.0.3}
+    - {port: Ethernet3, ip: 172.16.0.4 , peer: leaf03, pport: leaf03, peer_ip: 172.16.0.5}
+  spine02:
+    - {port: Ethernet1, ip: 172.16.0.6 , peer: leaf01, pport: leaf01, peer_ip: 172.16.0.7}
+    - {port: Ethernet2, ip: 172.16.0.8 , peer: leaf02, pport: leaf02, peer_ip: 172.16.0.9}
+    - {port: Ethernet3, ip: 172.16.0.10 , peer: leaf03, pport: leaf03, peer_ip: 172.16.0.11}
+
+

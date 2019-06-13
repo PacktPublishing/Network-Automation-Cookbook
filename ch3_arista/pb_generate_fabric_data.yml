@@ -1,0 +1,38 @@
+---
+- name: Build Folder Structure
+  hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Create group_vars Folder
+      file: path=group_vars state=directory
+      run_once: yes
+
+    - name: Create host_vars Folder
+      file: path=host_vars state=directory
+      run_once: yes
+
+    - name: Create host_vars Folder
+      file: path=host_vars/{{ inventory_hostname }} state=directory
+
+
+- name: Generate P2P IP address Info 
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars_files: "network_topology.yml"
+  tasks:
+    - template:
+        src: "j2_p2p_ip.j2"
+        dest: "group_vars/all.yml"
+      run_once: yes
+
+    - template:
+        src: "j2_bgp.j2"
+        dest: "host_vars/{{ inventory_hostname }}/underlay_bgp.yml"
+      tags: bgp
+- tags: test
+  hosts: all
+  connection: local
+  tasks:
+    - debug: msg={{inventory_hostname[-2:] | int}}

@@ -1,18 +1,24 @@
+global:
+    p2p_prefix: 31
+    num_links: 6
+    fabric_prefix: 172.16.0.0/16
+    bgp_asn: 65000
+
 fabric:
   spine01:
-    Ethernet1: {peer: leaf01, pport: Ethernet9, link_id: 1, rlink_id: 2}
-    Ethernet2: {peer: leaf02, pport: Ethernet9, link_id: 2, rlink_id: 2}
-    Ethernet3: {peer: leaf03, pport: Ethernet9, link_id: 3, rlink_id: 2}
+    Ethernet1: {peer: leaf01, pport: Ethernet9, link_id: 1, prefix_id: 1}
+    Ethernet2: {peer: leaf02, pport: Ethernet9, link_id: 2, prefix_id: 1}
+    Ethernet3: {peer: leaf03, pport: Ethernet9, link_id: 3, prefix_id: 1}
   spine02:
-    Ethernet1: {peer: leaf01, pport: Ethernet8, link_id: 4, rlink_id: 2}
-    Ethernet2: {peer: leaf02, pport: Ethernet8, link_id: 5, rlink_id: 2}
-    Ethernet3: {peer: leaf03, pport: Ethernet8, link_id: 6, rlink_id: 2}
+    Ethernet1: {peer: leaf01, pport: Ethernet8, link_id: 4, prefix_id: 1}
+    Ethernet2: {peer: leaf02, pport: Ethernet8, link_id: 5, prefix_id: 1}
+    Ethernet3: {peer: leaf03, pport: Ethernet8, link_id: 6, prefix_id: 1}
   leaf01:
-    Ethernet9: {peer: spine01, pport: Ethernet1, link_id: 1, rlink_id: 1}
-    Ethernet8: {peer: spine02, pport: Ethernet1, link_id: 4, rlink_id: 1}
+    Ethernet9: {peer: spine01, pport: Ethernet1, link_id: 1, prefix_id: 2}
+    Ethernet8: {peer: spine02, pport: Ethernet1, link_id: 4, prefix_id: 2}
   leaf02:
-    Ethernet9: {peer: spine01, pport: Ethernet2, link_id: 2, rlink_id: 1}
-    Ethernet8: {peer: spine02, pport: Ethernet2, link_id: 5, rlink_id: 1}
+    Ethernet9: {peer: spine01, pport: Ethernet2, link_id: 2, prefix_id: 2}
+    Ethernet8: {peer: spine02, pport: Ethernet2, link_id: 5, prefix_id: 2}
   leaf03:
-    Ethernet9: {peer: spine01, pport: Ethernet3, link_id: 3, rlink_id: 1}
-    Ethernet8: {peer: spine02, pport: Ethernet3, link_id: 6, rlink_id: 1}
+    Ethernet9: {peer: spine01, pport: Ethernet3, link_id: 3, prefix_id: 2}
+    Ethernet8: {peer: spine02, pport: Ethernet3, link_id: 6, prefix_id: 2}

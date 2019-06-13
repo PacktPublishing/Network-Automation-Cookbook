@@ -1,0 +1,17 @@
+p2p_ip:
+{% for node, links in fabric.items()|sort %}
+  {{ node }}:
+{%      for port,portinfo in links.items()|sort %}
+{%          set link_id = links[port].link_id %}
+{%          set network = global.fabric_prefix | ipsubnet (global.p2p_prefix, link_id - 1) %}
+{%          set prefix_id = links[port].prefix_id %}
+{%          set peer_id = 2 if prefix_id == 1 else 1 %}
+{%          if global.p2p_prefix == 31 %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id - 1)| ipaddr('address')}} , peer: {{links[port].peer}}, pport: {{ links[port].peer }}, peer_ip: {{network | ipv4(peer_id - 1)| ipaddr('address')}}}
+{%          else %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id)| ipaddr('address')}} , peer: {{links[port].peer}}, pport: {{ links[port].peer }}, peer_ip: {{network | ipv4(peer_id)| ipaddr('address')}}}
+{%          endif %}
+{%      endfor %}
+{% endfor %}
+
+
