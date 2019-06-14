@@ -1,0 +1,27 @@
+vrf vpna
+ address-family ipv4 unicast
+  import route-target
+   100:1
+  !
+  export route-target
+   100:1
+  !
+ !
+!
+interface Loopback10
+ vrf vpna
+ ipv4 address 10.20.1.30/32
+!
+interface Loopback11
+ vrf vpna
+ ipv4 address 10.20.1.31/32
+!
+!
+router bgp 65400
+ vrf vpna
+  rd 10.100.1.3:1
+  address-family ipv4 unicast
+   redistribute connected
+  !
+ !
+!

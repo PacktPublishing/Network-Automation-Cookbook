@@ -6,9 +6,9 @@ l3vpn:
         rt_exp:
             - "100:1"
         intfs:
-            - intf: lo0.10
+            - intf: ge-0/0/4.10
               ip : 10.20.1.10/32
 
-            - intf: lo0.11
+            - intf: ge-0/0/4.11
               ip : 10.20.1.11/32
 

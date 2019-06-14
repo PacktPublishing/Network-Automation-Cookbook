@@ -4,36 +4,27 @@
   connection: local
   tasks:
     - block:
-
-
-      - name: "P1T3: Generate Managment Configuration"
+      - name: "P1T3: Generate L3VPN Configuration"
         template:
           src: "{{ansible_network_os}}/l3vpn.j2"
           dest: "configs/{{ inventory_hostname }}/03_l3vpn.txt"
-
-
-      # - name: "P1T6: Compile the final Config"
-      #   assemble:
-      #     src: "configs/{{ inventory_hostname }}"
-      #     dest: "configs/{{ inventory_hostname }}/config.cfg"
-
       delegate_to: localhost
 
 - name: "Play 2: Deploy Configuration"
-  hosts: all
+  hosts: pe
   connection: local
   tags: deploy, never
   tasks:
     - name: "P2T1: Deploy config on Juniper"
       junos_config:
-        src: "configs/{{ inventory_hostname }}/config.cfg"
-        update: replace
+        src: "configs/{{ inventory_hostname }}/03_l3vpn.txt"
+        #update: replace
       when: ansible_network_os == 'junos'
  
     - name: "P2T1: Deploy config on IOS-XR"
       iosxr_config:
-        src: "configs/{{ inventory_hostname }}/config.cfg"   
-        replace: config
+        src: "configs/{{ inventory_hostname }}/03_l3vpn.txt"   
+        #replace: config
       when: ansible_network_os == 'iosxr'
       # vars:
       #     ansible_command_timeout: 60

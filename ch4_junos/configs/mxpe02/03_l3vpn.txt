@@ -1,19 +1,35 @@
 
 interfaces {
-    lo0 {
+    ge-0/0/4 {
+        vlan-tagging;
         unit 10 {
-            description " vpna"
+            description "vpna"
+            vlan-id 10;
             family inet {
                 address 10.20.1.20/32
             }
         }
-    lo0 {
+    }
+    ge-0/0/4 {
+        vlan-tagging;
         unit 11 {
-            description " vpna"
+            description "vpna"
+            vlan-id 11;
             family inet {
                 address 10.20.1.21/32
             }
         }
-    }   
+    }
 }
 
+routing-instances {
+    vpna {
+        instance-type vrf;
+        interface ge-0/0/4.10;
+        interface ge-0/0/4.11;
+        route-distinguisher 10.100.1.2:1;
+        vrf-target import target:100:1;
+        vrf-target export target:100:1;
+        vrf-table-label;
+    }
+}

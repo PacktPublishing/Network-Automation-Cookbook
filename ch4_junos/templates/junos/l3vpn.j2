@@ -8,14 +8,16 @@ interfaces {
 {%  for vpn in l3vpn %}
 {%      for port in l3vpn[vpn].intfs %}
     {{ port.intf.split('.')[0] }} {
+        vlan-tagging;
         unit {{port.intf.split('.')[1]}} {
-            description " {{vpn}}"
+            description "{{vpn}}"
+            vlan-id {{ port.intf.split('.')[1]}};
             family inet {
                 address {{port.ip}}
             }
         }
+    }
 {%      endfor %}
-    }   
 {% endfor %}
 }
 
@@ -24,24 +26,17 @@ interfaces {
 ###         Routing Instances                  ###
 **************************************************
 #}
-{#routing-instances {
-{%  for site in node %}
-    {{vpn_service.vrf_name}} {
+routing-instances {
+{%  for vpn in l3vpn %}
+    {{vpn}} {
         instance-type vrf;
-        interface {{site.links.keys()[0]}};
-        route-distinguisher {{vpn_service.rd}};
-        vrf-target target:{{vpn_service.rt}};
+{%      for port in l3vpn[vpn].intfs %}
+        interface {{port.intf}};
+{%      endfor %}
+        route-distinguisher {{l3vpn[vpn].rd}};
+        vrf-target import target:{{l3vpn[vpn].rt_imp[0]}};
+        vrf-target export target:{{l3vpn[vpn].rt_exp[0]}};
         vrf-table-label;
-        protocols {
-            bgp {
-                group {{site.name}} {
-                    import __ANSIBLE_{{vpn_service.vrf_name}}_{{site.name}}_import;
-                    export __ANSIBLE_{{vpn_service.vrf_name}}_{{site.name}}_export;
-                    neighbor {{site.bgp.peer_ip}};
-                    peer-as {{site.bgp.as}};
-                }
-            }
-        }
     }
 {%  endfor %}
-}#}
+}
