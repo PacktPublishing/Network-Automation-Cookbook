@@ -1,0 +1,2 @@
+- change generate data playbook to use blockinfile with template lookup for jinja2 files.
+- How to model single metrics in grafana

@@ -1,0 +1,19 @@
+
+interfaces {
+    lo0 {
+        unit 10 {
+            description " vpna"
+            family inet {
+                address 10.20.1.10/32
+            }
+        }
+    lo0 {
+        unit 11 {
+            description " vpna"
+            family inet {
+                address 10.20.1.11/32
+            }
+        }
+    }   
+}
+

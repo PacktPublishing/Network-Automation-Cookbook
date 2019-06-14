@@ -1,0 +1,16 @@
+l3vpn_srv:
+  vpna:
+      id: 1
+      rt_imp: 
+        - "100:1"
+      rt_exp: 
+        - "100:1"
+      prefix: 10.20.1.0/24
+      site_per_node: 2
+      sites:
+        - id: 1
+          node: mxpe01
+        - id: 2
+          node: mxpe02
+        - id: 3
+          node: xrpe03

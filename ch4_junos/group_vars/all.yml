@@ -13,10 +13,9 @@ global:
   root_pwd: $1$ciI4raxU$XfCVzABJKdALim0aWVMql0
   setup: isp
   users:
-  -   hash: $1$ZSlk89c9$m2FmAhhohufFT5I55Xg0M1
-      passwd: lab123
-      username: lab
-
+  -   hash: $1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1
+      passwd: ansible123
+      username: ansible
 p2p_ip:
   mxp01:
     - {port: ge-0/0/0, ip: 10.1.1.0 , peer: mxpe01, pport: ge-0/0/0, peer_ip: 10.1.1.1}
@@ -48,5 +47,23 @@ mgmt_net:
   xrpe03:
       ip: 172.20.1.5/28
       port: MgmtEth0/0/CPU0/0
+
+bgp_topo:
+  af:
+  - inet
+  - inet-vpn
+  peers:
+      mxp01:
+      - mxpe01
+      - mxpe02
+      - xrpe03
+      mxpe01:
+      - mxp01
+      mxpe02:
+      - mxp01
+      xrpe03:
+      - mxp01
+  rr: mxp01
+
 
 

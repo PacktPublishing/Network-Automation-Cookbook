@@ -20,19 +20,25 @@
   hosts: all
   connection: local
   gather_facts: no
-  vars_files: "network_topology.yml"
+  vars_files: 
+    - "network_topology.yml"
+    - "l3vpn.yml"
   tasks:
-    - template:
+    - name: "Generate Global Config Data"
+      template:
         src: "infra.j2"
         dest: "group_vars/all.yml"
       run_once: yes
 
-    - template:
+    - name: "Generate Host Specifc BGP Data"
+      template:
         src: "j2_bgp.j2"
         dest: "host_vars/{{ inventory_hostname }}/bgp.yml"
       tags: bgp
-- tags: test
-  hosts: all
-  connection: local
-  tasks:
-    - debug: msg={{inventory_hostname[-2:] | int}}
+
+    - name: "Generate L3VPN"
+      template:
+        src: "l3vpn.j2"
+        dest: "host_vars/{{ inventory_hostname }}/l3vpn.yml"
+      tags: l3vpn
+

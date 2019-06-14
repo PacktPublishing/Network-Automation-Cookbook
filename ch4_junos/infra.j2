@@ -25,4 +25,8 @@ lo_ip:
 mgmt_net:
 {{ mgmt_net | to_nice_yaml | indent(2,true) }}
 
+bgp_topo:
+{{ bgp_topo | to_nice_yaml | indent(2,true) }}
+
+
 

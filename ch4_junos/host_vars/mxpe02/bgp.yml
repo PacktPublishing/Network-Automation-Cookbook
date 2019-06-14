@@ -1,7 +1,7 @@
-bgp_asn: 65402
+bgp_asn: 65400
 
 bgp_peers:
-    - local_as: 65402
+    - local_as: 65400
       peer: 10.100.1.254
-      remote_as: 65501
+      remote_as: 65400
 

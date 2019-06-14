@@ -11,10 +11,13 @@ mxpe01
 mxpe02
 mxp01
 
-[xr]
+[iosxr]
 xrpe03
 
 [core:children]
 pe
 p
+[all:vars]
+ansible_user=ansible
+ansible_ssh_pass=ansible123
 

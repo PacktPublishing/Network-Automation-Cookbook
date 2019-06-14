@@ -1,0 +1,39 @@
+protocols {
+    ospf {
+        area 0 {
+            interface ge-0/0/0 {
+                interface-type p2p;
+                metric 100;
+            }
+            interface lo0.0 {
+                passive;
+            }
+        }
+    }
+    bgp {
+        group Core {
+            type internal;
+            local-address 10.100.1.1;
+            family inet {               
+                unicast;
+            }
+            family inet-vpn {
+                unicast;
+            }
+            neighbor 10.100.1.254;
+        }
+    }
+    ldp {
+        interface ge-0/0/0;
+        interface lo0.0;
+    }
+    rsvp {
+        interface ge-0/0/0;
+    }
+    mpls {
+        interface ge-0/0/0;
+    }
+    lldp {
+        interface ge-0/0/0;
+    }
+}

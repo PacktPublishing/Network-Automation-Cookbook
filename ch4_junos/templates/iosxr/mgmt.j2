@@ -1,0 +1,32 @@
+!
+hostname {{inventory_hostname}}
+telnet vrf default ipv4 server max-servers 100
+!
+{% for user in global.users %}
+username {{user.username}}
+ group sysadmin
+ group cisco-support
+ group root-system
+ password {{user.passwd}}
+{% endfor %}
+!
+interface {{mgmt_net[inventory_hostname].port}}
+ ipv4 address {{mgmt_net[inventory_hostname].ip}}
+!
+
+router static
+ address-family ipv4 unicast
+{%  for route in global.mgmt_prefixes %}
+  {{route}} {{global.mgmt_gw}}
+{% endfor %}
+ !
+!
+xml agent tty
+ iteration off
+!
+xml agent
+!
+ssh server v2
+ssh server vrf default
+ssh server logging
+ssh server rate-limit 600

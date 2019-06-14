@@ -22,12 +22,14 @@
   gather_facts: no
   vars_files: "network_topology.yml"
   tasks:
-    - template:
+    - name: "Generate Global Topology Data"
+      template:
         src: "j2_p2p_ip.j2"
         dest: "group_vars/all.yml"
       run_once: yes
 
-    - template:
+    - name: "Generate BGP Specific Data"
+      template:
         src: "j2_bgp.j2"
         dest: "host_vars/{{ inventory_hostname }}/underlay_bgp.yml"
       tags: bgp

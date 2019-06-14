@@ -3,19 +3,56 @@
   hosts: all
   connection: local
   tasks:
-    - name: "P1T1: Build Configs Directory"
-      file: path=configs  state=directory
-      run_once: yes
+    - block:
+      - name: "P1T1: Clear Configs Directory"
+        file: path=configs  state=absent
+        run_once: yes
 
-    - name: "P1T1: Build Config Directory per Device"
-      file: path=configs/{{ inventory_hostname }}  state=directory
+      - name: "P1T1: Build Configs Directory"
+        file: path=configs  state=directory
+        run_once: yes
 
-    - name: "P1T1: Generate Managment Configuration"
-      template:
-        src: "{{ansible_network_os}}/mgmt.j2"
-        dest: "configs/{{ inventory_hostname }}/mgmt.cfg"
+      - name: "P1T2: Build Config Directory per Device"
+        file: path=configs/{{ inventory_hostname }}  state=directory
 
-    - name: "P1T1: Generate Interface Configuration"
-      template:
-        src: "{{ansible_network_os}}/intf.j2"
-        dest: "configs/{{ inventory_hostname }}/intf.cfg"
+      - name: "P1T3: Generate Managment Configuration"
+        template:
+          src: "{{ansible_network_os}}/mgmt.j2"
+          dest: "configs/{{ inventory_hostname }}/00_mgmt.txt"
+
+      - name: "P1T4: Generate Interface Configuration"
+        template:
+          src: "{{ansible_network_os}}/intf.j2"
+          dest: "configs/{{ inventory_hostname }}/01_intf.txt"
+
+      - name: "P1T5: Generate Routing Configuration"
+        template:
+          src: "{{ansible_network_os}}/routing.j2"
+          dest: "configs/{{ inventory_hostname }}/02_routing.txt"
+
+      - name: "P1T6: Compile the final Config"
+        assemble:
+          src: "configs/{{ inventory_hostname }}"
+          dest: "configs/{{ inventory_hostname }}/config.cfg"
+
+      delegate_to: localhost
+
+- name: "Play 2: Deploy Configuration"
+  hosts: all
+  connection: local
+  tags: deploy, never
+  tasks:
+    - name: "P2T1: Deploy config on Juniper"
+      junos_config:
+        src: "configs/{{ inventory_hostname }}/config.cfg"
+        update: replace
+      when: ansible_network_os == 'junos'
+ 
+    - name: "P2T1: Deploy config on IOS-XR"
+      iosxr_config:
+        src: "configs/{{ inventory_hostname }}/config.cfg"   
+        replace: config
+      when: ansible_network_os == 'iosxr'
+      # vars:
+      #     ansible_command_timeout: 60
+      

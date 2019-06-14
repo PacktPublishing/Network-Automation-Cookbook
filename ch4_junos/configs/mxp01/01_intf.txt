@@ -1,12 +1,4 @@
 interfaces {
-    em0 {
-        description "OOB to MGMT Network";
-        unit 0 {
-            family inet {
-                address 172.20.1.2/28;
-            }
-        }
-    }
     ge-0/0/0 {
         description "peer:mxpe01 -- peer_port: ge-0/0/0"
         unit 0 {

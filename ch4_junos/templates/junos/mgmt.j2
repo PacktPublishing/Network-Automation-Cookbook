@@ -7,14 +7,14 @@ system {
     host-name {{inventory_hostname}};
     no-redirects;
     root-authentication {
-        encrypted-password {{ global.root_pwd}}; ## SECRET-DATA
+        encrypted-password "{{ global.root_pwd}}"; ## SECRET-DATA
     }
     login {
 {%      for user in global.users %}
         user {{ user.username }} {
             class super-user;
             authentication {
-                encrypted-password {{user.hash}}; ## SECRET-DATA
+                encrypted-password "{{user.hash}}"; ## SECRET-DATA
             }
         }
 {%      endfor %}
@@ -56,5 +56,15 @@ routing-options {
 {%      for route in global.mgmt_prefixes %}
         route {{ route }} next-hop {{ global.mgmt_gw}};
 {%      endfor %}
+    }
+}
+interfaces {
+    em0 {
+        description "OOB to MGMT Network";
+        unit 0 {
+            family inet {
+                address {{ mgmt_net[inventory_hostname].ip}};
+            }
+        }
     }
 }
