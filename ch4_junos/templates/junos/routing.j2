@@ -7,7 +7,7 @@ protocols {
 #}
     ospf {
         area {{global.ospf_area}} {
-{%          for intf in p2p_ip[inventory_hostname]|sort %}
+{%          for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
             interface {{ intf.port }} {
                 interface-type p2p;
                 metric {{intf.cost | default(100)}};
@@ -30,7 +30,7 @@ protocols {
             export __Ansible_Core_export;
 {%          endif %}#}
             local-address {{ lo_ip[inventory_hostname] | ipaddr('address')}};
-{%          if bgp_topo == inventory_hostname %}
+{%          if bgp_topo.rr == inventory_hostname %}
             cluster {{ lo_ip[inventory_hostname] }};
 {%          endif %}
 {%          for af in bgp_topo.af %}
@@ -61,7 +61,7 @@ protocols {
 **************************************************
 #}
     ldp {
-{%      for intf in p2p_ip[inventory_hostname]|sort %}
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
         interface {{intf.port}};
 {%      endfor %}
         interface lo0.0;
@@ -72,7 +72,7 @@ protocols {
 **************************************************
     #}
     rsvp {
-{%      for intf in p2p_ip[inventory_hostname]|sort %}
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
         interface {{intf.port}};
 {%      endfor %}
     }
@@ -82,12 +82,12 @@ protocols {
 **************************************************
 #}
     mpls {
-{%      for intf in p2p_ip[inventory_hostname]|sort %}
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
         interface {{intf.port}};
 {%      endfor %}
     }
     lldp {
-{%      for intf in p2p_ip[inventory_hostname]|sort %}
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
         interface {{intf.port}};
 {%      endfor %}
     }

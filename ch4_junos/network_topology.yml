@@ -3,8 +3,8 @@ global:
     root_pwd: "$1$ciI4raxU$XfCVzABJKdALim0aWVMql0"
     users:
       - username: ansible
-        passwd: ansible123
-        hash: "$1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1"
+        passwd: 14161C180506262E757A60 # ansible123
+        hash: "$1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1"  # ansible123
     p2p_prefix: 31
     num_links: 3
     fabric_subnet: 10.1.1.0/24

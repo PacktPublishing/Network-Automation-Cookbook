@@ -18,7 +18,7 @@ vrf {{vpn}}
 {% for port in l3vpn[vpn].intfs %}
 interface {{ port.intf.split('.')[0] }}
  vrf {{vpn}}
- ipv4 address {{port.ip}}
+ ipv4 address {{port.ip| ipaddr('address')}} {{port.ip| ipaddr('netmask')}}
 !
 {% endfor %}
 {% endfor %}

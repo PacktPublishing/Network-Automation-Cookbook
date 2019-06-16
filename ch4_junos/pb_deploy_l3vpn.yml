@@ -8,24 +8,43 @@
         template:
           src: "{{ansible_network_os}}/l3vpn.j2"
           dest: "configs/{{ inventory_hostname }}/03_l3vpn.txt"
+      - name: "P1T2: Clear Old Config"
+        file: 
+          path: "configs/{{ inventory_hostname }}/config.cfg"  
+          state: absent
+
+      - name: "P1T3: Compile the final Config"
+        assemble:
+          src: "configs/{{ inventory_hostname }}"
+          dest: "configs/{{ inventory_hostname }}/config.cfg"
+
       delegate_to: localhost
+
+
 
 - name: "Play 2: Deploy Configuration"
   hosts: pe
   connection: local
-  tags: deploy, never
+  tags: deploy
   tasks:
     - name: "P2T1: Deploy config on Juniper"
       junos_config:
-        src: "configs/{{ inventory_hostname }}/03_l3vpn.txt"
-        #update: replace
+        src: "configs/{{ inventory_hostname }}/config.cfg"
+        update: override
       when: ansible_network_os == 'junos'
+      register: "junos_cmds"
+      notify: "junos show configs"
  
     - name: "P2T1: Deploy config on IOS-XR"
       iosxr_config:
-        src: "configs/{{ inventory_hostname }}/03_l3vpn.txt"   
-        #replace: config
+        src: "configs/{{ inventory_hostname }}/config.cfg"   
+        replace: config
       when: ansible_network_os == 'iosxr'
-      # vars:
-      #     ansible_command_timeout: 60
-      
+      register: "iosxr_cmds"
+      notify: "iosxr show configs"
+
+  handlers:
+    - name: "junos show configs"
+      debug: var=junos_cmds 
+    - name: "iosxr show configs"
+      debug: var=iosxr_cmds 

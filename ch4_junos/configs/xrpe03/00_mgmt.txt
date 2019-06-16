@@ -6,10 +6,10 @@ username ansible
  group sysadmin
  group cisco-support
  group root-system
- password ansible123
+ password 7 14161C180506262E757A60
 !
 interface MgmtEth0/0/CPU0/0
- ipv4 address 172.20.1.5/28
+ ipv4 address 172.20.1.5 255.255.255.240
 !
 
 router static

@@ -14,3 +14,18 @@ l3vpn_srv:
           node: mxpe02
         - id: 3
           node: xrpe03
+  # vpnb:
+  #     id: 2
+  #     rt_imp: 
+  #       - "100:2"
+  #     rt_exp: 
+  #       - "100:2"
+  #     prefix: 10.20.2.0/24
+  #     site_per_node: 4
+  #     sites:
+  #       - id: 1
+  #         node: mxpe01
+  #       - id: 2
+  #         node: mxpe02
+  #       - id: 3
+  #         node: xrpe03

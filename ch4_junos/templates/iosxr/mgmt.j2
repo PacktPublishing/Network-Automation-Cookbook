@@ -7,11 +7,11 @@ username {{user.username}}
  group sysadmin
  group cisco-support
  group root-system
- password {{user.passwd}}
+ password 7 {{user.passwd}}
 {% endfor %}
 !
 interface {{mgmt_net[inventory_hostname].port}}
- ipv4 address {{mgmt_net[inventory_hostname].ip}}
+ ipv4 address {{mgmt_net[inventory_hostname].ip| ipaddr('address')}} {{mgmt_net[inventory_hostname].ip| ipaddr('netmask')}}
 !
 
 router static

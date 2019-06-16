@@ -14,8 +14,9 @@ global:
   setup: isp
   users:
   -   hash: $1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1
-      passwd: ansible123
+      passwd: 14161C180506262E757A60
       username: ansible
+
 p2p_ip:
   mxp01:
     - {port: ge-0/0/0, ip: 10.1.1.0 , peer: mxpe01, pport: ge-0/0/0, peer_ip: 10.1.1.1}
@@ -47,6 +48,7 @@ mgmt_net:
   xrpe03:
       ip: 172.20.1.5/28
       port: MgmtEth0/0/CPU0/0
+
 
 bgp_topo:
   af:

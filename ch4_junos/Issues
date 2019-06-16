@@ -3,4 +3,14 @@
 
 - test multiple l3vpns
 - how to do replace for l3vpns
+- change the transformation playbook to use blockinfile
+
+#### Bug ###
+- had to change ios_xr.py config to use str not byte
+
+from: >> file = open(src, 'wb')
+TO: >> file = open(src, 'w')
+Need to find out why work with not replace
+and why not work with replace
+
 

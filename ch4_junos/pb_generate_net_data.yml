@@ -24,21 +24,23 @@
     - "network_topology.yml"
     - "l3vpn.yml"
   tasks:
-    - name: "Generate Global Config Data"
-      template:
-        src: "infra.j2"
-        dest: "group_vars/all.yml"
-      run_once: yes
+    - block:
+      - name: "Generate Global Config Data"
+        template:
+          src: "infra.j2"
+          dest: "group_vars/all.yml"
+        run_once: yes
 
-    - name: "Generate Host Specifc BGP Data"
-      template:
-        src: "j2_bgp.j2"
-        dest: "host_vars/{{ inventory_hostname }}/bgp.yml"
-      tags: bgp
+      - name: "Generate Host Specifc BGP Data"
+        template:
+          src: "j2_bgp.j2"
+          dest: "host_vars/{{ inventory_hostname }}/bgp.yml"
+        tags: bgp
 
-    - name: "Generate L3VPN"
-      template:
-        src: "l3vpn.j2"
-        dest: "host_vars/{{ inventory_hostname }}/l3vpn.yml"
-      tags: l3vpn
+      - name: "Generate L3VPN"
+        template:
+          src: "l3vpn.j2"
+          dest: "host_vars/{{ inventory_hostname }}/l3vpn.yml"
+        tags: l3vpn
+      delegate_to: localhost
 

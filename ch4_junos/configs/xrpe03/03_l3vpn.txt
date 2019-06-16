@@ -10,11 +10,11 @@ vrf vpna
 !
 interface Loopback10
  vrf vpna
- ipv4 address 10.20.1.30/32
+ ipv4 address 10.20.1.30 255.255.255.255
 !
 interface Loopback11
  vrf vpna
- ipv4 address 10.20.1.31/32
+ ipv4 address 10.20.1.31 255.255.255.255
 !
 !
 router bgp 65400
