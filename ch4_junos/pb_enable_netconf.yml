@@ -1,0 +1,5 @@
+---
+- name: "Enable NETCONF on JunOS"
+  hosts: mxpe01
+  tasks:
+    - junos_netconf:

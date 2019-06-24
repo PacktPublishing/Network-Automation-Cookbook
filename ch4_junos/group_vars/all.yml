@@ -1,3 +1,4 @@
+ansible_user: vagrant
 global: 
   bgp_asn: 65400
   fabric_subnet: 10.1.1.0/24
