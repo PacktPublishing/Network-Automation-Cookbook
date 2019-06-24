@@ -1,0 +1,8 @@
+---
+- name: " Play 1: Deploy Config on All JunOS Devices"
+  hosts: junos
+  tasks:
+    - name: "P1T1: Enable NETCONF"
+      junos_netconf:
+        netconf_port: 830
+        state: present
