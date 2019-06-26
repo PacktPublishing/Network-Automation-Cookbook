@@ -1,0 +1,10 @@
+---
+- name: "Configure the Physical Interfaces"
+  junos_interface:
+    name: "{{ item.port }}"
+    enabled: true
+    description: "peer:{{item.peer}} remote_port:{{item.pport }}"
+    mtu: "{{ global.mtu | default(1400) }}"
+  with_items: "{{p2p_ip[inventory_hostname]}}"
+
+# - name: "Configure IP Addresses"

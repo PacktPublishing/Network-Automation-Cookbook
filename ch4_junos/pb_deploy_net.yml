@@ -6,3 +6,10 @@
       junos_netconf:
         netconf_port: 830
         state: present
+      vars:
+        ansible_connection: network_cli
+        
+    - import_tasks: "tasks/junos_basic_config.yml"
+
+    - import_tasks: "tasks/junos_interfaces.yml"
+      tags: intf

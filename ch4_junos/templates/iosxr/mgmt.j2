@@ -2,7 +2,7 @@
 hostname {{inventory_hostname}}
 telnet vrf default ipv4 server max-servers 100
 !
-{% for user in global.users %}
+{% for user in global.users if user.passwd is defined %}
 username {{user.username}}
  group sysadmin
  group cisco-support

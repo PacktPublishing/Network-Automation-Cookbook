@@ -1,3 +1,3 @@
 ansible_network_os: junos
-ansible_connection: network_cli
+ansible_connection: netconf
 ce_intf: ge-0/0/4.

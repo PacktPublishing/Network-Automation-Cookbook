@@ -1,4 +1,6 @@
+{#{% if inventory_hostname in bgp_topo.peers%}
 {% set bgp_peers = bgp_topo.peers[inventory_hostname] %}
+{% endif %}#}
 protocols {
 {#
 **************************************************
@@ -23,12 +25,10 @@ protocols {
 ###         BGP  Variables                  ######
 **************************************************
 #}
+{%  if bgp_peers is defined %}
     bgp {
         group Core {
             type internal;
-{#{%          if node.bgp.ibgp.rr is not defined  %}
-            export __Ansible_Core_export;
-{%          endif %}#}
             local-address {{ lo_ip[inventory_hostname] | ipaddr('address')}};
 {%          if bgp_topo.rr == inventory_hostname %}
             cluster {{ lo_ip[inventory_hostname] }};
@@ -50,11 +50,12 @@ protocols {
             }
 {%          endif %}
 {%          endfor %}
-{%          for peer in bgp_peers %}
-            neighbor {{ lo_ip[peer] | ipaddr('address')}};
+{%          for p in bgp_peers %}
+            neighbor {{ p.peer}};
 {%          endfor %}
         }
     }
+{%  endif %}
 {#
 **************************************************
 ###         LDP  Variables                  ######

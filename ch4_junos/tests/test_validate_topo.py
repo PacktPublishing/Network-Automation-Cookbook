@@ -2,7 +2,7 @@ import yaml
 import pytest
 
 TOPOLOGY_FILE = 'network_topology.yml'
-NUM_OF_LINKS = 6
+NUM_OF_LINKS = 7
 
 @pytest.fixture()
 def net_topo():
@@ -41,21 +41,23 @@ def test_unique_interfaces(net_topo):
         intfs = fabric[node].keys()
         assert len(intfs) == len(set(intfs))
 
-def test_matching_link_id(net_topo):
-    '''
-    Validate that the matching link_id appear on each
-    side of the link
-    '''
-    fabric = net_topo['fabric']
-    for node,ports in fabric.items():
-        for port in ports:
-            #print(fabric[node].get(port)['link_id'])
-            link_id = fabric[node][port]['link_id']
-            peer = fabric[node][port]['peer']
-            peer_port = fabric[node][port]['pport']
-            peer_link_id = fabric[peer].get(peer_port)['link_id']
-            # WIP: Output a more descriptive error message
-            #print((node,port,link_id), (peer,peer_port,peer_link_id))
-            assert link_id == peer_link_id 
+# def test_matching_link_id(net_topo):
+#     '''
+#     Validate that the matching link_id appear on each
+#     side of the link
+#     '''
+#     fabric = net_topo['fabric']
+#     for node,ports in fabric.items():
+#         for port in ports:
+#             #print(fabric[node].get(port)['link_id'])
+#             link_id = fabric[node][port]['link_id']
+#             peer = fabric[node][port]['peer']
+#             peer_port = fabric[node][port]['pport']
+#             assert fabric[peer].get(peer_port)['link_id'] == range(1,100) ,\
+#                      'node:{} has no matching link_id with {} with {}'.format(node,peer,peer_port)
+#             peer_link_id = fabric[peer].get(peer_port)['link_id']
+#             # WIP: Output a more descriptive error message
+#             #print((node,port,link_id), (peer,peer_port,peer_link_id))
+#             assert link_id == peer_link_id 
 
 

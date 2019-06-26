@@ -1,0 +1,7 @@
+---
+- name: test
+  hosts: localhost
+  connection: local
+  tasks:
+    - debug: msg={{ 'ansible123' | password_hash('sha256') }}
+    - debug: msg={{ global.users | selectattr('ssh_key','defined') | list }}

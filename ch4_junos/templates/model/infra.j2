@@ -5,7 +5,7 @@ p2p_ip:
   {{ node }}:
 {%      for port,portinfo in links.items()|sort %}
 {%          set link_id = links[port].link_id %}
-{%          set network = global.fabric_subnet | ipsubnet (global.p2p_prefix, link_id - 1) %}
+{%          set network = global.core_subnet | ipsubnet (global.p2p_prefix, link_id - 1) %}
 {%          set prefix_id = links[port].prefix_id %}
 {%          set peer_id = 2 if prefix_id == 1 else 1 %}
 {%          if global.p2p_prefix == 31 %}

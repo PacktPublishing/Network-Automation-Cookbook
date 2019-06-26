@@ -20,3 +20,6 @@ xrpe03
 pe
 p
 
+[junos:vars]
+transport=netconf
+

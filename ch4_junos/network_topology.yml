@@ -1,13 +1,20 @@
 global:
-    setup: isp
-    root_pwd: "$1$ciI4raxU$XfCVzABJKdALim0aWVMql0"
+    dns:
+      - 172.20.1.1
+      - 172.20.1.15
     users:
+      - username: vagrant
+        role: super-user
+        ssh_key: '~/.ssh/id_rsa.pub'
       - username: ansible
         passwd: 14161C180506262E757A60 # ansible123
         hash: "$1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1"  # ansible123
+    root_pwd: "$1$ciI4raxU$XfCVzABJKdALim0aWVMql0"
     p2p_prefix: 31
     num_links: 3
-    fabric_subnet: 10.1.1.0/24
+    mtu: 1500
+    setup: isp  # varaible to control bgp setup (can be isp or dc)
+    core_subnet: 10.1.1.0/24
     loopback_subnet: 10.100.1.0/24
     mgmt_gw: 172.20.1.1
     mgmt_prefixes:
@@ -19,18 +26,28 @@ global:
 
 fabric:
   mxp01:
-    ge-0/0/0: {peer: mxpe01, pport: ge-0/0/0, link_id: 1, prefix_id: 1}
-    ge-0/0/1: {peer: mxpe02, pport: ge-0/0/0, link_id: 2, prefix_id: 1}
-    ge-0/0/2: {peer: xrpe03, pport: GigabitEthernet0/0/0/0, link_id: 3, prefix_id: 1}
+    ge-0/0/0: {peer: mxpe01, pport: ge-0/0/0, link_id: 2, prefix_id: 1}
+    ge-0/0/1: {peer: mxpe02, pport: ge-0/0/0, link_id: 3, prefix_id: 1}
+    ge-0/0/2: {peer: xrpe03, pport: GigabitEthernet0/0/0/0, link_id: 4, prefix_id: 1}
+    ge-0/0/3: {peer: mxpe02, pport: ge-0/0/3, link_id: 1, prefix_id: 1} 
+  mxp02:
+    ge-0/0/0: {peer: mxpe01, pport: ge-0/0/1, link_id: 5, prefix_id: 1}
+    ge-0/0/1: {peer: mxpe02, pport: ge-0/0/1, link_id: 6, prefix_id: 1}
+    ge-0/0/2: {peer: xrpe03, pport: GigabitEthernet0/0/0/1, link_id: 7, prefix_id: 1}
+    ge-0/0/3: {peer: mxpe01, pport: ge-0/0/3, link_id: 1, prefix_id: 2} 
   mxpe01:
-    ge-0/0/0: {peer: mxp01, pport: ge-0/0/0, link_id: 1, prefix_id: 2}
+    ge-0/0/0: {peer: mxp01, pport: ge-0/0/0, link_id: 2, prefix_id: 2}
+    ge-0/0/1: {peer: mxp02, pport: ge-0/0/0, link_id: 5, prefix_id: 2}
   mxpe02:
-    ge-0/0/0: {peer: mxp01, pport: ge-0/0/1, link_id: 2, prefix_id: 2}
+    ge-0/0/0: {peer: mxp01, pport: ge-0/0/1, link_id: 3, prefix_id: 2}
+    ge-0/0/1: {peer: mxp02, pport: ge-0/0/1, link_id: 6, prefix_id: 2}
   xrpe03:
-    GigabitEthernet0/0/0/0: {peer: mxp01, pport: ge-0/0/2, link_id: 3, prefix_id: 2}
+    GigabitEthernet0/0/0/0: {peer: mxp01, pport: ge-0/0/2, link_id: 4, prefix_id: 2}
+    GigabitEthernet0/0/0/1: {peer: mxp02, pport: ge-0/0/2, link_id: 7, prefix_id: 2}
 
 mgmt_net:
   mxp01: {port: em0, ip: 172.20.1.2/28}
+  mxp02: {port: fxp0, ip: 172.20.1.6/28}
   mxpe01: {port: em0, ip: 172.20.1.3/28}
   mxpe02: {port: em0, ip: 172.20.1.4/28}
   xrpe03: {port: MgmtEth0/0/CPU0/0, ip: 172.20.1.5/28}
