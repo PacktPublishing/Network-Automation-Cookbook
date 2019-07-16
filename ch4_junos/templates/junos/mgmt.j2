@@ -31,7 +31,9 @@ system {
         ssh;
         telnet;
         netconf {
-            ssh;
+            ssh {
+                {{ global.netconf_port }};
+            }
             traceoptions {
                 file nc.txt size 1m world-readable;
                 flag incoming;

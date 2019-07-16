@@ -1,0 +1,20 @@
+protocols {
+{#
+**************************************************
+###         OSPF  Variables                  ######
+**************************************************
+#}
+    ospf {
+        area {{global.ospf_area}} {
+{%          for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+            interface {{ intf.port }} {
+                interface-type p2p;
+                metric {{intf.cost | default(100)}};
+            }
+{%          endfor %}
+            interface lo0.0 {
+                passive;
+            }
+        }
+    }
+}

@@ -4,7 +4,12 @@
     name: "{{ item.port }}"
     enabled: true
     description: "peer:{{item.peer}} remote_port:{{item.pport }}"
-    mtu: "{{ global.mtu | default(1400) }}"
+    mtu: "{{ global.mtu | default(1500) }}"
   with_items: "{{p2p_ip[inventory_hostname]}}"
 
-# - name: "Configure IP Addresses"
+- name: "Configure IP Addresses"
+  junos_l3_interface:
+    name: "{{ item.port }}"
+    ipv4: "{{ item.ip }}/{{ global.p2p_prefix }}"
+    state: present
+  with_items: "{{ p2p_ip[inventory_hostname] }}"

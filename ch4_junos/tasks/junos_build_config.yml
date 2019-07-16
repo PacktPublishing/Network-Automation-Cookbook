@@ -1,0 +1,20 @@
+---
+- name: "P1T3: Interface Configuration"
+  template:
+    src: "{{ansible_network_os}}/intf.j2"
+    dest: "{{config_dir}}/{{ inventory_hostname }}/01_intf.cfg"
+
+- name: "P1T4: OSPF Configuration"
+  template:
+    src: "{{ansible_network_os}}/ospf.j2"
+    dest: "{{config_dir}}/{{ inventory_hostname }}/02_ospf.cfg"
+
+- name: "P1T5: MPLS Configuration"
+  template:
+    src: "{{ansible_network_os}}/mpls.j2"
+    dest: "{{config_dir}}/{{ inventory_hostname }}/03_mpls.cfg"
+
+- name: "P1T6: BGP Configuration"
+  template:
+    src: "{{ansible_network_os}}/bgp.j2"
+    dest: "{{config_dir}}/{{ inventory_hostname }}/04_bgp.cfg"

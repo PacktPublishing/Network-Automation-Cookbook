@@ -1,0 +1,9 @@
+---
+- block:
+  - name: "Create Config Directory"
+    file: path={{config_dir}}   state=directory
+    run_once: yes
+  - name: "Create Per host directory"
+    file: path={{config_dir}}/{{inventory_hostname}}  state=directory
+  
+  delegate_to: localhost
