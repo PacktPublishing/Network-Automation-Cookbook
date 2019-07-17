@@ -1,24 +1,12 @@
 {%    set bgp_data = bgp_topo.peers[inventory_hostname] %}
-{%  if global.setup == 'dc' %}
-{%    set base_bgp_asn = global.bgp_asn if 'pe' in inventory_hostname else global.bgp_asn + 100  %}
-{%    set local_bgp_asn = base_bgp_asn + inventory_hostname[-2:] | int %}
-{%  else %}
-{%    set local_bgp_asn = global.bgp_asn %}
-{%  endif %}
-bgp_asn: {{ local_bgp_asn}}
+bgp_asn: {{ global.bgp_asn}}
 
 {% if inventory_hostname in bgp_topo.peers%}
 bgp_peers:
 {%  for peer in bgp_data %}
-{%  if global.setup == 'dc' %}
-{%    set base_remote_bgp_asn = global.bgp_asn if 'pe' in peer.peer else global.bgp_asn + 100  %}
-{%    set remote_bgp_asn = base_remote_bgp_asn + peer.peer[-2:] | int %}
-{%  else %}
-{%    set remote_bgp_asn = global.bgp_asn %}
-{%  endif %}
-    - local_as: {{ local_bgp_asn }}
+    - local_as: {{ global.bgp_asn }}
       peer: {{ lo_ip[peer] | ipaddr('address') }}
-      remote_as: {{ remote_bgp_asn }}
+      remote_as: {{ global.bgp_asn }}
 {%  endfor %}
 {% endif %}
 

@@ -6,6 +6,13 @@
 system {
     host-name {{inventory_hostname}};
     no-redirects;
+{%  if global.dns is defined %}
+    name-servers {
+{%      for dns_server in global.dns %}
+        {{dns_server}};
+{%      endfor %}
+    }
+{%  endif %}
     root-authentication {
         encrypted-password "{{ global.root_pwd}}"; ## SECRET-DATA
     }
@@ -32,7 +39,7 @@ system {
         telnet;
         netconf {
             ssh {
-                {{ global.netconf_port }};
+                port {{ global.netconf_port }};
             }
             traceoptions {
                 file nc.txt size 1m world-readable;
