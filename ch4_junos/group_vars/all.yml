@@ -17,7 +17,7 @@ global:
   - 192.168.0.0/24
   - 10.8.0.0/24
   mtu: 1500
-  num_links: 3
+  netconf_port: 830
   ospf_area: 0
   ospf_pid: 1
   p2p_prefix: 31
@@ -29,19 +29,19 @@ global:
       username: vagrant
   -   hash: $1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1
       passwd: 14161C180506262E757A60
+      role: super-user
       username: ansible
-
 p2p_ip:
   mxp01:
     - {port: ge-0/0/0, ip: 10.1.1.2 , peer: mxpe01, pport: ge-0/0/0, peer_ip: 10.1.1.3}
     - {port: ge-0/0/1, ip: 10.1.1.4 , peer: mxpe02, pport: ge-0/0/0, peer_ip: 10.1.1.5}
     - {port: ge-0/0/2, ip: 10.1.1.6 , peer: xrpe03, pport: GigabitEthernet0/0/0/0, peer_ip: 10.1.1.7}
-    - {port: ge-0/0/3, ip: 10.1.1.0 , peer: mxpe02, pport: ge-0/0/3, peer_ip: 10.1.1.1}
+    - {port: ge-0/0/3, ip: 10.1.1.0 , peer: mxp02, pport: ge-0/0/3, peer_ip: 10.1.1.1}
   mxp02:
     - {port: ge-0/0/0, ip: 10.1.1.8 , peer: mxpe01, pport: ge-0/0/1, peer_ip: 10.1.1.9}
     - {port: ge-0/0/1, ip: 10.1.1.10 , peer: mxpe02, pport: ge-0/0/1, peer_ip: 10.1.1.11}
     - {port: ge-0/0/2, ip: 10.1.1.12 , peer: xrpe03, pport: GigabitEthernet0/0/0/1, peer_ip: 10.1.1.13}
-    - {port: ge-0/0/3, ip: 10.1.1.1 , peer: mxpe01, pport: ge-0/0/3, peer_ip: 10.1.1.0}
+    - {port: ge-0/0/3, ip: 10.1.1.1 , peer: mxp01, pport: ge-0/0/3, peer_ip: 10.1.1.0}
   mxpe01:
     - {port: ge-0/0/0, ip: 10.1.1.3 , peer: mxp01, pport: ge-0/0/0, peer_ip: 10.1.1.2}
     - {port: ge-0/0/1, ip: 10.1.1.9 , peer: mxp02, pport: ge-0/0/0, peer_ip: 10.1.1.8}
@@ -76,7 +76,6 @@ mgmt_net:
       ip: 172.20.1.5/28
       port: MgmtEth0/0/CPU0/0
 
-
 bgp_topo:
   af:
   - inet
@@ -93,7 +92,4 @@ bgp_topo:
       xrpe03:
       - mxp01
   rr: mxp01
-
-
-
 # END ANSIBLE MANAGED BLOCK

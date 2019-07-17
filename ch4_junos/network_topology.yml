@@ -9,9 +9,9 @@ global:
       - username: ansible
         passwd: 14161C180506262E757A60 # ansible123
         hash: "$1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1"  # ansible123
+        role: super-user
     root_pwd: "$1$ciI4raxU$XfCVzABJKdALim0aWVMql0"
     p2p_prefix: 31
-    num_links: 3
     mtu: 1500
     setup: isp  # varaible to control bgp setup (can be isp or dc)
     core_subnet: 10.1.1.0/24
@@ -23,18 +23,19 @@ global:
     bgp_asn: 65400
     ospf_pid: 1
     ospf_area: 0
+    netconf_port: 830
 
 fabric:
   mxp01:
     ge-0/0/0: {peer: mxpe01, pport: ge-0/0/0, link_id: 2, prefix_id: 1}
     ge-0/0/1: {peer: mxpe02, pport: ge-0/0/0, link_id: 3, prefix_id: 1}
     ge-0/0/2: {peer: xrpe03, pport: GigabitEthernet0/0/0/0, link_id: 4, prefix_id: 1}
-    ge-0/0/3: {peer: mxpe02, pport: ge-0/0/3, link_id: 1, prefix_id: 1} 
+    ge-0/0/3: {peer: mxp02, pport: ge-0/0/3, link_id: 1, prefix_id: 1, cost: 1000} 
   mxp02:
     ge-0/0/0: {peer: mxpe01, pport: ge-0/0/1, link_id: 5, prefix_id: 1}
     ge-0/0/1: {peer: mxpe02, pport: ge-0/0/1, link_id: 6, prefix_id: 1}
     ge-0/0/2: {peer: xrpe03, pport: GigabitEthernet0/0/0/1, link_id: 7, prefix_id: 1}
-    ge-0/0/3: {peer: mxpe01, pport: ge-0/0/3, link_id: 1, prefix_id: 2} 
+    ge-0/0/3: {peer: mxp01, pport: ge-0/0/3, link_id: 1, prefix_id: 2, cost: 1000} 
   mxpe01:
     ge-0/0/0: {peer: mxp01, pport: ge-0/0/0, link_id: 2, prefix_id: 2}
     ge-0/0/1: {peer: mxp02, pport: ge-0/0/0, link_id: 5, prefix_id: 2}
@@ -68,5 +69,3 @@ bgp_topo:
       - mxp01
     xrpe03:
       - mxp01
-
-

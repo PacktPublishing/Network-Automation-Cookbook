@@ -11,5 +11,4 @@ bgp_peers:
     - local_as: 65400
       peer: 10.100.1.3
       remote_as: 65400
-
 # END ANSIBLE MANAGED BLOCK
