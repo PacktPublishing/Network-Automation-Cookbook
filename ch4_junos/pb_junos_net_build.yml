@@ -20,10 +20,17 @@
       delegate_to: localhost
       tags: config
 
+    - name: "Remove Old Assembled Config"
+      file: 
+        path: "{{config_dir}}/{{ inventory_hostname }}/config.cfg"
+        state: absent
+      tags: config
+       
     - name: "Assemble config"
       assemble:
         src: "{{config_dir}}/{{ inventory_hostname }}"
         dest: "{{config_dir}}/{{ inventory_hostname }}/config.cfg"
+      delegate_to: localhost
       tags: config
     
     - name: "Deploy Configuration"
