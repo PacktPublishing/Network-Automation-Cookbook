@@ -1,8 +1,7 @@
 tmp_dir: ./tmp
 config_dir: ./configs
 
-ansible_user: ansible
-ansible_ssh_pass: ansible123
+
 
 # BEGIN ANSIBLE MANAGED BLOCK
 global: 

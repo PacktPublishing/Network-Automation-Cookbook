@@ -1,0 +1,33 @@
+---
+- name: "Playbook for Batfish Analysis"
+  hosts: junos
+  tasks:
+    - block:
+      - name: "create folder for batfish configs"
+        file: path=batfish_snapshot  state=directory
+
+      - name: "create folder for batfish configs"
+        file: path=batfish_snapshot/configs  state=directory      
+      delegate_to: localhost
+      run_once: yes
+
+    - junos_command:
+        commands: show configuration
+      register: running_config
+    
+    - name: "copy to config folder"
+      copy:
+        content: "{{ running_config.stdout[0] }}"
+        dest: "batfish_snapshot/configs/{{inventory_hostname}}.cfg"
+
+      delegate_to: localhost
+
+- name: "copy to batfish server"
+  hosts: batfish
+  tags: copy
+  tasks:
+    - copy:
+        src: "./batfish_snapshot/"
+        dest: "~/batfish_data/batfish_snapshot/"
+      vars:
+        ansible_user: lab 

@@ -22,20 +22,22 @@
 
     - name: "Remove Old Assembled Config"
       file: 
-        path: "{{config_dir}}/{{ inventory_hostname }}/config.cfg"
+        path: "{{config_dir}}/{{ inventory_hostname }}.cfg"
         state: absent
+      delegate_to: localhost
       tags: config
-       
+
     - name: "Assemble config"
       assemble:
         src: "{{config_dir}}/{{ inventory_hostname }}"
-        dest: "{{config_dir}}/{{ inventory_hostname }}/config.cfg"
+        dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
       delegate_to: localhost
       tags: config
     
     - name: "Deploy Configuration"
       junos_config:
-        src: "{{config_dir}}/{{ inventory_hostname }}/config.cfg"
+        src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+        update: update
       tags: deploy
 
 

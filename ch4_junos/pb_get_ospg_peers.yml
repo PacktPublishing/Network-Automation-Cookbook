@@ -1,0 +1,21 @@
+---
+- name: "Get OSPF Status"
+  hosts: junos
+  tasks:
+    - name: "Get OSPF Neigbours Data"
+      junos_command:
+        commands: show ospf neighbor
+        display: xml
+      register: ospf_output
+
+    - name: "Extract OSPF Neigbour Data"
+      set_fact:
+        ospf_peers: "{{ ospf_output.output[0]['rpc-reply']\
+                        ['ospf-neighbor-information']['ospf-neighbor'] }}"
+    
+    - name: "Validate All OSPF Peers are in Full State"
+      assert:
+        that: item['ospf-neighbor-state'] == 'Full'
+        fail_msg: "Peer on Interface {{item['interface-name']}} is Down"
+        success_msg: "Peer on Interface {{item['interface-name']}} is UP"
+      loop: "{{ospf_peers}}"

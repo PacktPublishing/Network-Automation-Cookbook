@@ -10,7 +10,7 @@ protocols {
             type internal;
             local-address {{ lo_ip[inventory_hostname] | ipaddr('address')}};
 {%          if bgp_topo.rr == inventory_hostname %}
-            cluster {{ lo_ip[inventory_hostname] }};
+            cluster {{ lo_ip[inventory_hostname].split('/')[0] }};
 {%          endif %}
 {%          for af in bgp_topo.af %}
 {%          if af == 'inet' %}

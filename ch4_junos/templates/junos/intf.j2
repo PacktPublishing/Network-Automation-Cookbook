@@ -6,7 +6,7 @@
 interfaces {
 {% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
     {{ intf.port.split('.')[0] }} {
-        description "peer:{{intf.peer}} -- peer_port: {{intf.pport}}"
+        description "peer:{{intf.peer}} -- peer_port: {{intf.pport}}";
 {%      if intf.vlan  is defined and intf.vlan != 0 %}
         vlan-tagging;
         encapsulation flexible-ethernet-services;

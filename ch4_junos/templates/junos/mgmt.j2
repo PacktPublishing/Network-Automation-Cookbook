@@ -7,7 +7,7 @@ system {
     host-name {{inventory_hostname}};
     no-redirects;
 {%  if global.dns is defined %}
-    name-servers {
+    name-server {
 {%      for dns_server in global.dns %}
         {{dns_server}};
 {%      endfor %}
@@ -76,7 +76,7 @@ routing-options {
     }
 }
 interfaces {
-    em0 {
+    {{mgmt_net[inventory_hostname].port}} {
         description "OOB to MGMT Network";
         unit 0 {
             family inet {

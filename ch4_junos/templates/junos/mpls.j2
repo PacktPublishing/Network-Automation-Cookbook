@@ -6,7 +6,7 @@ protocols {
 #}
     ldp {
 {%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
-        interface {{intf.port}};
+        interface {{intf.port}}.{{intf.vlan|default('0')}};
 {%      endfor %}
         interface lo0.0;
     }
@@ -17,7 +17,7 @@ protocols {
     #}
     rsvp {
 {%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
-        interface {{intf.port}};
+        interface {{intf.port}}.{{intf.vlan|default('0')}};
 {%      endfor %}
     }
 {#
@@ -27,7 +27,7 @@ protocols {
 #}
     mpls {
 {%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
-        interface {{intf.port}};
+        interface {{intf.port}}.{{intf.vlan|default('0')}};
 {%      endfor %}
     }
     lldp {

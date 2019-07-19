@@ -5,9 +5,9 @@ protocols {
 **************************************************
 #}
     ospf {
-        area {{global.ospf_area}} {
+        area 0.0.0.{{global.ospf_area}} {
 {%          for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
-            interface {{ intf.port }} {
+            interface {{ intf.port }}.{{intf.vlan|default('0')}} {
                 interface-type p2p;
                 metric {{intf.cost | default(100)}};
             }
