@@ -1,11 +1,16 @@
-leaf01
-leaf02
-leaf03
-spine01
-spine02
-
 [leaf]
-leaf[01-03]
+leaf01    ansible_host=172.20.1.41
+leaf02    ansible_host=172.20.1.42
+leaf03    ansible_host=172.20.1.43
+leaf04    ansible_host=172.20.1.44
 
 [spine]
-spine[01-02]
+spine01     ansible_host=172.20.1.35
+spine02     ansible_host=172.20.1.36
+
+[arista:children]
+leaf     
+spine
+
+
+
