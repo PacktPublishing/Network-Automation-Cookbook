@@ -10,7 +10,7 @@ global:
     site: DC1
     users:
       - name: ansible
-        privilage: 15
+        privilege: 15
         role: network-admin
         password: ansible123
     mgmt_prefixes:

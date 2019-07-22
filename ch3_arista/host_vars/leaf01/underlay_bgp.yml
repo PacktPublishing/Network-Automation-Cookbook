@@ -1,8 +1,10 @@
+# BEGIN ANSIBLE MANAGED BLOCK
+bgp_asn: 65001
 bgp_peers:
-    - local_as: 65001
-      peer: 172.16.0.6
-      remote_as: 65102
-    - local_as: 65001
-      peer: 172.16.0.0
+    - peer: spine01
+      peer_ip: 172.31.1.0
       remote_as: 65101
-
+    - peer: spine02
+      peer_ip: 172.31.1.10
+      remote_as: 65102
+# END ANSIBLE MANAGED BLOCK

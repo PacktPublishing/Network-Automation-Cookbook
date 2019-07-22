@@ -32,8 +32,10 @@
       delegate_to: localhost
       run_once: yes
 
-    # - name: "Generate BGP Specific Data"
-    #   template:
-    #     src: "j2_bgp.j2"
-    #     dest: "host_vars/{{ inventory_hostname }}/underlay_bgp.yml"
-    #   tags: bgp
+    - name: "Generate BGP Specific Data"
+      blockinfile:
+        block: "{{ lookup('template','net_model/bgp.j2') }}" 
+        path: "host_vars/{{ inventory_hostname }}/underlay_bgp.yml"
+        create: yes
+      delegate_to: localhost
+      tags: bgp
