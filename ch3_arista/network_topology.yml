@@ -29,7 +29,7 @@ fabric:
     Ethernet1: {peer: leaf01, pport: Ethernet9, link_id: 6, prefix_id: 1}
     Ethernet2: {peer: leaf02, pport: Ethernet9, link_id: 7, prefix_id: 1}
     Ethernet3: {peer: leaf03, pport: Ethernet9, link_id: 8, prefix_id: 1}
-    Ethernet4: {peer: leaf03, pport: Ethernet9, link_id: 9, prefix_id: 1}
+    Ethernet4: {peer: leaf04, pport: Ethernet9, link_id: 9, prefix_id: 1}
     Ethernet6: {peer: spine01, pport: Ethernet6, link_id: 5, prefix_id: 2,mlag: yes}
   leaf01:
     Ethernet8: {peer: spine01, pport: Ethernet1, link_id: 1, prefix_id: 2}

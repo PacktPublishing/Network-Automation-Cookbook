@@ -1,13 +1,16 @@
 {%  set base_bgp_asn = global.bgp_asn + 100 if 'spine' in inventory_hostname else global.bgp_asn  %}
-{%  set local_bgp_asn = base_bgp_asn + inventory_hostname[-2:] | int %}
+{%  set local_bgp_asn = base_bgp_asn if 'spine' in inventory_hostname  else base_bgp_asn + inventory_hostname[-2:] | int %}
 {%  set bgp_data = p2p_ip[inventory_hostname] %}
 bgp_asn: {{ local_bgp_asn }}
 bgp_peers:
 {%  for p in bgp_data %}
 {%  set base_remote_bgp_asn = global.bgp_asn + 100 if 'spine' in p.peer else global.bgp_asn  %}
-{%  set remote_bgp_asn = base_remote_bgp_asn + p.peer[-2:] | int %}
+{%  set remote_bgp_asn = base_remote_bgp_asn if 'spine' in p.peer else base_remote_bgp_asn + p.peer[-2:] | int %}
+{# NOTE: Remove Any Possibility for Spine to Spine Peering #}
+{%  if not('spine' in inventory_hostname and 'spine' in p.peer) %}
     - peer: {{ p.peer }}
       peer_ip: {{ p.peer_ip }}
       remote_as: {{ remote_bgp_asn}}
+{%  endif %}
 {%  endfor %}
 

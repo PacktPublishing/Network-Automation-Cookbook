@@ -1,6 +1,7 @@
 ---
 - name: " Play 1: Deploy Config on All Arista Switches"
   hosts: arista
+  vars_files: vxlan.yml
   tasks:
     - name: "P1T1: Enable eAPI"
       eos_eapi:
@@ -40,11 +41,7 @@
     - name: "Deploy Configuration"
       eos_config:
         src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-        # provider:
-        #   validate_certs: no
-        #   use_ssl: yes
-        #   transport: eapi
-        #replace: config
+        replace: config
       tags: deploy
 
 

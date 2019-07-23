@@ -21,6 +21,7 @@ global:
       privilege: 15
       role: network-admin
 
+
 p2p_ip:
   leaf01:
     - {port: Ethernet8, ip: 172.31.1.1 , peer: spine01, pport: Ethernet1, peer_ip: 172.31.1.0}
@@ -44,7 +45,7 @@ p2p_ip:
     - {port: Ethernet1, ip: 172.31.1.10 , peer: leaf01, pport: Ethernet9, peer_ip: 172.31.1.11}
     - {port: Ethernet2, ip: 172.31.1.12 , peer: leaf02, pport: Ethernet9, peer_ip: 172.31.1.13}
     - {port: Ethernet3, ip: 172.31.1.14 , peer: leaf03, pport: Ethernet9, peer_ip: 172.31.1.15}
-    - {port: Ethernet4, ip: 172.31.1.16 , peer: leaf03, pport: Ethernet9, peer_ip: 172.31.1.17}
+    - {port: Ethernet4, ip: 172.31.1.16 , peer: leaf04, pport: Ethernet9, peer_ip: 172.31.1.17}
     - {port: Ethernet6, ip: 172.31.1.9 , peer: spine01, pport: Ethernet6, peer_ip: 172.31.1.8}
 
 lo_ip:
@@ -54,6 +55,7 @@ lo_ip:
   leaf04: 10.100.1.4/32
   spine01: 10.100.1.254/32
   spine02: 10.100.1.253/32
+
 
 
 # END ANSIBLE MANAGED BLOCK

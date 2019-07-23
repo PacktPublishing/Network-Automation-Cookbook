@@ -1,5 +1,5 @@
 # BEGIN ANSIBLE MANAGED BLOCK
-bgp_asn: 65101
+bgp_asn: 65100
 bgp_peers:
     - peer: leaf01
       peer_ip: 172.31.1.1
@@ -13,7 +13,5 @@ bgp_peers:
     - peer: leaf04
       peer_ip: 172.31.1.7
       remote_as: 65004
-    - peer: spine02
-      peer_ip: 172.31.1.9
-      remote_as: 65102
+
 # END ANSIBLE MANAGED BLOCK
