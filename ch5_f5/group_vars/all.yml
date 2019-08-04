@@ -1,0 +1,5 @@
+provider:
+    user: admin
+    password: admin
+    server: "{{ ansible_host }}"
+    validate_certs: no

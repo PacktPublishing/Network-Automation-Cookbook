@@ -7,7 +7,6 @@
       eos_eapi:
         https_port: 443
         https: yes
-        http: yes
         state: started
         vrf: "{{global.mgmt_vrf}}"
       vars:

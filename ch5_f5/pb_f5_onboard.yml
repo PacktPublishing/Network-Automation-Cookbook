@@ -1,0 +1,77 @@
+---
+- name: debug
+  hosts: localhost
+  connection: local
+  tags: never,debug
+  tasks:
+    - debug:
+        msg: " IP: {{item.ip | ipv4('address')}} mask: {{ item.ip | ipv4('netmask') }}"
+      with_items:
+        - ip: 172.20.90.253/24
+          intf: vlan90
+        - ip: 10.10.1.253/24
+          intf: vlan10
+
+- name: test
+  hosts: ltm01
+  connection: local
+  tasks:
+    - name: Create a Port channel on F5 LTM
+      bigip_trunk:
+        name: po1
+        interfaces:
+          - 1.1
+          - 1.2
+        link_selection_policy: maximum-bandwidth
+        frame_distribution_hash: destination-mac
+        lacp_enabled: no
+        # lacp_mode: active
+        # lacp_timeout: long
+        provider: "{{ provider }}"
+
+    - name: Add VLAN 1234 as tagged to interfaces 1.1 and 1.2
+      bigip_vlan:
+        tagged_interfaces:
+          - po1
+        name: "{{item.name}}"
+        tag: "{{item.tag}}"
+        provider: "{{ provider }}"
+      with_items:
+        - name: vlan10
+          tag: 10
+        - name: vlan90
+          tag: 90
+      delegate_to: localhost
+
+    - name: Create Self IP
+      bigip_selfip:
+        address: "{{ item.ip | ipv4('address') }}"
+        name: "{{ item.intf }}"
+        netmask: "{{ item.ip | ipv4('netmask') }}"
+        vlan: "{{ item.intf }}"
+        provider: "{{ provider }}"
+      with_items:
+        - ip: 172.20.90.253/24
+          intf: vlan90     
+        - ip: 10.10.1.253/24
+          intf: vlan10
+      delegate_to: localhost
+      tags: selfip
+
+    # - bigip_device_facts:
+    #     gather_subset: all
+    #     provider:
+    #         user: admin
+    #         password: admin
+    #         server: "{{ ansible_host }}"
+    #         validate_certs: no
+
+    # - bigip_device_ntp:
+    #     ntp_servers:
+    #       - 172.20.1.33
+    #     provider:
+    #         user: admin
+    #         password: admin
+    #         server: "{{ ansible_host }}"
+    #         validate_certs: no
+        

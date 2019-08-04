@@ -1,9 +1,8 @@
 ansible_network_os: eos
-ansible_connection: httpapi #network_cli
+ansible_connection: httpapi 
 ansible_user: ansible
-ansible_password: ansible123
 ansible_ssh_pass: ansible123
 # ansible_become: yes
 # ansible_become_method: enable
-ansible_httpapi_use_ssl: yes
-ansible_httpapi_validate_certs: no
+# ansible_httpapi_use_ssl: yes
+# ansible_httpapi_validate_certs: no

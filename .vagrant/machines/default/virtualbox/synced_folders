@@ -1,1 +1,1 @@
-{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/kokasha/OneDrive/My_Stuff/Automation_projects/automation_cookbook","disabled":false,"__vagrantfile":true}}}
+{"virtualbox":{"/home/vagrant/sp_core_automation":{"guestpath":"/home/vagrant/sp_core_automation","hostpath":"/Users/kokasha/OneDrive/My_Stuff/Automation_projects/sp_core_automation","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/kokasha/OneDrive/My_Stuff/Automation_projects/net_automation_cookbook","disabled":false,"__vagrantfile":true}}}
