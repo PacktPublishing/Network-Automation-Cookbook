@@ -1,62 +1,50 @@
 ---
 - name: debug
-  hosts: localhost
+  hosts: ltm01
   connection: local
   tags: never,debug
   tasks:
     - debug:
-        msg: " IP: {{item.ip | ipv4('address')}} mask: {{ item.ip | ipv4('netmask') }}"
-      with_items:
-        - ip: 172.20.90.253/24
-          intf: vlan90
-        - ip: 10.10.1.253/24
-          intf: vlan10
+        msg: " IP: {{item.dst.split('/')[0]}} mask: {{ item.dst | ipv4('netmask') }}"
+      with_items: "{{ routes }}"
 
-- name: test
+- name: Onboarding a New LTM
   hosts: ltm01
   connection: local
   tasks:
-    - name: Create a Port channel on F5 LTM
-      bigip_trunk:
-        name: po1
-        interfaces:
-          - 1.1
-          - 1.2
-        link_selection_policy: maximum-bandwidth
-        frame_distribution_hash: destination-mac
-        lacp_enabled: no
-        # lacp_mode: active
-        # lacp_timeout: long
-        provider: "{{ provider }}"
+    - name: "P1T1: Create new Users"
+      bigip_user:
+        username_credential: "{{ item.name }}"
+        password_credential: "{{ item.passwd }}"
+        partition_access: "{{ item.role }}" 
+        state: "{{ item.state | default('present')}}"
+        provider: "{{ conn_parameters }}"
+      loop: "{{ users }}"
 
-    - name: Add VLAN 1234 as tagged to interfaces 1.1 and 1.2
-      bigip_vlan:
-        tagged_interfaces:
-          - po1
-        name: "{{item.name}}"
-        tag: "{{item.tag}}"
-        provider: "{{ provider }}"
-      with_items:
-        - name: vlan10
-          tag: 10
-        - name: vlan90
-          tag: 90
-      delegate_to: localhost
+    - name: "P1T1: Update admin Password"
+      bigip_user:
+        username_credential: admin
+        password_credential: "{{ admin_passwd }}"
+        state: present
+        provider: "{{ conn_parameters }}"
+    
+    - name: "P1T3: Configure System Parameters"
+      import_tasks: "tasks/f5_system.yml"
+      tags: system
 
-    - name: Create Self IP
-      bigip_selfip:
-        address: "{{ item.ip | ipv4('address') }}"
-        name: "{{ item.intf }}"
-        netmask: "{{ item.ip | ipv4('netmask') }}"
-        vlan: "{{ item.intf }}"
-        provider: "{{ provider }}"
-      with_items:
-        - ip: 172.20.90.253/24
-          intf: vlan90     
-        - ip: 10.10.1.253/24
-          intf: vlan10
-      delegate_to: localhost
-      tags: selfip
+    - name: "P1T4: Configure Interfaces"
+      import_tasks: "tasks/f5_interfaces.yml"
+      tags: intfs
+
+    - name: "P1T5: Setup External Routing"
+      bigip_static_route:
+        destination: "{{ item.dst.split('/')[0] }}"
+        netmask: "{{item.dst | ipv4('prefix')}}"
+        gateway_address: "{{ item.gw }}"
+        name: "{{ item.name }}"
+        provider: "{{ conn_parameters }}"
+      loop: "{{ routes }}"
+      tags: routing
 
     # - bigip_device_facts:
     #     gather_subset: all

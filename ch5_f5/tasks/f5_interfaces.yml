@@ -1,0 +1,33 @@
+---
+- name: Create a Port channel on BIG-IP
+  bigip_trunk:
+    name: "{{ item.name}}"
+    interfaces: "{{ item.members }}"
+    link_selection_policy: maximum-bandwidth
+    frame_distribution_hash: destination-mac
+    lacp_enabled: no
+    provider: "{{ conn_parameters }}"
+    state: present
+  loop: "{{ trunks }}"
+  tags: trunk
+
+- name: Create VLANs on BIG-IP
+  bigip_vlan:
+    tagged_interfaces: "{{ item.tagged_intf }}"
+    name: "VL{{item.vlan}}"
+    description: "{{ item.description }}"
+    tag: "{{item.vlan}}"
+    provider: "{{ conn_parameters }}"
+    state: present
+  loop: "{{ vlans }}"
+
+- name: Provision IP addresses on BIG-IP
+  bigip_selfip:
+    address: "{{ item.ip | ipv4('address') }}"
+    name: "VL{{ item.vlan }}"
+    netmask: "{{ item.ip | ipv4('netmask') }}"
+    vlan: "VL{{ item.vlan }}"
+    provider: "{{ conn_parameters }}"
+    state: present
+  loop: "{{ vlans }}" 
+  

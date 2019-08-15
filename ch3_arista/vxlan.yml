@@ -20,8 +20,4 @@ access_interfaces:
       vlan: 10
     - name: Ethernet2
       mode: access
-      vlan: 20  
-
-l2_network:
-  leaf01:
-    vlans
+      vlan: 20

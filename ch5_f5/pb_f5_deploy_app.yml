@@ -1,0 +1,48 @@
+---
+- name: Deploying a New App on BIG-IP
+  hosts: ltm01
+  connection: local
+  vars_files: web_app.yml
+  tasks:
+    - name: "Create Nodes on BIG-IP"
+      bigip_node:
+        address: "{{ item.ip }}"
+        name: "{{ item.name }}"
+        provider: "{{ conn_parameters }}"
+        state: present
+      loop: "{{ pool_members }}"
+
+    - name: Create New LB Pool
+      bigip_pool:
+        name: "POOL_{{ website }}_{{ vip_port }}"
+        lb_method: round-robin
+        state: present
+        provider: "{{ conn_parameters }}"
+
+    - name: Add Members to the Pool
+      bigip_pool_member:
+        pool: "POOL_{{ website }}_{{ vip_port }}"
+        host: "{{ item.ip }}"
+        name: "{{ item.name }}"
+        port: "{{ item.port }}"
+        description: "Web Server for {{ website }}"
+        provider: "{{ conn_parameters }}"
+      loop: "{{ pool_members }}"
+      tags: new_pool
+
+    - name: Create Virtual Server
+      bigip_virtual_server:
+        name: "{{ website }}_{{ vip_port }}_VS"
+        destination: "{{ vip }}"
+        port: "{{ vip_port}}"
+        pool: "POOL_{{ website }}_{{ vip_port }}"
+        description: "VIP for {{ website }}"
+        profiles:
+          - http
+          - name: clientssl
+            context: client-side
+          - name: serverssl
+            context: server-side
+        state: present
+        provider: "{{ conn_parameters }}"
+      tags: vip

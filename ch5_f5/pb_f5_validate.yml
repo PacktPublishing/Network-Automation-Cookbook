@@ -1,0 +1,20 @@
+---
+- name: Validating BIG-IP Health
+  hosts: ltm01
+  connection: local
+  tasks:
+    - name: Collect Device Facts from BIG-IP
+      bigip_device_facts:
+        gather_subset:
+          - interfaces
+        provider: "{{ conn_parameters }}"
+      register: bigip_facts
+    
+    - name: Validate All Interface are operational
+      assert:
+        that:
+          - item.enabled == 'yes'
+        fail_msg: " Interface {{ item.name }} is Down"  
+      loop: "{{bigip_facts.interfaces}}"
+
+    - debug: var=bigip_facts
