@@ -1,0 +1,95 @@
+{#{% if inventory_hostname in bgp_topo.peers%}
+{% set bgp_peers = bgp_topo.peers[inventory_hostname] %}
+{% endif %}#}
+protocols {
+{#
+**************************************************
+###         OSPF  Variables                  ######
+**************************************************
+#}
+    ospf {
+        area {{global.ospf_area}} {
+{%          for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+            interface {{ intf.port }} {
+                interface-type p2p;
+                metric {{intf.cost | default(100)}};
+            }
+{%          endfor %}
+            interface lo0.0 {
+                passive;
+            }
+        }
+    }
+{#
+**************************************************
+###         BGP  Variables                  ######
+**************************************************
+#}
+{%  if bgp_peers is defined %}
+    bgp {
+        group Core {
+            type internal;
+            local-address {{ lo_ip[inventory_hostname] | ipaddr('address')}};
+{%          if bgp_topo.rr == inventory_hostname %}
+            cluster {{ lo_ip[inventory_hostname] }};
+{%          endif %}
+{%          for af in bgp_topo.af %}
+{%          if af == 'inet' %}
+            family inet {               
+                unicast;
+            }
+{%          endif %}
+{%          if af == 'inet-vpn' %}
+            family inet-vpn {
+                unicast;
+            }
+{%          endif %}
+{%          if af == 'evpn' %}
+            family evpn {
+                signaling;
+            }
+{%          endif %}
+{%          endfor %}
+{%          for p in bgp_peers %}
+            neighbor {{ p.peer}};
+{%          endfor %}
+        }
+    }
+{%  endif %}
+{#
+**************************************************
+###         LDP  Variables                  ######
+**************************************************
+#}
+    ldp {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}};
+{%      endfor %}
+        interface lo0.0;
+    }
+{#
+**************************************************
+###         RSVP  Variables                  ######
+**************************************************
+    #}
+    rsvp {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}};
+{%      endfor %}
+    }
+{#
+**************************************************
+###         MPLS and LLDP  Variables        ######
+**************************************************
+#}
+    mpls {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}};
+{%      endfor %}
+    }
+    lldp {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}};
+{%      endfor %}
+    }
+}

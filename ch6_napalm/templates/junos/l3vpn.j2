@@ -1,0 +1,42 @@
+
+{#
+**************************************************
+###         Interfaces configuration        ######
+**************************************************
+    #}
+interfaces {
+{%  for vpn in l3vpn %}
+{%      for port in l3vpn[vpn].intfs %}
+    {{ port.intf.split('.')[0] }} {
+        vlan-tagging;
+        unit {{port.intf.split('.')[1]}} {
+            description "{{vpn}}"
+            vlan-id {{ port.intf.split('.')[1]}};
+            family inet {
+                address {{port.ip}}
+            }
+        }
+    }
+{%      endfor %}
+{% endfor %}
+}
+
+{#
+**************************************************
+###         Routing Instances                  ###
+**************************************************
+#}
+routing-instances {
+{%  for vpn in l3vpn %}
+    {{vpn}} {
+        instance-type vrf;
+{%      for port in l3vpn[vpn].intfs %}
+        interface {{port.intf}};
+{%      endfor %}
+        route-distinguisher {{l3vpn[vpn].rd}};
+        vrf-target import target:{{l3vpn[vpn].rt_imp[0]}};
+        vrf-target export target:{{l3vpn[vpn].rt_exp[0]}};
+        vrf-table-label;
+    }
+{%  endfor %}
+}

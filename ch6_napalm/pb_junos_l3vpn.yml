@@ -1,0 +1,43 @@
+---
+- name: "Deploy L3VPNs on Juniper Devices"
+  hosts: pe
+  vars_files:
+    - "l3vpn.yml"
+  tasks:
+    # TODO: Good Example to use python filters
+    # TODO: Fix issue with L3VPN not on all PEs
+    - name: "Set VPN Interfaces"
+      set_fact:
+          l3vpn_intfs: "{{ l3vpn_intfs|default([]) +
+                           l3vpns[item.key].sites |
+                           selectattr('node','equalto',inventory_hostname) | list}}"
+      with_dict: "{{l3vpns}}"
+      delegate_to: localhost
+
+    - name: "Configure Interfaces for L3VPN Sites"
+      junos_config:
+        lines:
+          - set interfaces {{ item.port.split('.')[0]}} vlan-tagging
+          - set interfaces {{ item.port}} vlan-id {{ item.port.split('.')[1] }}
+      loop: "{{ l3vpn_intfs }}"
+    
+    - name: "Configure IP address for L3VPN Interfaces"
+      junos_l3_interface:
+        name: "{{ item.port.split('.')[0]}}"
+        ipv4: "{{ item.ip }}"
+        unit: "{{ item.port.split('.')[1] }}"
+      loop: "{{l3vpn_intfs}}"
+      tags: intf_ip
+
+    - name: "Configure L3VPNs"
+      junos_vrf:
+        name: "{{ item.key }}"
+        rd: "{{item.value.rd}}"
+        target: "{{ item.value.rt }}"
+        interfaces: "{{ l3vpns[item.key].sites |
+                        map(attribute='port') | list }}"
+        state: "{{ item.value.state }}"
+      with_dict: "{{l3vpns}}"
+      when: inventory_hostname in (l3vpns[item.key].sites | map(attribute='node') | list)
+      tags: l3vpn 
+

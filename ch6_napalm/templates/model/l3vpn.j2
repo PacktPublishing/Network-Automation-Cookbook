@@ -1,0 +1,25 @@
+l3vpn:
+{%for vpn in l3vpn_srv%}
+{%  set vpn_info = l3vpn_srv[vpn] %}
+{%  if inventory_hostname in vpn_info.sites|map(attribute='node') %}
+    {{vpn}}:
+        rd: {{lo_ip[inventory_hostname] | ipaddr('address') + ':' + vpn_info.id|string }}
+        rt_imp:
+{%              for rt in vpn_info.rt_imp %}
+            - "{{rt}}"
+{%              endfor %}
+        rt_exp:
+{%              for rt in vpn_info.rt_exp %}
+            - "{{rt}}"
+{%              endfor %}
+        intfs:
+{%      for i in range(0, vpn_info.site_per_node) %}
+{%          set intf_id = vpn_info.id|string + i|string %}
+{%          set prefix_id = vpn_info.sites|selectattr('node','equalto',inventory_hostname)|list|first%}
+{%          set network_id = prefix_id.id|string + i|string %}
+            - intf: {{ce_intf + intf_id}}
+              ip : {{ vpn_info.prefix | ipsubnet(32, network_id) }}
+
+{%      endfor %}
+{%  endif %}
+{% endfor %}

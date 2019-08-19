@@ -1,0 +1,12 @@
+{%    set bgp_data = bgp_topo.peers[inventory_hostname] %}
+bgp_asn: {{ global.bgp_asn}}
+
+{% if inventory_hostname in bgp_topo.peers%}
+bgp_peers:
+{%  for peer in bgp_data %}
+    - local_as: {{ global.bgp_asn }}
+      peer: {{ lo_ip[peer] | ipaddr('address') }}
+      remote_as: {{ global.bgp_asn }}
+{%  endfor %}
+{% endif %}
+
