@@ -41,8 +41,8 @@
         password: "{{ ansible_ssh_pass }}"
         dev_os: "{{ ansible_network_os }}"
         config_file: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-        diff_file: "{{ config_diff_dir}}/{{ inventory_hostname }}_diff.txt"
-        commit_changes: no
+        #diff_file: "{{ config_diff_dir}}/{{ inventory_hostname }}_diff.txt"
+        commit_changes: "{{commit | default('no')}}"
         replace_config: yes
       register: napalm_config
       tags: deploy, never
