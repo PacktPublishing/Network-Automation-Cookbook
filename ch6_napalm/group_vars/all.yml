@@ -15,6 +15,7 @@ global:
   mgmt_prefixes:
   - 192.168.0.0/24
   - 10.8.0.0/24
+  - 172.20.1.0/24
   mtu: 1500
   netconf_port: 830
   ospf_area: 0

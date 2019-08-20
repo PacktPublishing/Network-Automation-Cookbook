@@ -20,6 +20,7 @@ global:
     mgmt_prefixes:
       - 192.168.0.0/24
       - 10.8.0.0/24
+      - 172.20.1.0/24
     bgp_asn: 65400
     ospf_pid: 1
     ospf_area: 0
