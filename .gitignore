@@ -1,4 +1,5 @@
 *.retry
 .vagrant/
 .vagrant
+~$*
 
