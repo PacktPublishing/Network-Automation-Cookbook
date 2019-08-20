@@ -1,10 +1,10 @@
+{%  if bgp_peers is defined %}
 protocols {
 {#
 **************************************************
 ###         BGP  Variables                  ######
 **************************************************
 #}
-{%  if bgp_peers is defined %}
     bgp {
         group Core {
             type internal;
