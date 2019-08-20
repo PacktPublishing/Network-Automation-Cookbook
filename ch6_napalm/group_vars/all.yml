@@ -1,5 +1,7 @@
 tmp_dir: ./tmp
 config_dir: ./configs
+config_diff_dir: ./config_diff
+log_dir: ./logs
 
 # BEGIN ANSIBLE MANAGED BLOCK
 global: 
