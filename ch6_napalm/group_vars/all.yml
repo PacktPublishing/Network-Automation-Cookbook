@@ -1,8 +1,6 @@
 tmp_dir: ./tmp
 config_dir: ./configs
 
-
-
 # BEGIN ANSIBLE MANAGED BLOCK
 global: 
   bgp_asn: 65400

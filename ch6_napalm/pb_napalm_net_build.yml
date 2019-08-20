@@ -11,7 +11,7 @@
     #   tags: netconf
         
     - name: "P1T1: Build Config Directory Strcuture"
-      import_tasks: "tasks/build_config_dir.yml"
+      import_tasks: "tasks/build_req_dir.yml"
       delegate_to: localhost
       tags: config
 
@@ -20,25 +20,25 @@
       delegate_to: localhost
       tags: config
 
-    - name: "Remove Old Assembled Config"
+    - name: "P1T3: Remove Old Assembled Config"
       file: 
         path: "{{config_dir}}/{{ inventory_hostname }}.cfg"
         state: absent
       delegate_to: localhost
       tags: config
 
-    - name: "Assemble config"
+    - name: "P1T4: Assemble The Final configuration"
       assemble:
-        src: "{{config_dir}}/{{ inventory_hostname }}"
+        src: "{{tmp_dir}}/{{ inventory_hostname }}"
         dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
       delegate_to: localhost
       tags: config
     
-    - name: "Deploy Configuration"
+    - name: "P1T5: Deploy Configuration"
       junos_config:
         src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
         update: update
-      tags: deploy
+      tags: deploy, never
 
 
 
