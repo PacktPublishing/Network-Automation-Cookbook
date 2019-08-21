@@ -1,0 +1,16 @@
+---
+- name: " Collect Routing Data via NAPALM"
+  hosts: sp_core
+  tasks:
+    - name: "P1T1: Collect NAPALM Facts"
+      napalm_get_facts:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        dev_os: "{{ ansible_network_os }}"
+        filter:
+          - route_to
+        args:
+          route_to:
+            destination: 10.100.1.254
+    - debug: var=ansible_facts

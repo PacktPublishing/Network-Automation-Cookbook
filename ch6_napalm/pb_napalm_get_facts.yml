@@ -22,7 +22,7 @@
         that: bgp_peers | length == napalm_bgp_neighbors.global.peers.keys() | length
       when: bgp_peers is defined
 
-    - name: Validate All BGP Session Are UP
+    - name: Validate All BGP Sessions Are UP
       assert:
         that: napalm_bgp_neighbors.global.peers[item.peer].is_up == true
       loop: "{{ bgp_peers }}"
