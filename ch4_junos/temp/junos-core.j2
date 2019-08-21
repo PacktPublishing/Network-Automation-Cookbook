@@ -1,0 +1,229 @@
+{% set node = nodes[inventory_hostname] %}
+
+{#
+**************************************************
+###         System configuration            ######
+**************************************************
+    #}
+system {
+    host-name {{inventory_hostname}};
+    no-redirects;
+    root-authentication {
+        encrypted-password "$1$IEubk6rr$TAjfcpG6c7h747FzGd0dF."; ## SECRET-DATA
+    }
+    login {
+        user lab {
+            class super-user;
+            authentication {
+                encrypted-password "$1$5dcoGq3x$.tmzXkl4fGzTpjHkOSMIU."; ## SECRET-DATA
+            }
+        }
+    }
+    services {
+        ssh;
+        telnet;
+        netconf {
+            ssh;
+            traceoptions {
+                file nc.txt size 1m world-readable;
+                flag incoming;
+            }
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any any;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+}
+
+{#
+**************************************************
+###         Interfaces configuration        ######
+**************************************************
+    #}
+interfaces {
+    em0 {
+        description "OOB to MGMT Network";
+        unit 0 {
+            family inet {
+                address {{node.mgmt}}/24;
+            }
+        }
+    }
+{% for intf,intf_attr in node.links.items()|sort %}
+    {{ intf.split('.')[0] }} {
+        description "{{intf_attr.remote}}"
+{%      if intf_attr.vlan  is defined and intf_attr.vlan != 0 %}
+        vlan-tagging;
+        encapsulation flexible-ethernet-services;
+        unit {{intf_attr.vlan}} {
+            vlan-id {{intf_attr.vlan}};
+            family inet {
+                address {{intf_attr.ip|ipaddr('address')}}/{{intf_attr.ip|ipaddr('prefix')|default('24')}};
+            }
+            family mpls;
+        }
+    }
+{%      else %}
+        unit 0 {
+            family inet {
+                address {{intf_attr.ip|ipaddr('address')}}/{{intf_attr.ip|ipaddr('prefix')|default('24')}};
+            }
+{%          if intf_attr.mpls is defined %}
+            family mpls;
+{%          endif %}
+        }
+    }
+{%      endif %}   
+{% endfor %}
+    lo0 {
+        unit 0 {
+            family inet {
+                address {{node.rid}}/32;
+            }
+        }
+    }
+}
+{#
+**************************************************
+###         Global Variables                ######
+**************************************************
+    #}
+routing-options {
+    router-id {{ node.rid }};
+    autonomous-system {{ common.bgp_asn }};
+}
+protocols {
+{#
+**************************************************
+###         BGP  Variables                  ######
+**************************************************
+#}
+{% if node.bgp is defined %}
+    bgp {
+{%      if node.bgp.ibgp is defined %}
+        group Core {
+            type internal;
+{%          if node.bgp.ibgp.rr is not defined  %}
+            export __Ansible_Core_export;
+{%          endif %}
+            local-address {{ node.rid}};
+{%          if node.bgp.ibgp.rr is defined and node.bgp.ibgp.rr == true %}
+            cluster {{node.rid}};
+{%          endif %}
+{%          for af in node.bgp.ibgp.af %}
+{%          if af == 'inet' %}
+            family inet {               
+                unicast;
+            }
+{%          endif %}
+{%          if af == 'inet-vpn' %}
+            family inet-vpn {
+                unicast;
+            }
+{%          endif %}
+{%          if af == 'evpn' %}
+            family evpn {
+                signaling;
+            }
+{%          endif %}
+{%          endfor %}
+{%          for peer in node.bgp.ibgp.peers %}
+            neighbor {{ peer }};
+{%          endfor %}
+        }
+{%      endif %}
+    }
+{% endif %}
+{#
+**************************************************
+###         OSPF  Variables                  ######
+**************************************************
+#}
+{% if node.ospf is defined %}
+    ospf {
+        area 0 {
+{%          for intf, intf_attr in node.links.items()|sort %}
+            interface {{ intf }} {
+                interface-type p2p;
+{%              if intf_attr.cost is defined %}
+                metric {{intf_attr.cost }};
+{%              endif %}
+            }
+{%          endfor %}
+            interface lo0.0 {
+                passive;
+            }
+        }
+    }
+{% endif %}
+{#
+**************************************************
+###         LDP  Variables                  ######
+**************************************************
+#}
+{% if node.ldp is not defined  %}
+    ldp {
+{%      for intf, intf_attr in node.links.items()|sort %}
+        interface {{intf}};
+{%      endfor %}
+        interface lo0.0;
+    }
+{% endif %}
+{#
+**************************************************
+###         RSVP  Variables                  ######
+**************************************************
+    #}
+{% if node.rsvp is not defined %}
+    rsvp {
+{%      for intf, intf_attr in node.links.items()|sort %}
+        interface {{intf}};
+{%      endfor %}
+    }
+{% endif %}
+{#
+**************************************************
+###         MPLS and LLDP  Variables        ######
+**************************************************
+#}
+    mpls {
+{%      for intf, intf_attr in node.links.items()|sort %}
+        interface {{intf}};
+{%      endfor %}
+    }
+    lldp {
+{%      for intf, intf_attr in node.links.items()|sort %}
+        interface {{intf.split('.')[0]}};
+{%      endfor %}
+    }
+}
+{#
+**************************************************
+###         Default BGP Export policy        #####
+**************************************************
+#}
+{% if node.bgp.ibgp.rr is not defined  %}
+policy-options {
+    policy-statement __Ansible_Core_export {
+        term ebgp {
+            from {
+                protocol bgp;
+                external;
+            }
+            then {
+                next-hop self;
+                accept;
+            }
+        }
+    }
+}
+{%  endif %}

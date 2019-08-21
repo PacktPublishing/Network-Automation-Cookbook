@@ -1,0 +1,23 @@
+l3vpns:
+  vpna:
+      state: present
+      rt: "target:{{bgp_asn}}:10"
+      rd: "1:10"
+      sites:
+          - node: mxpe01
+            port: ge-0/0/3.10
+            ip: 172.10.1.1/24
+          - node: mxpe02
+            port: ge-0/0/3.10
+            ip: 172.10.2.1/24
+  vpnb:
+      state: present
+      rt: "target:{{bgp_asn}}:20"
+      rd: "1:20"
+      sites:
+          - node: mxpe01
+            port: ge-0/0/3.20
+            ip: 172.20.1.1/24
+          - node: mxpe02
+            port: ge-0/0/3.20
+            ip: 172.20.2.1/24

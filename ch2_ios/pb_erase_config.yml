@@ -1,0 +1,30 @@
+---
+- name: Clear All Access config
+  hosts: access
+  connection: network_cli
+  tasks:
+    - import_tasks: "tasks/erase_config.yml"
+      vars:
+        INTERFACES: "{{interfaces[inventory_hostname]}}"
+
+- name: Clear All Core config
+  hosts: core
+  tags: core
+  connection: network_cli
+  tasks:
+    - import_tasks: "tasks/erase_config.yml"
+      vars:
+        INTERFACES: "{{interfaces[inventory_hostname] + 
+                      core_l3_links[inventory_hostname] +
+                      svi_interfaces }}"
+        VLANS: "{{ vlans + core_vlans }}"
+
+- name: Clear All Wan config
+  hosts: wan
+  tags: wan
+  connection: network_cli
+  tasks:
+    - import_tasks: "tasks/erase_config.yml"
+      vars:
+        INTERFACES: "{{ wan_l3_links[inventory_hostname] }}"
+        VLANS: "[]"

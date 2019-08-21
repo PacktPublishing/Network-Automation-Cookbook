@@ -1,0 +1,6 @@
+ansible_user: ansible
+ansible_ssh_pass: ansible123
+
+ansible_network_os: junos
+ansible_connection: netconf
+ce_intf: ge-0/0/4.

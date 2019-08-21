@@ -1,0 +1,30 @@
+---
+- name: " Collect Network Facts using NAPALM"
+  hosts: sp_core
+  tasks:
+    - name: "P1T1: Collect NAPALM Facts"
+      napalm_get_facts:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        dev_os: "{{ ansible_network_os }}"
+        filter:
+          - bgp_neighbors
+    - debug: var=napalm_bgp_neighbors
+
+    - name: Validate All BGP Routers ID is correct
+      assert:
+        that: napalm_bgp_neighbors.global.router_id == lo_ip[inventory_hostname].split('/')[0]
+      when: napalm_bgp_neighbors
+
+    - name: Validate Correct Number of BGP Peers
+      assert:
+        that: bgp_peers | length == napalm_bgp_neighbors.global.peers.keys() | length
+      when: bgp_peers is defined
+
+    - name: Validate All BGP Sessions Are UP
+      assert:
+        that: napalm_bgp_neighbors.global.peers[item.peer].is_up == true
+      loop: "{{ bgp_peers }}"
+      when: bgp_peers is defined
+    

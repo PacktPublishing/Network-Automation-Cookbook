@@ -1,0 +1,14 @@
+!
+router ospf {{ global.ospf_pid }}
+ address-family ipv4 unicast
+ area 0
+  interface Loopback0
+   passive enable
+  !
+{% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
+  interface {{intf.port.split('.')[0]}}
+   cost {{intf.cost | default(100)}}
+   network point-to-point
+  !
+{% endfor %}
+ !

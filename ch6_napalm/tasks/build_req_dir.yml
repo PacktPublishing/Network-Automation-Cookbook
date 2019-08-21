@@ -1,0 +1,15 @@
+---
+- name: "Create Config Directory"
+  file: path={{config_dir}}   state=directory
+  run_once: yes
+
+- name: "Create Tem Directory"
+  file: path={{tmp_dir}}   state=directory
+  run_once: yes
+
+- name: "Create Config Diff Directory"
+  file: path={{config_diff_dir}}   state=directory
+  run_once: yes
+
+- name: "Create Per host directory"
+  file: path={{tmp_dir}}/{{inventory_hostname}}  state=directory

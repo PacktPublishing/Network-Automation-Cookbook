@@ -1,0 +1,27 @@
+---
+- name: Generate Cisco config from Jinja2
+  hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Create Configs Directory
+    file: path=configs  state=directory
+
+- name: Generate Cisco config from Jinja2
+  hosts: cisco
+  gather_facts: no
+  tasks:
+  - name: Generate Cisco Basic Config
+    template:
+      src: "templates/ios_basic.j2"
+      dest: "configs/{{inventory_hostname}}.cfg"
+    delegate_to: localhost
+
+- name: Generate Juniper config from Jinja2
+  hosts: juniper
+  gather_facts: no
+  tasks:
+  - name: Generate Juniper Basic Config
+    template:
+      src: "templates/junos_basic.j2"
+      dest: "configs/{{inventory_hostname}}.cfg"
+    delegate_to: localhost

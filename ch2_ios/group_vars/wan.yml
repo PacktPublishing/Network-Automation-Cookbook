@@ -1,0 +1,84 @@
+wan_l3_links:
+  wan01:
+    - name: GigabitEthernet2
+      description: "core01_e1/0"
+      peer: core01
+      ipv4: 10.3.1.2/30
+      ospf: yes
+      ospf_metric: 100
+    - name: Loopback0
+      ipv4: "{{ loopback_prefix | ipv4(hst_router_id) | ipaddr('address') + '/32'}}"
+      ospf: passive
+    - name: GigabitEthernet3
+      description: "wan01_Gi3"
+      peer: wan01
+      ipv4: 10.3.1.9/30
+      ospf: no
+    - name: GigabitEthernet4
+      description: "isp01_Gi2"
+      peer: wan01
+      ipv4: 192.168.1.1/30
+      ospf: no
+  wan02:
+    - name: GigabitEthernet2
+      description: "core02_e1/0"
+      peer: core02
+      ipv4: 10.3.1.6/30
+      ospf: yes
+      ospf_metric: 200
+    - name: Loopback0
+      ipv4: "{{ loopback_prefix | ipv4(hst_router_id) | ipaddr('address') + '/32'}}"
+      ospf: passive
+    - name: GigabitEthernet3
+      description: "wan01_Gi3"
+      peer: wan01
+      ipv4: 10.3.1.10/30
+      ospf: no
+    - name: GigabitEthernet4
+      description: "isp01_Gi3"
+      peer: wan01
+      ipv4: 192.168.1.5/30
+      ospf: no
+
+bgp_peers:
+  wan01:
+    - peer: 10.100.1.3
+      description: "iBGP sesstion to wan02"
+      redistribute: ospf
+      route_map: wan_peer_export
+    - peer: 192.168.1.2
+      description: "eBGP sesstion to ips01"
+      redistribute: ospf
+      route_map: isp_export
+  wan02:
+    - peer: 10.100.1.4
+      description: "iBGP sesstion to wan01"
+      redistribute: ospf
+      route_map: to_wan_peer
+    - peer: 192.168.1.6
+      description: "eBGP sesstion to ips01"
+      redistribute: ospf
+      route_map: wan01_to_isp
+
+route_policy:
+<<<<<<< HEAD
+  wan_peer_export:
+    - id: 10
+      match: ospf
+      set:
+        as_path: "{{bgp_as}}"
+||||||| merged common ancestors
+  wan01:
+    - 
+=======
+  wan_peer:
+    - id: 10
+      prefixes: "{{ hostvars[core01].svi_interfaces }}"
+      action: 
+
+  to_isp:
+    - id: 10
+      prefixes:
+      action:  
+>>>>>>> 39fa6692b5df8212ce5c86de6a6299aa8ae7b5cb
+  wan02:

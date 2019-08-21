@@ -1,0 +1,12 @@
+---
+website: dev.internet.net
+vip: 10.1.100.10
+vip_port: 443
+pool_members:
+  - ip: 10.1.10.10
+    name: "dev01.internal.net"
+    port: 443
+  - ip: 10.1.10.11
+    name: "dev02.internal.net"
+    port: 443
+

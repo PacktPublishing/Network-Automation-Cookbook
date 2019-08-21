@@ -1,0 +1,48 @@
+---
+- name: " Play 1: Deploy Config on All JunOS Devices"
+  hosts: junos
+  tasks:
+    - name: "P1T1: Enable NETCONF"
+      junos_netconf:
+        netconf_port: 830
+        state: present
+      vars:
+        ansible_connection: network_cli
+      tags: netconf
+        
+    - name: "P1T2: Build Config Directory Strcuture"
+      import_tasks: "tasks/build_config_dir.yml"
+      delegate_to: localhost
+      tags: config
+
+    - name: "P1T3: Build Devices configuration"
+      import_tasks: "tasks/junos_build_config.yml"
+      delegate_to: localhost
+      tags: config
+
+    - name: "Remove Old Assembled Config"
+      file: 
+        path: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+        state: absent
+      delegate_to: localhost
+      tags: config
+
+    - name: "Assemble config"
+      assemble:
+        src: "{{config_dir}}/{{ inventory_hostname }}"
+        dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+      delegate_to: localhost
+      tags: config
+    
+    - name: "Deploy Configuration"
+      junos_config:
+        src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+        update: update
+      tags: deploy
+
+
+
+    # - import_tasks: "tasks/junos_interfaces.yml"
+    #   tags: intf, never
+
+

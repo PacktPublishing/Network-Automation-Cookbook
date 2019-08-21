@@ -1,0 +1,58 @@
+vlans:
+  - name: Data
+    vlan_id: 10
+  - name: Voice
+    vlan_id: 20
+  - name: Web
+    vlan_id: 100
+  - name: Data30
+    vlan_id: 30
+
+interfaces:
+  core01:
+    - name: Ethernet0/1
+      description: access01_e0/1
+      mode: trunk
+    - name: Ethernet0/2
+      description: access02_e0/1
+      mode: trunk
+    - name: Ethernet0/3
+      description: core01_e0/3
+      mode: trunk
+  core02:
+    - name: Ethernet0/1
+      description: access01_e0/2
+      mode: trunk
+    - name: Ethernet0/2
+      description: access02_e0/2
+      mode: trunk
+    - name: Ethernet0/3
+      description: core02_e0/3
+      mode: trunk
+  access01:
+    - name: Ethernet0/1
+      description: core01_e0/1
+      mode: trunk
+    - name: Ethernet0/2
+      description: core02_e0/1
+      mode: trunk
+    - name: Ethernet0/3
+      description: Data_vlan
+      mode: access
+      vlan: 10
+  access02:
+    - name: Ethernet0/1
+      description: core01_e0/2
+      mode: trunk
+    - name: Ethernet0/2
+      description: core02_e0/2
+      mode: trunk
+    - name: Ethernet0/3
+      description: Voice_vlan
+      mode: access
+      vlan: 20
+    - name: Ethernet1/0
+      description: Web_vlan
+      mode: access
+      vlan: 100
+

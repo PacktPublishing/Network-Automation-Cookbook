@@ -1,0 +1,23 @@
+---
+- name: Validating BIG-IP Health
+  hosts: ltm01
+  connection: local
+  vars_files: web_app.yml
+  tasks:
+    - name: Collect Device Facts from BIG-IP
+      bigip_device_facts:
+        gather_subset:
+          - virtual-servers
+        provider: "{{ conn_parameters }}"
+      register: bigip_app_facts
+
+    - name: Validate Virtual Address Status
+      assert:
+        that:
+          - item.enabled == 'yes'
+          - item.destination_address == vip
+          - item.destination_port == vip_port
+        fail_msg: " {{ item.name }} is No Setup Correctly"  
+      loop: "{{bigip_app_facts.virtual_servers}}"
+
+    - debug: var=bigip_app_facts

@@ -1,0 +1,38 @@
+{#
+**************************************************
+###         Interfaces configuration        ######
+**************************************************
+#}
+interfaces {
+{% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
+    {{ intf.port.split('.')[0] }} {
+        description "peer:{{intf.peer}} -- peer_port: {{intf.pport}}";
+{%      if intf.vlan  is defined and intf.vlan != 0 %}
+        vlan-tagging;
+        encapsulation flexible-ethernet-services;
+        unit {{intf.vlan}} {
+            vlan-id {{intf.vlan}};
+            family inet {
+                address {{intf.ip}}/{{global.p2p_prefix}};
+            }
+            family mpls;
+        }
+    }
+{%      else %}
+        unit 0 {
+            family inet {
+                address {{intf.ip}}/{{global.p2p_prefix}};
+            }
+            family mpls;
+        }
+    }
+{%      endif %}
+{% endfor %}
+    lo0 {
+        unit 0 {
+            family inet {
+                address {{lo_ip[inventory_hostname]}};
+            }
+        }
+    }
+}

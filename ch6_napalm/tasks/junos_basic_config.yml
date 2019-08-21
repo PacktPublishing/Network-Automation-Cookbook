@@ -1,0 +1,14 @@
+---
+- name: "Conifgure Basic System config"
+  junos_system:
+    hostname: "{{ inventory_hostname }}"
+    name_servers: "{{ global.dns }}"
+    state: present
+
+- name: "Configure Users"
+  junos_user:
+    name: "{{ item.username }}"
+    role: "{{ item.role }}"
+    sshkey: "{{ lookup ('file', item.ssh_key) }}"
+    state: present
+  with_items: "{{ global.users | selectattr('ssh_key','defined') | list }}"

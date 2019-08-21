@@ -1,0 +1,29 @@
+isp_l3_links:
+    - name: GigabitEthernet2
+      description: "wan01_Gi4"
+      peer: wan01
+      ipv4: 192.168.1.2/30
+
+    - name: GigabitEthernet3
+      description: "wan02_Gi4"
+      peer: wan02
+      ipv4: 192.168.1.6/30
+
+bgp_peers:
+    - peer: 192.168.1.1
+      description: "eBGP sesstion to ips01"
+      redistribute: ospf
+      route_map: cust_export
+    - peer: 192.168.1.5
+      description: "eBGP sesstion to ips01"
+      redistribute: ospf
+      route_map: cust_export
+
+
+route_policy:
+  cust_export:
+    - id: 10
+      match: ospf
+      set:
+        as_path: "{{bgp_as}}"
+  wan02:

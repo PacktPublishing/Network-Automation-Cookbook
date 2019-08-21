@@ -1,0 +1,51 @@
+---
+- name: "PLay 1: Validate Network Reachability"
+  hosts: core,wan
+  vars:
+    host_id: 10
+    packet_count: 10
+  tasks:
+    - name: "P1T1: Get all SVI Prefixes"
+      set_fact:
+        all_svi_prefixes: "{{ svi_interfaces | selectattr('vrrp') |
+                              map(attribute='ipv4') | list }}"
+      run_once: yes
+      delegate_to: localhost
+      tags: svi
+
+    - name: "P1T2: Ping Hosts in all VLANs"
+      ios_ping:
+        dest: "{{ item | ipaddr(10) | ipaddr('address') }}"
+      loop: "{{ all_svi_prefixes }}"
+      tags: svi
+
+    - name: "P1T3: Include all Loobacks"
+      include_vars: facts.yml
+      run_once: yes
+      delegate_to: localhost
+      tags: loopbacks
+
+    - name: "P1T2: Ping Loopbacks for all Core and WAN Devices"
+      ios_ping:
+        dest: "{{ item }}"
+        count: "{{ packet_count }}"
+      loop: "{{ all_loopbacks }}"
+      tags: loopbacks  
+
+
+- hosts: localhost
+  vars:
+    subnets: ['10.1.1.0/24', '10.1.2.0/24']
+    prefix: '10.1.1.0/24'
+  tags: test
+  tasks:
+    - debug: msg={{ subnets | ipaddr(1) }} #NotWorking
+    - debug: msg={{ subnets | ipaddr('1') }} #NotWorking
+    - debug: msg={{ subnets | ipaddr(-1) }} #Working
+    - debug: msg={{ subnets | ipaddr('-1') }} #Working
+    - debug: msg={{ prefix | ipaddr(1) }} #Working
+    - debug: msg={{ prefix | ipaddr('1') }} #Working
+    - debug: msg={{ prefix | ipaddr('-1') }} #Working
+
+
+

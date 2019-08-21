@@ -1,0 +1,25 @@
+!
+router bgp {{bgp_asn}}
+{% if 'inet' in bgp_topo.af %}
+ address-family ipv4 unicast
+{% endif %}
+ !
+{% if 'inet-vpn' in bgp_topo.af %}
+ address-family vpnv4 unicast
+{% endif %}
+ !
+{% for peer in bgp_peers %}
+ neighbor {{peer.peer}}
+  remote-as {{peer.remote_as}}
+  local address {{lo_ip[inventory_hostname] | ipaddr('address')}}
+{%  if 'inet' in bgp_topo.af  %}
+  address-family ipv4 unicast
+{%  endif %}
+  !
+{%  if 'inet-vpn' in bgp_topo.af %}
+  address-family vpnv4 unicast
+{%  endif %}
+  !
+{% endfor %}
+ !
+!

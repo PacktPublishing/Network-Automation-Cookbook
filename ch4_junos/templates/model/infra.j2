@@ -1,0 +1,29 @@
+global: 
+{{ global | to_nice_yaml| indent(2,true) }}
+p2p_ip:
+{% for node, links in fabric.items()|sort %}
+  {{ node }}:
+{%      for port,portinfo in links.items()|sort %}
+{%          set link_id = links[port].link_id %}
+{%          set network = global.core_subnet | ipsubnet (global.p2p_prefix, link_id - 1) %}
+{%          set prefix_id = links[port].prefix_id %}
+{%          set peer_id = 2 if prefix_id == 1 else 1 %}
+{%          if global.p2p_prefix == 31 %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id - 1)| ipaddr('address')}} , peer: {{links[port].peer}}, pport: {{ links[port].pport }}, peer_ip: {{network | ipv4(peer_id - 1)| ipaddr('address')}}}
+{%          else %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id)| ipaddr('address')}} , peer: {{links[port].peer}}, pport: {{ links[port].pport }}, peer_ip: {{network | ipv4(peer_id)| ipaddr('address')}}}
+{%          endif %}
+{%      endfor %}
+{% endfor %}
+
+lo_ip:
+{%  for host in play_hosts|sort %}
+{%    set hst_id = host[-2:]|int if 'pe' in host else (255 - host[-2:]|int) %}
+  {{ host }}: {{ global.loopback_subnet | ipv4(hst_id) | ipaddr('address') + '/32' }}
+{%  endfor %}
+
+mgmt_net:
+{{ mgmt_net | to_nice_yaml | indent(2,true) }}
+
+bgp_topo:
+{{ bgp_topo | to_nice_yaml | indent(2,true) }}

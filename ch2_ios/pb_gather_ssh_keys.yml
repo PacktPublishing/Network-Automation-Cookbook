@@ -1,0 +1,32 @@
+---
+- name: Gather SSH keys
+  hosts: all
+  tasks:
+    - name: scan ssh keys
+      command: ssh-keyscan {{ ansible_host }}
+      delegate_to: localhost
+      register: ssh_keys
+    - debug: var=ssh_keys
+      delegate_to: localhost
+
+- name: Record Keys in in ssh known files
+  hosts: localhost
+  vars:
+    #- hosts_file: "~/.ssh/known_hosts"
+    - hosts_file: "./temp_ssh.txt"
+
+  tasks:
+    - name: create know hosts file
+      file:
+        path: "{{ hosts_file }}"
+        state: file
+      changed_when: false
+
+    - name: Populate the known_hosts file
+      blockinfile:
+        block: |
+          {% for host in groups['all'] if  hostvars[host].ssh_keys.stdout != ''  %}
+          {{ hostvars[host].ssh_keys.stdout}}
+          {% endfor %}
+        path: "{{ hosts_file }}"
+        create: yes

@@ -1,0 +1,16 @@
+---
+- name: Using Ansible vault
+  hosts: all
+  gather_facts: no
+  vars_files:
+  - secrets
+  tasks:
+  - name: Output OSPF passowrd
+    debug:
+      msg: "Router {{ hostname }} ospf Password {{ ospf_password }}"
+    when: inventory_hostname == 'csr1'
+
+  - name: Output BGP passowrd
+    debug:
+      msg: "Router {{ hostname }} BGP Password {{ bgp_password }}"
+    when: inventory_hostname == 'mx1'

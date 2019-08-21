@@ -1,0 +1,31 @@
+---
+- name: " Collect Routing Data via NAPALM"
+  hosts: junos:&pe
+  vars_files: napalm_route_validation.yml
+  tasks:
+    - name: "P1T1: Collect NAPALM Facts"
+      napalm_get_facts:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        dev_os: "{{ ansible_network_os }}"
+        filter:
+          - route_to
+        args:
+          route_to:
+            destination: "{{ item.route }}"
+      loop: "{{ route_validation[inventory_hostname] }}"
+
+    - name: Validate Active Routing Protocol
+      assert:
+        that: napalm_route_to[item.route] |
+              selectattr('protocol','equalto',item.protocol) |
+              map(attribute='current_active') | list | first == true 
+      loop: "{{ route_validation[inventory_hostname] }}"
+
+    - name: Validate Correct Number of Next-Hops
+      assert:
+        that: napalm_route_to[item.route] |
+              selectattr('protocol','equalto',item.protocol) | 
+              list | length ==  item.next_hop | length
+      loop: "{{ route_validation[inventory_hostname] }}"

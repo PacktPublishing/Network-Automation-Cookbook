@@ -1,0 +1,4 @@
+hst_svi_id: 2
+hst_vrrp_priority: 50
+hst_router_id: 2
+hst_vlan_priority: 20480

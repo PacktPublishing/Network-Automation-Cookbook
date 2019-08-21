@@ -1,0 +1,61 @@
+config_dir: configs
+
+# BEGIN ANSIBLE MANAGED BLOCK
+global: 
+  bgp_asn: 65000
+  fabric_subnet: 172.31.1.0/24
+  loopback_subnet: 10.100.1.0/24
+  mgmt_gw: 172.20.1.33
+  mgmt_prefix: 28
+  mgmt_prefixes:
+  - 10.8.0.0/24
+  - 172.20.1.0/24
+  - 192.168.0.0/24
+  mgmt_vrf: MGMT
+  mlag_vlan: 4094
+  p2p_prefix: 31
+  site: DC1
+  users:
+  -   name: ansible
+      password: ansible123
+      privilege: 15
+      role: network-admin
+
+
+p2p_ip:
+  leaf01:
+    - {port: Ethernet8, ip: 172.31.1.1 , peer: spine01, pport: Ethernet1, peer_ip: 172.31.1.0}
+    - {port: Ethernet9, ip: 172.31.1.11 , peer: spine02, pport: Ethernet1, peer_ip: 172.31.1.10}
+  leaf02:
+    - {port: Ethernet8, ip: 172.31.1.3 , peer: spine01, pport: Ethernet2, peer_ip: 172.31.1.2}
+    - {port: Ethernet9, ip: 172.31.1.13 , peer: spine02, pport: Ethernet2, peer_ip: 172.31.1.12}
+  leaf03:
+    - {port: Ethernet8, ip: 172.31.1.5 , peer: spine01, pport: Ethernet3, peer_ip: 172.31.1.4}
+    - {port: Ethernet9, ip: 172.31.1.15 , peer: spine02, pport: Ethernet3, peer_ip: 172.31.1.14}
+  leaf04:
+    - {port: Ethernet8, ip: 172.31.1.7 , peer: spine01, pport: Ethernet3, peer_ip: 172.31.1.6}
+    - {port: Ethernet9, ip: 172.31.1.17 , peer: spine02, pport: Ethernet3, peer_ip: 172.31.1.16}
+  spine01:
+    - {port: Ethernet1, ip: 172.31.1.0 , peer: leaf01, pport: Ethernet8, peer_ip: 172.31.1.1}
+    - {port: Ethernet2, ip: 172.31.1.2 , peer: leaf02, pport: Ethernet8, peer_ip: 172.31.1.3}
+    - {port: Ethernet3, ip: 172.31.1.4 , peer: leaf03, pport: Ethernet8, peer_ip: 172.31.1.5}
+    - {port: Ethernet4, ip: 172.31.1.6 , peer: leaf04, pport: Ethernet8, peer_ip: 172.31.1.7}
+    - {port: Ethernet6, ip: 172.31.1.8 , peer: spine02, pport: Ethernet6, peer_ip: 172.31.1.9}
+  spine02:
+    - {port: Ethernet1, ip: 172.31.1.10 , peer: leaf01, pport: Ethernet9, peer_ip: 172.31.1.11}
+    - {port: Ethernet2, ip: 172.31.1.12 , peer: leaf02, pport: Ethernet9, peer_ip: 172.31.1.13}
+    - {port: Ethernet3, ip: 172.31.1.14 , peer: leaf03, pport: Ethernet9, peer_ip: 172.31.1.15}
+    - {port: Ethernet4, ip: 172.31.1.16 , peer: leaf04, pport: Ethernet9, peer_ip: 172.31.1.17}
+    - {port: Ethernet6, ip: 172.31.1.9 , peer: spine01, pport: Ethernet6, peer_ip: 172.31.1.8}
+
+lo_ip:
+  leaf01: 10.100.1.1/32
+  leaf02: 10.100.1.2/32
+  leaf03: 10.100.1.3/32
+  leaf04: 10.100.1.4/32
+  spine01: 10.100.1.254/32
+  spine02: 10.100.1.253/32
+
+
+
+# END ANSIBLE MANAGED BLOCK

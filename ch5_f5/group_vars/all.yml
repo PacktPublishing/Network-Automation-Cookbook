@@ -1,0 +1,18 @@
+conn_parameters:
+    user: ansible
+    password: ansible123
+    server: "{{ ansible_host }}"
+    server_port: 443
+    validate_certs: no
+
+admin_passwd: NewP@sswd
+users:
+    - name: ansible
+      passwd: ansible123
+      role: all:admin
+      state: present
+
+domain: lab.net
+nms_servers:
+    - 172.20.1.250
+

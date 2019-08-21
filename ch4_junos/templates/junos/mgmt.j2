@@ -1,0 +1,87 @@
+{#
+**************************************************
+###         System configuration            ######
+**************************************************
+#}
+system {
+    host-name {{inventory_hostname}};
+    no-redirects;
+{%  if global.dns is defined %}
+    name-server {
+{%      for dns_server in global.dns %}
+        {{dns_server}};
+{%      endfor %}
+    }
+{%  endif %}
+    root-authentication {
+        encrypted-password "{{ global.root_pwd}}"; ## SECRET-DATA
+    }
+    login {
+{%      for user in global.users if user.hash is defined %}
+        user {{ user.username }} {
+            class super-user;
+            authentication {
+                encrypted-password "{{user.hash}}"; ## SECRET-DATA
+            }
+        }
+{%      endfor %}
+{%      for user in global.users if user.ssh_key is defined %}
+        user {{ user.username }} {
+            class {{ user.role }};
+            authentication {
+                ssh-rsa "{{lookup('file',user.ssh_key)}}"; ## SECRET-DATA
+            }
+        }
+{%      endfor %}
+    }
+    services {
+        ssh;
+        telnet;
+        netconf {
+            ssh {
+                port {{ global.netconf_port }};
+            }
+            traceoptions {
+                file nc.txt size 1m world-readable;
+                flag incoming;
+            }
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any any;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+}
+
+{#
+**************************************************
+###         Managment configuration            ###
+**************************************************
+#}
+routing-options {
+    router-id {{ lo_ip[inventory_hostname] | ipaddr('address') }};
+    autonomous-system {{ bgp_asn }};
+    static {
+{%      for route in global.mgmt_prefixes %}
+        route {{ route }} next-hop {{ global.mgmt_gw}};
+{%      endfor %}
+    }
+}
+interfaces {
+    {{mgmt_net[inventory_hostname].port}} {
+        description "OOB to MGMT Network";
+        unit 0 {
+            family inet {
+                address {{ mgmt_net[inventory_hostname].ip}};
+            }
+        }
+    }
+}

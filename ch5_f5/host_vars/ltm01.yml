@@ -1,0 +1,23 @@
+---
+phy_interfaces: 
+  - 1.1
+  - 1.2
+
+trunks:
+    - name: po1
+      members: "{{ phy_interfaces }}"
+
+vlans:
+    - vlan: 100
+      description: Exnternal VLAN (Internet)
+      ip: 10.1.100.254/24
+      tagged_intf: po1
+    - vlan: 10
+      description: Server VLAN10 (Internal)
+      ip: 10.1.10.254/24
+      tagged_intf: po1
+
+routes:
+  - dst: 0.0.0.0/0
+    gw: 10.1.100.1
+    name: default_route

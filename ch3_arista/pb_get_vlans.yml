@@ -1,0 +1,17 @@
+---
+- name: " Play 1: Retrive All VLANs from Arista Switches"
+  hosts: leaf
+  vars_files: vxlan.yml
+  tasks:
+    - name: "Get All VLANs"
+      eos_command:
+        commands: show vlan | json
+      register: show_vlan
+
+    - name: "Validate VLANs are Present"
+      assert:
+        that: item.vlan in show_vlan.stdout[0].vlans.keys()
+        fail_msg: "VLAN:{{ item.vlan }} is NOT configured "
+        success_msg: "VLAN:{{ item.vlan }} is configured "
+      loop: "{{ access_interfaces[inventory_hostname] }}"
+      delegate_to: localhost

@@ -1,0 +1,21 @@
+---
+- name: Ansible Filters
+  hosts: csr1
+  vars:
+    interfaces:
+      - { port: FastEthernet0/0, prefix: 10.1.1.0/24 }
+      - { port: FastEthernet1/0, prefix: 10.1.2.0/24 }
+  tasks:
+    - name: Generate Interface Config
+      blockinfile:
+        block: |
+          hostname {{ hostname | upper }}
+          {% for intf in interfaces %}
+          !
+          interface {{ intf.port }}
+            ip address {{intf.prefix | ipv4(1) | ipv4('address') }} {{intf.prefix | ipv4('netmask') }}
+          !  
+          {% endfor %}
+        dest: "configs/csr1_interfaces.cfg"
+        create: yes
+      delegate_to: localhost

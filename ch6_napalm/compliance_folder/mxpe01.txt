@@ -1,0 +1,28 @@
+complies: false
+get_bgp_neighbors:
+    complies: false
+    extra: []
+    missing: []
+    present:
+        global:
+            complies: false
+            diff:
+                complies: false
+                extra: []
+                missing: []
+                present:
+                    router_id:
+                        actual_value: 10.100.1.1
+                        complies: false
+                        expected_value: 10.100.1.10
+                        nested: false
+            nested: true
+get_interfaces_ip:
+    complies: true
+    extra: []
+    missing: []
+    present:
+        ge-0/0/0.0:
+            complies: true
+            nested: true
+skipped: []

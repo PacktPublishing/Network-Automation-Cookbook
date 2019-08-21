@@ -1,0 +1,17 @@
+- name: "Setup BIG-IP Hostname"
+  bigip_hostname:
+    hostname: "{{ inventory_hostname }}.{{ domain }}"
+    provider: "{{ conn_parameters }}"
+
+- name: "Setup BIG-IP DNS Servers"
+  bigip_device_dns:
+    ip_version: '4'
+    name_servers: "{{ nms_servers }}"
+    provider: "{{ conn_parameters }}"
+    
+
+- name: "Setup BIG-IP NTP Servers"
+  bigip_device_ntp:
+    ntp_servers: "{{ nms_servers }}"
+    provider: "{{ conn_parameters }}"
+

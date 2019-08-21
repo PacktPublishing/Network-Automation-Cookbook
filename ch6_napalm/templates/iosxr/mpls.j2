@@ -1,0 +1,17 @@
+!
+rsvp
+{% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
+ interface {{intf.port.split('.')[0]}}
+{% endfor %}
+ !
+!
+mpls traffic-eng
+{% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
+ interface {{intf.port.split('.')[0]}}
+{% endfor %}
+!
+mpls ldp
+{% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
+ interface {{intf.port.split('.')[0]}}
+{% endfor %}
+!

@@ -1,0 +1,21 @@
+---
+- name: Using Ansible Tags
+  hosts: cisco
+  gather_facts: no
+  tasks:
+  - name: Print OSPF
+    debug:
+      msg: "Router {{ hostname }} will Run OSPF"
+    tags: [ospf, routing]
+
+  - name: Print BGP
+    debug:
+      msg: "Router {{ hostname }} will Run BGP"
+    tags:
+    - bgp
+    - routing
+
+  - name: Print NTP 
+    debug:
+      msg: "Router {{ hostname }} will run NTP"
+    tags: ntp

@@ -1,0 +1,5 @@
+*.retry
+.vagrant/
+.vagrant
+~$*
+

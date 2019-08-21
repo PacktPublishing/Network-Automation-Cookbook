@@ -1,0 +1,38 @@
+protocols {
+{#
+**************************************************
+###         LDP  Variables                  ######
+**************************************************
+#}
+    ldp {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}}.{{intf.vlan|default('0')}};
+{%      endfor %}
+        interface lo0.0;
+    }
+{#
+**************************************************
+###         RSVP  Variables                  ######
+**************************************************
+    #}
+    rsvp {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}}.{{intf.vlan|default('0')}};
+{%      endfor %}
+    }
+{#
+**************************************************
+###         MPLS and LLDP  Variables        ######
+**************************************************
+#}
+    mpls {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}}.{{intf.vlan|default('0')}};
+{%      endfor %}
+    }
+    lldp {
+{%      for intf in p2p_ip[inventory_hostname]|sort(attribute='port') %}
+        interface {{intf.port}};
+{%      endfor %}
+    }
+}

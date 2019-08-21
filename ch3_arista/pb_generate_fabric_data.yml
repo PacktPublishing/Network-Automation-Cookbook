@@ -1,0 +1,41 @@
+---
+- name: Build Folder Structure
+  hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+    - block:
+      - name: Create group_vars Folder
+        file: path=group_vars state=directory
+        run_once: yes
+
+      - name: Create host_vars Folder
+        file: path=host_vars state=directory
+        run_once: yes
+
+      - name: Create host_vars Folder
+        file: path=host_vars/{{ inventory_hostname }} state=directory
+      delegate_to: localhost
+
+
+- name: Generate P2P IP address Info 
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars_files: "network_topology.yml"
+  tasks:
+    - name: "Generate Global Config Data"
+      blockinfile:
+        block: "{{ lookup('template','net_model/dc_fabric.j2') }}" 
+        path: "group_vars/all.yml"
+        create: yes
+      delegate_to: localhost
+      run_once: yes
+
+    - name: "Generate BGP Specific Data"
+      blockinfile:
+        block: "{{ lookup('template','net_model/bgp.j2') }}" 
+        path: "host_vars/{{ inventory_hostname }}/underlay_bgp.yml"
+        create: yes
+      delegate_to: localhost
+      tags: bgp

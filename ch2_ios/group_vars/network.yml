@@ -1,0 +1,36 @@
+ansible_network_os: ios
+ansible_connection: network_cli
+ansible_user: lab
+ansible_ssh_pass: lab123
+ansible_become: yes
+ansible_become_password: admin123
+ansible_become_method: enable
+
+mgmt_net_gw: 172.20.1.17
+intf_duplex: full
+domain_name: lab.net
+name_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+
+ntp_server: 172.20.1.17
+  
+
+intf_mtu: 1500
+users:
+  core: core123
+
+mgmt_static_routes:
+  - prefix: 192.168.0.0/24
+    next_hop: "{{ mgmt_net_gw }}"
+  - prefix: 10.8.0.0/24
+    next_hop: "{{ mgmt_net_gw }}"
+
+ospf_process: 10
+ospf_area: 0
+ospf_metric: 10
+
+loopback_prefix: 10.100.1.0/24
+
+bgp_as: 65001
+prepend: 4
