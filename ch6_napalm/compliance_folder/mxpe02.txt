@@ -1,0 +1,18 @@
+complies: true
+get_bgp_neighbors:
+    complies: true
+    extra: []
+    missing: []
+    present:
+        global:
+            complies: true
+            nested: true
+get_interfaces_ip:
+    complies: true
+    extra: []
+    missing: []
+    present:
+        ge-0/0/0.0:
+            complies: true
+            nested: true
+skipped: []
