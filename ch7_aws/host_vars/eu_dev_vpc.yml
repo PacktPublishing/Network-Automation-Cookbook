@@ -1,0 +1,25 @@
+vpc_name: EU_DEV_Public_VPC
+vpc_cidr: 10.2.0.0/16
+igw_name: eu_dev_igw
+
+vpc_subnets:
+  eu-dev-public-a:
+    cidr: 10.2.1.0/24
+    az: "{{ aws_region }}a"
+    tags: "{{ vpc_tags }}"
+    public: true
+
+route_table:
+  tags:
+    Name: eu_dev_public_rt
+  igw:
+    - dest: 0.0.0.0/0
+      gateway_id: "{{ igw_id }}"
+  public:
+      - eu-dev-public-a
+
+vpc_tags:
+  role: dev
+  region: eu
+
+

@@ -1,0 +1,32 @@
+vpc_name: US_Prod_Public_VPC
+vpc_cidr: 10.1.0.0/16
+igw_name: us_prod_igw
+
+vpc_subnets:
+  us-prod-public-a:
+    cidr: 10.1.1.0/24
+    az: "{{ aws_region }}a"
+    tags: "{{ vpc_tags }}"
+    public: true
+
+  us-prod-public-b:
+    cidr: 10.1.2.0/24
+    az: "{{ aws_region}}b"
+    tags: "{{ vpc_tags }}"
+    public: true
+
+route_table:
+  tags:
+    Name: us_public_rt
+  igw:
+    - dest: 0.0.0.0/0
+      gateway_id: "{{ igw_id }}"
+  public:
+      - us-prod-public-a
+      - us-prod-public-b
+
+vpc_tags:
+  role: prod
+  region: US
+
+

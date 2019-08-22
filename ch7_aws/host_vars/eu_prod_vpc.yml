@@ -1,0 +1,32 @@
+vpc_name: EU_Prod_Public_VPC
+vpc_cidr: 10.3.0.0/16
+igw_name: eu_prod_igw
+
+vpc_subnets:
+  eu-prod-public-a:
+    cidr: 10.3.1.0/24
+    az: "{{ aws_region }}a"
+    tags: "{{ vpc_tags }}"
+    public: true
+
+  eu-prod-public-b:
+    cidr: 10.3.2.0/24
+    az: "{{ aws_region}}b"
+    tags: "{{ vpc_tags }}"
+    public: true
+
+route_table:
+  tags:
+    Name: eu_prod_public_rt
+  igw:
+    - dest: 0.0.0.0/0
+      gateway_id: "{{ igw_id }}"
+  public:
+      - eu-prod-public-a
+      - eu-prod-public-a
+
+vpc_tags:
+  role: prod
+  region: eu
+
+

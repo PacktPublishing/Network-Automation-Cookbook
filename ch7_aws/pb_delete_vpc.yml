@@ -1,0 +1,31 @@
+- name: Delete all VPC resources
+  hosts: us
+  gather_facts: no
+  environment:
+    AWS_ACCESS_KEY: "{{ aws_access_key }}"
+    AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
+    AWS_REGION: "{{ aws_region }}"
+  tasks:
+    - name: Collect VPC Facts
+      include_tasks: tasks/vpc_facts.yml
+      
+    - name: Start Delete VPC Resources
+      block: 
+        - name: Delete Subnets
+          ec2_vpc_subnet:
+            cidr: "{{ item.value.cidr }}"
+            vpc_id: "{{ vpc_id }}" 
+            state: absent
+          with_dict: "{{ vpc_subnets }}"
+
+        - name: Delete IGW
+          ec2_vpc_igw:
+            vpc_id: "{{ vpc_id }}"
+            state: absent
+
+        - name: Delete VPC
+          ec2_vpc_net:
+            cidr_block: "{{ vpc_cidr }}"
+            name: "{{ vpc_name }}"
+            state: absent
+      when: vpc_id is defined

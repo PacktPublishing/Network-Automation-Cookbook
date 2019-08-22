@@ -1,0 +1,6 @@
+.vscode/
+.vagrant/
+testing/
+diagrams/
+Vagrantfile
+backup/

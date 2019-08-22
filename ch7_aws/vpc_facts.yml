@@ -1,0 +1,9 @@
+- name: Create US Network
+  hosts: us
+  gather_facts: no
+  environment:
+    AWS_ACCESS_KEY: "{{ aws_access_key }}"
+    AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
+    AWS_REGION: "{{ aws_region }}"
+  tasks:
+    - import_tasks: tasks/vpc_facts.yml
