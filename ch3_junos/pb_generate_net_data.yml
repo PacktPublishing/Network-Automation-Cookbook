@@ -1,0 +1,47 @@
+---
+- name: Build Folder Structure
+  hosts: all
+  gather_facts: no
+  tasks:
+    - block:
+      - name: Create group_vars Folder
+        file: path=group_vars state=directory
+        run_once: yes
+
+      - name: Create host_vars Folder
+        file: path=host_vars state=directory
+        run_once: yes
+
+      - name: Create Host Specifc Folder
+        file: path=host_vars/{{ inventory_hostname }} state=directory
+      delegate_to: localhost
+
+
+- name: Generate P2P IP address Info 
+  hosts: all
+  gather_facts: no
+  vars_files: 
+    - "network_topology.yml"
+    - "l3vpn.yml"
+  tasks:
+    - block:
+      - name: "Generate Global Config Data"
+        blockinfile:
+          block: "{{ lookup('template','model/infra.j2') }}" 
+          path: "group_vars/all.yml"
+        run_once: yes
+
+      - name: "Generate Host Specifc BGP Data"
+        blockinfile:
+          block: "{{ lookup('template','model/bgp.j2') }}" 
+          path: "host_vars/{{ inventory_hostname }}/bgp.yml"
+          create: yes
+        tags: bgp
+
+      # - name: "Generate L3VPN"
+      #   template:
+      #     src: "l3vpn.j2"
+      #     dest: "host_vars/{{ inventory_hostname }}/l3vpn.yml"
+      #   tags: l3vpn
+      delegate_to: localhost
+

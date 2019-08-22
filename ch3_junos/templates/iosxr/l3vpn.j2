@@ -1,0 +1,35 @@
+{% for vpn in l3vpn %}
+vrf {{vpn}}
+ address-family ipv4 unicast
+  import route-target
+{% for rt in l3vpn[vpn].rt_imp%}
+   {{rt}}
+{% endfor %}
+  !
+  export route-target
+{% for rt in l3vpn[vpn].rt_exp%}
+   {{rt}}
+{% endfor %}
+  !
+{% endfor %}
+ !
+!
+{% for vpn in l3vpn %}
+{% for port in l3vpn[vpn].intfs %}
+interface {{ port.intf.split('.')[0] }}
+ vrf {{vpn}}
+ ipv4 address {{port.ip| ipaddr('address')}} {{port.ip| ipaddr('netmask')}}
+!
+{% endfor %}
+{% endfor %}
+!
+router bgp {{bgp_asn}}
+{% for vpn in l3vpn %}
+ vrf {{vpn}}
+  rd {{l3vpn[vpn].rd}}
+  address-family ipv4 unicast
+   redistribute connected
+  !
+{% endfor %}
+ !
+!

@@ -1,0 +1,14 @@
+!
+interface Loopback0
+ ipv4 address {{lo_ip[inventory_hostname]| ipaddr('address')}} {{lo_ip[inventory_hostname]| ipaddr('netmask')}}
+!
+{% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
+interface {{intf.port.split('.')[0]}}
+{%  if intf.vlan  is undefined or intf.vlan == 0 %}
+{%      set ip = intf.ip + '/' + global.p2p_prefix|string %}
+{# ipv4 address {{intf.ip}}/{{global.p2p_prefix}} #} 
+   ipv4 address {{ip | ipaddr('address')}} {{ip | ipaddr('netmask')}}
+{%  endif %}
+!
+{% endfor %}
+!
