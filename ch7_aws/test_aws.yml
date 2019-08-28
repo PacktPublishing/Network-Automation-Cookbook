@@ -1,0 +1,7 @@
+---
+- name: Get AZ Facts
+  hosts: localhost
+  tasks:
+    - name: get AZ
+      aws_az_facts:
+      

@@ -2,11 +2,9 @@
 us_prod_vpc
 
 [eu]
-eu_dev_vpc
 eu_prod_vpc
 
-[vpcs]
+[prod_vpcs]
 us_prod_vpc
-eu_dev_vpc
 eu_prod_vpc
 
