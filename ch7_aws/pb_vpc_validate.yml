@@ -1,0 +1,54 @@
+- name: Delete all VPC resources
+  hosts: all
+  gather_facts: no
+  environment:
+    AWS_ACCESS_KEY: "{{ aws_access_key }}"
+    AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
+    AWS_REGION: "{{ aws_region }}"
+  tasks:
+
+    - name: Get VPC facts
+      ec2_vpc_net_facts:
+        filters:
+          "tag:Name": "{{ vpc_name }}"
+      register: vpc_facts
+
+    - debug: var=vpc_facts
+
+    - name: Validate VPC Info
+      assert:
+        that: 
+          - vpc_facts.vpcs[0].cidr_block == vpc_cidr
+          - vpc_facts.vpcs[0].tags.Name == vpc_name
+
+    - block:
+
+        - name: Extract VPC ID
+          set_fact:
+            vpc_id: "{{ vpc_facts.vpcs[0].id }}"
+
+        - name: Get Subnet facts
+          ec2_vpc_subnet_facts:
+            filters:
+              vpc-id: "{{ vpc_id }}"
+          register: vpc_subnet_facts
+          tags: subnet
+
+        - debug: var=vpc_subnet_facts
+
+        - name: Validate VPC Subnets Info
+          assert:
+            that: 
+              - vpc_subnet_facts.subnets | 
+                selectattr('tags.Name','equalto',item.key) | 
+                map(attribute='cidr_block') | 
+                list | first == item.value.cidr
+
+              - vpc_subnet_facts.subnets | 
+                selectattr('tags.Name','equalto',item.key) | 
+                map(attribute='availability_zone') | 
+                list | first == item.value.az
+
+          with_dict: "{{ vpc_subnets }}" 
+
+      when: vpc_facts.vpcs != []
