@@ -1,7 +1,12 @@
 ---
 - name: Get AZ Facts
-  hosts: localhost
+  hosts: all
+  environment:
+    AWS_ACCESS_KEY: "{{ aws_access_key }}"
+    AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
+    AWS_REGION: "{{ aws_region }}"
   tasks:
+    - debug: var=aws_region
     - name: get AZ
       aws_az_facts:
       

@@ -1,24 +1,24 @@
-- name: Create all VPCs
-  hosts: vpcs
-  gather_facts: no
+- name: Create all AWS Networks
+  hosts: prod_vpcs
   environment:
     AWS_ACCESS_KEY: "{{ aws_access_key }}"
     AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
-    AWS_REGION: "{{ aws_region }}"
+    # AWS_REGION: "{{ aws_region }}"
   tasks:
-      - name: Import Facts
-        import_tasks: tasks/vpc_facts.yml
-        tags: [facts, never]
+      # - name: Import Facts
+      #   import_tasks: tasks/vpc_facts.yml
+      #   tags: [facts, never]
 
       - name: Create New VPC
         ec2_vpc_net:
           cidr_block: "{{ vpc_cidr }}"
           region: "{{ aws_region }}"
           name: "{{ vpc_name }}"
-          state: present
+          state: "{{ vpc_state | default('present') }}"
           tags: "{{ vpc_tags }}"
         tags: [vpc,subnet,igw,rt]
         register: create_vpc
+        notify: Create VPC
 
       - name: "set fact: VPC ID"
         set_fact:
@@ -34,11 +34,13 @@
           tags: "{{item.value.tags | combine({ 'Name': item.key })}}"
         with_dict: "{{ vpc_subnets }}"
         register: create_vpc_subnets
+        tags: vpc,subnets
 
       - name: Get VPC Subnets IDs
         set_fact:
           vpc_subnet_ids: "{{ vpc_subnet_ids | default({}) | combine({ item.subnet.tags.Name: item.subnet.id }) }}"
         with_items: "{{ create_vpc_subnets.results }}"
+        tags: vpc,subnets
 
       - name: Create IGW
         ec2_vpc_igw:
@@ -50,16 +52,21 @@
         tags:
           - igw
 
+      - debug: var=vpc_igw_create
+
       - name: Extract VPC IGW ID
         set_fact:
           igw_id: "{{ vpc_igw_create.gateway_id }}"
 
       - name: Get Default VPC Route Table
         ec2_vpc_route_table_facts:
+          region: "{{ aws_region }}"
           filters:
             vpc-id: "{{ vpc_id }}"
         register: vpc_route_table_facts
         tags: rt
+        
+      - debug: var=vpc_route_table_facts
 
       - name: Extract Route Table IDs
         set_fact:
@@ -78,3 +85,7 @@
           tags: "{{ vpc_tags | combine(route_table.tags) }}"
         tags:
           - rt
+
+  handlers:
+    - name: Create VPC
+      debug: var=create_vpc

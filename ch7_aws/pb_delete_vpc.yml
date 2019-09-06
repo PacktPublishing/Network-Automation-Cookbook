@@ -1,5 +1,5 @@
 - name: Delete all VPC resources
-  hosts: us
+  hosts: all
   gather_facts: no
   environment:
     AWS_ACCESS_KEY: "{{ aws_access_key }}"
