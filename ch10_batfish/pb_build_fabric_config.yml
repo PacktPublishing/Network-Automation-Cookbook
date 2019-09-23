@@ -1,0 +1,12 @@
+---
+- name: Build DC Fabric Config
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars:
+    tmp_dir: tmp
+    config_dir: configs
+  roles:
+    - generate_fabric_config
+
+

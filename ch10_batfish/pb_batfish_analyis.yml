@@ -1,0 +1,86 @@
+---
+- name: Extract network device facts using Batfish and Ansible
+  hosts: all
+  connection: local
+  gather_facts: no
+  roles:
+    - batfish.base
+  vars:
+    batfish_host: 172.20.100.101
+    config_dir: configs
+    batfish_network_folder: batfish_net_snapshot
+    batfish_analysis_folder: batfish_analysis
+  tasks:
+
+  - name: Create a Batfish Config Directory
+    file: 
+      path: "{{ batfish_network_folder }}"
+      state: directory
+    run_once: yes
+
+  - name: copy All configs to Batfish Directory
+    copy:
+      src: "{{ config_dir }}"
+      dest: "{{ batfish_network_folder }}"
+    run_once: yes
+
+  - name: Setup connection to Batfish service
+    bf_session:
+      host: "{{ batfish_host }}"
+      name: local_batfish
+    run_once: yes
+    register: bf_session
+  
+  #- debug: var=bf_session
+
+  - name: Initialize the Network Snapshot
+    bf_init_snapshot:
+      network: arista_dc_fabric
+      snapshot: arista_dc_fabric_config
+      snapshot_data: "{{ batfish_network_folder }}"
+      overwrite: true
+    run_once: yes
+    register: bf_snapshot
+  
+  #- debug: var=bf_snapshot
+
+  - name: Retrieve Batfish Facts
+    bf_extract_facts:
+      output_directory: "{{ batfish_analysis_folder }}/bf_facts"
+    run_once: yes
+    register: bf_facts
+
+  # - debug: var=bf_facts.result.nodes[inventory_hostname]
+  #   run_once: yes
+  
+  - name: Validate all Interfaces are Operational and Have correct IP
+    assert:
+      that:
+        - bf_facts.result.nodes[inventory_hostname].Interfaces[item.port].Active == true
+        - bf_facts.result.nodes[inventory_hostname].Interfaces[item.port].Primary_Address == 
+          item.ip + '/' + global.p2p_prefix | string
+    loop: "{{ p2p_ip[inventory_hostname] }}"
+
+  - name: Validate BGP Sessions and Undefined References
+    bf_assert:
+      assertions:
+        - type: assert_no_undefined_references
+          name: Confirm we have no undefined references
+        - type: assert_no_incompatible_bgp_sessions
+          name: Confirm we have no incompatible BGP sessions
+    run_once: yes
+
+  - bf_assert:
+      assertions:
+        - type: assert_all_flows_succeed
+          name: confirm host is reachable for traffic received
+          parameters:
+            startLocation: "{{ item.0 }}"
+            headers:
+              dstIps: "{{ item.1.value.ip }}"
+              srcIps: "{{ lo_ip[item.0].ip }}"
+    with_nested:
+      - "{{ play_hosts }}"
+      - "{{ lo_ip | dict2items }}"
+    when: '"spine" not in item.0'
+    run_once: yes

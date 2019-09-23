@@ -1,0 +1,6 @@
+- name: "Generate Global Config Data"
+  blockinfile:
+    block: "{{ lookup('template','dc_fabric.j2') }}" 
+    path: "group_vars/all.yml"
+    create: yes
+  run_once: yes

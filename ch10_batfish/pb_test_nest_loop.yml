@@ -1,0 +1,15 @@
+---
+- name: Test Nesting Loops
+  hosts: arista
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Output
+      debug:
+        msg: "startNode {{  item.0 }} , srcIP: {{ lo_ip[item.0].ip }} , dstIP:  {{ item.1.value.ip}}"
+      with_nested:
+        - "{{ play_hosts }}"
+        - "{{ lo_ip | dict2items }}"
+      run_once: yes
+
+      

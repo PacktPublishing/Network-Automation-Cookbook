@@ -1,0 +1,43 @@
+{% set bgp_grp = 'LEAF' if 'spine' in inventory_hostname else 'SPINE' %}
+!
+route-map loopback permit 10
+   match ip address prefix-list loopback
+!
+{% if 'spine' in inventory_hostname %}
+!
+ip prefix-list loopback
+{%  for node,lo_data in lo_ip.items() | sort %}
+{%    if 'leaf' in node or inventory_hostname in node %}
+    seq {{loop.index + 10 }} permit {{lo_data.ip}}
+{%    endif %}
+{%  endfor %}
+!
+{% else %}
+!
+ip prefix-list loopback
+    seq 10 permit {{lo_ip[inventory_hostname].ip}}
+!
+{% endif %}
+!
+router bgp {{bgp_asn}}
+   router-id {{lo_ip[inventory_hostname].ip.split('/')[0]}}
+   maximum-paths 2
+   bgp bestpath tie-break router-id
+   neighbor {{ bgp_grp }} peer-group   
+   neighbor {{ bgp_grp }} description "Peer Group for All {{bgp_grp}} Nodes"
+   neighbor {{ bgp_grp }} graceful-restart-helper
+   neighbor {{ bgp_grp }} send-community standard extended
+   neighbor {{ bgp_grp }} maximum-routes 100000 warning-only
+{% for p in bgp_peers %}
+   neighbor {{ p.peer_ip}} peer-group {{ bgp_grp }}
+   neighbor {{ p.peer_ip}} remote-as {{p.remote_as}}
+{% endfor %}
+   redistribute connected route-map loopback
+   !
+{% include 'overlay_bgp.j2' ignore missing %}
+   !
+   address-family ipv4
+      neighbor {{ bgp_grp }} activate
+      neighbor {{ bgp_grp }} route-map loopback out
+    !
+!

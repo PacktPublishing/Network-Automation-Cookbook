@@ -1,0 +1,376 @@
+nodes:
+  spine01:
+    AS_Path_Access_Lists: []
+    Authentication_Key_Chains: []
+    BGP:
+      Multipath_EBGP: true
+      Multipath_IBGP: true
+      Multipath_Match_Mode: PATH_LENGTH
+      Neighbors:
+        172.31.1.1:
+          Cluster_ID: null
+          Export_Policy:
+          - loopback
+          Import_Policy: []
+          Is_Passive: false
+          Local_AS: 65100
+          Local_IP: 172.31.1.0
+          Local_Interface: null
+          Peer_Group: LEAF
+          Remote_AS: '65001'
+          Remote_IP: 172.31.1.1
+          Route_Reflector_Client: false
+          Send_Community: false
+          VRF: default
+        172.31.1.3:
+          Cluster_ID: null
+          Export_Policy:
+          - loopback
+          Import_Policy: []
+          Is_Passive: false
+          Local_AS: 65100
+          Local_IP: 172.31.1.2
+          Local_Interface: null
+          Peer_Group: LEAF
+          Remote_AS: '65002'
+          Remote_IP: 172.31.1.3
+          Route_Reflector_Client: false
+          Send_Community: false
+          VRF: default
+        172.31.1.5:
+          Cluster_ID: null
+          Export_Policy:
+          - loopback
+          Import_Policy: []
+          Is_Passive: false
+          Local_AS: 65100
+          Local_IP: 172.31.1.4
+          Local_Interface: null
+          Peer_Group: LEAF
+          Remote_AS: '65003'
+          Remote_IP: 172.31.1.5
+          Route_Reflector_Client: false
+          Send_Community: false
+          VRF: default
+        172.31.1.7:
+          Cluster_ID: null
+          Export_Policy:
+          - loopback
+          Import_Policy: []
+          Is_Passive: false
+          Local_AS: 65100
+          Local_IP: 172.31.1.6
+          Local_Interface: null
+          Peer_Group: LEAF
+          Remote_AS: '65004'
+          Remote_IP: 172.31.1.7
+          Route_Reflector_Client: false
+          Send_Community: false
+          VRF: default
+      Route_Reflector: false
+      Router_ID: 10.100.1.254
+      Tie_Breaker: ARRIVAL_ORDER
+      VRF: default
+    Community_Lists: []
+    Configuration_Format: ARISTA
+    DNS:
+      DNS_Servers: []
+      DNS_Source_Interface: null
+    Default_Cross_Zone_Action: PERMIT
+    Default_Inbound_Action: PERMIT
+    Device_Type: ROUTER
+    Domain_Name: null
+    Hostname: spine01
+    IP6_Access_Lists: []
+    IP_Access_Lists: []
+    IPsec:
+      IKE_Phase1_Keys: []
+      IKE_Phase1_Policies: []
+      IKE_Phase1_Proposals: []
+      IPsec_Peer_Configs: []
+      IPsec_Phase2_Policies: []
+      IPsec_Phase2_Proposals: []
+    Interfaces:
+      Ethernet1:
+        Access_VLAN: null
+        Active: true
+        All_Prefixes:
+        - 172.31.1.0/31
+        Allowed_VLANs: ''
+        Auto_State_VLAN: true
+        Bandwidth: 1000000000.0
+        Blacklisted: false
+        Channel_Group: null
+        Channel_Group_Members: []
+        DHCP_Relay_Addresses: []
+        Declared_Names:
+        - Ethernet1
+        Description: '"DC1 | Rpeer: leaf01 | Rport: Ethernet8"'
+        Encapsulation_VLAN: null
+        HSRP_Groups: []
+        HSRP_Version: null
+        Incoming_Filter_Name: null
+        MLAG_ID: null
+        MTU: 1500
+        Native_VLAN: null
+        Outgoing_Filter_Name: null
+        PBR_Policy_Name: null
+        Primary_Address: 172.31.1.0/31
+        Primary_Network: 172.31.1.0/31
+        Proxy_ARP: false
+        Rip_Enabled: false
+        Rip_Passive: false
+        Spanning_Tree_Portfast: false
+        Speed: 1000000000.0
+        Switchport: false
+        Switchport_Mode: NONE
+        Switchport_Trunk_Encapsulation: DOT1Q
+        VRF: default
+        VRRP_Groups: []
+        Zone_Name: null
+      Ethernet2:
+        Access_VLAN: null
+        Active: true
+        All_Prefixes:
+        - 172.31.1.2/31
+        Allowed_VLANs: ''
+        Auto_State_VLAN: true
+        Bandwidth: 1000000000.0
+        Blacklisted: false
+        Channel_Group: null
+        Channel_Group_Members: []
+        DHCP_Relay_Addresses: []
+        Declared_Names:
+        - Ethernet2
+        Description: '"DC1 | Rpeer: leaf02 | Rport: Ethernet8"'
+        Encapsulation_VLAN: null
+        HSRP_Groups: []
+        HSRP_Version: null
+        Incoming_Filter_Name: null
+        MLAG_ID: null
+        MTU: 1500
+        Native_VLAN: null
+        Outgoing_Filter_Name: null
+        PBR_Policy_Name: null
+        Primary_Address: 172.31.1.2/31
+        Primary_Network: 172.31.1.2/31
+        Proxy_ARP: false
+        Rip_Enabled: false
+        Rip_Passive: false
+        Spanning_Tree_Portfast: false
+        Speed: 1000000000.0
+        Switchport: false
+        Switchport_Mode: NONE
+        Switchport_Trunk_Encapsulation: DOT1Q
+        VRF: default
+        VRRP_Groups: []
+        Zone_Name: null
+      Ethernet3:
+        Access_VLAN: null
+        Active: true
+        All_Prefixes:
+        - 172.31.1.4/31
+        Allowed_VLANs: ''
+        Auto_State_VLAN: true
+        Bandwidth: 1000000000.0
+        Blacklisted: false
+        Channel_Group: null
+        Channel_Group_Members: []
+        DHCP_Relay_Addresses: []
+        Declared_Names:
+        - Ethernet3
+        Description: '"DC1 | Rpeer: leaf03 | Rport: Ethernet8"'
+        Encapsulation_VLAN: null
+        HSRP_Groups: []
+        HSRP_Version: null
+        Incoming_Filter_Name: null
+        MLAG_ID: null
+        MTU: 1500
+        Native_VLAN: null
+        Outgoing_Filter_Name: null
+        PBR_Policy_Name: null
+        Primary_Address: 172.31.1.4/31
+        Primary_Network: 172.31.1.4/31
+        Proxy_ARP: false
+        Rip_Enabled: false
+        Rip_Passive: false
+        Spanning_Tree_Portfast: false
+        Speed: 1000000000.0
+        Switchport: false
+        Switchport_Mode: NONE
+        Switchport_Trunk_Encapsulation: DOT1Q
+        VRF: default
+        VRRP_Groups: []
+        Zone_Name: null
+      Ethernet4:
+        Access_VLAN: null
+        Active: true
+        All_Prefixes:
+        - 172.31.1.6/31
+        Allowed_VLANs: ''
+        Auto_State_VLAN: true
+        Bandwidth: 1000000000.0
+        Blacklisted: false
+        Channel_Group: null
+        Channel_Group_Members: []
+        DHCP_Relay_Addresses: []
+        Declared_Names:
+        - Ethernet4
+        Description: '"DC1 | Rpeer: leaf04 | Rport: Ethernet8"'
+        Encapsulation_VLAN: null
+        HSRP_Groups: []
+        HSRP_Version: null
+        Incoming_Filter_Name: null
+        MLAG_ID: null
+        MTU: 1500
+        Native_VLAN: null
+        Outgoing_Filter_Name: null
+        PBR_Policy_Name: null
+        Primary_Address: 172.31.1.6/31
+        Primary_Network: 172.31.1.6/31
+        Proxy_ARP: false
+        Rip_Enabled: false
+        Rip_Passive: false
+        Spanning_Tree_Portfast: false
+        Speed: 1000000000.0
+        Switchport: false
+        Switchport_Mode: NONE
+        Switchport_Trunk_Encapsulation: DOT1Q
+        VRF: default
+        VRRP_Groups: []
+        Zone_Name: null
+      Ethernet6:
+        Access_VLAN: null
+        Active: true
+        All_Prefixes:
+        - 172.31.1.8/31
+        Allowed_VLANs: ''
+        Auto_State_VLAN: true
+        Bandwidth: 1000000000.0
+        Blacklisted: false
+        Channel_Group: null
+        Channel_Group_Members: []
+        DHCP_Relay_Addresses: []
+        Declared_Names:
+        - Ethernet6
+        Description: '"DC1 | Rpeer: spine02 | Rport: Ethernet6"'
+        Encapsulation_VLAN: null
+        HSRP_Groups: []
+        HSRP_Version: null
+        Incoming_Filter_Name: null
+        MLAG_ID: null
+        MTU: 1500
+        Native_VLAN: null
+        Outgoing_Filter_Name: null
+        PBR_Policy_Name: null
+        Primary_Address: 172.31.1.8/31
+        Primary_Network: 172.31.1.8/31
+        Proxy_ARP: false
+        Rip_Enabled: false
+        Rip_Passive: false
+        Spanning_Tree_Portfast: false
+        Speed: 1000000000.0
+        Switchport: false
+        Switchport_Mode: NONE
+        Switchport_Trunk_Encapsulation: DOT1Q
+        VRF: default
+        VRRP_Groups: []
+        Zone_Name: null
+      Loopback0:
+        Access_VLAN: null
+        Active: true
+        All_Prefixes:
+        - 10.100.1.254/32
+        Allowed_VLANs: ''
+        Auto_State_VLAN: true
+        Bandwidth: 8000000000.0
+        Blacklisted: false
+        Channel_Group: null
+        Channel_Group_Members: []
+        DHCP_Relay_Addresses: []
+        Declared_Names:
+        - Loopback0
+        Description: null
+        Encapsulation_VLAN: null
+        HSRP_Groups: []
+        HSRP_Version: null
+        Incoming_Filter_Name: null
+        MLAG_ID: null
+        MTU: 1500
+        Native_VLAN: null
+        Outgoing_Filter_Name: null
+        PBR_Policy_Name: null
+        Primary_Address: 10.100.1.254/32
+        Primary_Network: 10.100.1.254/32
+        Proxy_ARP: false
+        Rip_Enabled: false
+        Rip_Passive: false
+        Spanning_Tree_Portfast: false
+        Speed: null
+        Switchport: false
+        Switchport_Mode: NONE
+        Switchport_Trunk_Encapsulation: DOT1Q
+        VRF: default
+        VRRP_Groups: []
+        Zone_Name: null
+      Management1:
+        Access_VLAN: null
+        Active: false
+        All_Prefixes:
+        - 172.20.1.35/28
+        Allowed_VLANs: ''
+        Auto_State_VLAN: true
+        Bandwidth: 1000000000000.0
+        Blacklisted: true
+        Channel_Group: null
+        Channel_Group_Members: []
+        DHCP_Relay_Addresses: []
+        Declared_Names:
+        - Management1
+        Description: null
+        Encapsulation_VLAN: null
+        HSRP_Groups: []
+        HSRP_Version: null
+        Incoming_Filter_Name: null
+        MLAG_ID: null
+        MTU: 1500
+        Native_VLAN: null
+        Outgoing_Filter_Name: null
+        PBR_Policy_Name: null
+        Primary_Address: 172.20.1.35/28
+        Primary_Network: 172.20.1.32/28
+        Proxy_ARP: false
+        Rip_Enabled: false
+        Rip_Passive: false
+        Spanning_Tree_Portfast: false
+        Speed: null
+        Switchport: false
+        Switchport_Mode: NONE
+        Switchport_Trunk_Encapsulation: DOT1Q
+        VRF: MGMT
+        VRRP_Groups: []
+        Zone_Name: null
+    NTP:
+      NTP_Servers: []
+      NTP_Source_Interface: null
+    PBR_Policies: []
+    Route6_Filter_Lists: []
+    Route_Filter_Lists:
+    - loopback
+    Routing_Policies:
+    - loopback
+    SNMP:
+      SNMP_Source_Interface: null
+      SNMP_Trap_Servers: []
+    Syslog:
+      Logging_Servers: []
+      Logging_Source_Interface: null
+    TACACS:
+      TACACS_Servers: []
+      TACACS_Source_Interface: null
+    VRFs:
+    - MGMT
+    - default
+    Vendor_Family: CISCO
+    Zones: []
+version: batfish_v0
