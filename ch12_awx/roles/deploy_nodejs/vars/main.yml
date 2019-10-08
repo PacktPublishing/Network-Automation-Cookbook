@@ -1,0 +1,8 @@
+
+nodejs_version: 10.x
+npm_version: 6.x
+
+packages:
+  - name: nodejs
+    version: "{{ nodejs_version }}"
+  

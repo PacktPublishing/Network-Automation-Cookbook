@@ -1,0 +1,21 @@
+---
+- name: Check if awx Repo is already cloned
+  stat:
+    path: "{{ awx_repo_dir }}"
+  register: awx_repo_exists
+
+- name: Clone AWX into configured directory.
+  git:
+    repo: "{{ awx_repo }}"
+    dest: "{{ awx_repo_dir }}"
+    version: "{{ awx_version }}"
+    force: true
+    accept_hostkey: true
+  when: not awx_repo_exists.stat.exists
+
+- name: Run the Install AWX playbook
+  command: "ansible-playbook -i inventory install.yml -e 'postgres_data_dir={{ postgres_data_dir }},
+                                                          docker_compose_dir={{ docker_compose_dir }}'"
+  args:
+    chdir: "{{ awx_repo_dir }}/installer"
+    creates: "{{ awx_repo_dir }}/awx_playbook_complete"

@@ -1,0 +1,52 @@
+- name: Update APT cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 600
+  become: yes
+
+- name: Install Docker Prerequisites
+  apt:
+    name: "{{ docker_required_packages }}"
+  become: yes
+
+- name: Add Docker GPG Key
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+- name: Create correct Repo for Docker
+  shell: add-apt-repository \
+         "deb [arch=amd64] https://download.docker.com/linux/ubuntu 
+         $(lsb_release -cs)
+         stable" 
+  become: yes 
+
+- name: Update APT cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 600
+  become: yes
+
+- name: Install Docker Packages
+  apt:
+    name: "{{ docker_packages }}"
+  become: yes
+
+- name: Check if Docker Compose is Installed
+  stat:
+    path: /usr/local/bin/docker-compose
+  register: is_compose_installed
+  tags: compose
+
+
+- name: Install Docker Compose
+  shell: curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m) \
+          -o /usr/local/bin/docker-compose
+  when: not is_compose_installed.stat.exists
+  tags: compose
+  become: yes
+
+- name: Update permissions for Docker compose
+  file:
+    path: /usr/local/bin/docker-compose
+    mode: u+x,g+x,o+x
+  tags: compose
+  become: yes

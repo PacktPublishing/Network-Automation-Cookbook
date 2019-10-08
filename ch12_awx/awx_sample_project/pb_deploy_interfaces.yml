@@ -1,0 +1,17 @@
+---
+- name: get facts
+  hosts: iosxr
+  gather_facts: no
+  tasks:
+    - name: Enable Interface
+      iosxr_interface:
+        name: "{{ item.port }}"
+        enabled: yes
+      loop: "{{ p2p_ip[inventory_hostname] }}"
+
+    - name: Configure IP address
+      iosxr_config:
+        lines:
+          - ipv4 address {{ item.ip | ipaddr('address') }} {{item.ip | ipaddr('netmask') }}
+        parents: interface {{ item.port }}
+      loop: "{{ p2p_ip[inventory_hostname] }}"

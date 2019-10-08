@@ -1,0 +1,19 @@
+---
+- name: get facts
+  hosts: iosxr
+  gather_facts: no
+  tasks:
+    - iosxr_facts:
+      tags: collect_facts
+
+    - name: Validate all Interfaces are Operational
+      assert:
+        that:
+          - ansible_net_interfaces[item.port].operstatus == 'up'
+      loop: "{{ p2p_ip[inventory_hostname] }}"
+
+    - name: Validate all Interfaces with Correct IP
+      assert:
+        that:
+          - ansible_net_interfaces[item.port].ipv4.address == item.ip.split('/')[0]
+      loop: "{{ p2p_ip[inventory_hostname] }}"

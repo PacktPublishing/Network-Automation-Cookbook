@@ -1,0 +1,12 @@
+---
+- name: Install Python PIP System Package
+  package:
+    name: "{{ pip_package }}"
+    state: present
+  become: yes
+
+- name: Install Python packages
+  pip:
+    name: "{{ item }}"
+  loop: "{{ python_packages }}"
+  #become: yes
