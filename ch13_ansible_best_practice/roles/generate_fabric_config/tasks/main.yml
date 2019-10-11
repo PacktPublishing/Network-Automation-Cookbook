@@ -1,0 +1,56 @@
+---
+# tasks file for generate_fabric_config
+
+# - name: "Remove Old Assembled Config"
+#   file: 
+#     path: "{{tmp_dir}}/{{ inventory_hostname }}"
+#     state: absent
+
+- name: "Create Temp directory"
+  file: 
+    path: "{{tmp_dir}}/{{ inventory_hostname }}"
+    state: directory
+
+- name: "Generate System Configuration"
+  template:
+    src: "mgmt.j2"
+    dest: "{{tmp_dir}}/{{ inventory_hostname }}/00_mgmt.cfg"
+
+- name: "Generate Interface Configuration"
+  template:
+    src: "intf.j2"
+    dest: "{{tmp_dir}}/{{ inventory_hostname }}/01_intf.cfg"
+
+- name: "Generate Underlay BGP Configuration"
+  template:
+    src: "underlay_bgp.j2"
+    dest: "{{tmp_dir}}/{{ inventory_hostname }}/03_bgp.cfg"
+
+# - name: "Generate Overlay BGP EVPN Configuration"
+#   template:
+#     src: "overlay_bgp.j2"
+#     dest: "{{tmp_dir}}/{{ inventory_hostname }}/04_evpn.cfg"
+
+# - name: "Generate VLAN/VXLAN Configuration"
+#   template:
+#     src: "vxlan.j2"
+#     dest: "{{tmp_dir}}/{{ inventory_hostname }}/02_vxlan.cfg"
+#   when: inventory_hostname in access_interfaces.keys()
+#   tags: vxlan
+
+- name: "Create Config directory"
+  file: 
+    path: "{{config_dir}}"
+    state: directory
+  run_once: yes
+
+- name: "Assemble config"
+  assemble:
+    src: "{{tmp_dir}}/{{ inventory_hostname }}"
+    dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+
+- name: "Remove Temp Directory"
+  file: 
+    path: "{{tmp_dir}}"
+    state: absent
+  run_once: yes
