@@ -1,0 +1,12 @@
+- name: "Generate Global Config Data"
+  blockinfile:
+    block: "{{ lookup('template','infra.j2') }}"
+    path: "group_vars/all.yml"
+  run_once: yes
+
+# - name: "Generate Host Specifc BGP Data"
+#   blockinfile:
+#     block: "{{ lookup('template','model/bgp.j2') }}"
+#     path: "host_vars/{{ inventory_hostname }}/bgp.yml"
+#     create: yes
+#   tags: bgp

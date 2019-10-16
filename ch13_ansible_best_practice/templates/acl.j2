@@ -1,0 +1,8 @@
+{% for filter in ACLs %}
+!
+ipv4 access-list {{ filter }}
+{%  for line in ACLs[filter] %}
+ {{ loop.index * 10 }} permit {{ line.app | default('tcp') }} {{ line.src }} {{ line.dst }} eq {{ line.dport }}
+{%  endfor %}
+!
+{% endfor %}

@@ -1,0 +1,17 @@
+---
+- include_vars: ACLs.yml
+
+- name: Validate ACL is Defined
+  assert:
+    that: 
+      - ACLs is defined
+      - "'INFRA_ACL' in ACLs.keys()"
+      - ACLs.INFRA_ACL|length > 0
+
+- name: Validate Rules are Valid
+  assert:
+    that:
+      - item.src is defined
+      - item.dst is defined
+      - item.src | ipaddr
+  loop: "{{ ACLs.INFRA_ACL }}"

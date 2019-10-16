@@ -1,0 +1,32 @@
+---
+- name: Configure ACL on IOS-XR
+  hosts: all
+  tags: build
+  vars_files:
+    - ACLs.yml
+  tasks:
+    - name: Validate Input Data
+      import_tasks: validate_acls.yml
+      delegate_to: localhost
+      tags: validate
+
+    - name: Create ACL Config
+      template:
+        src: acl.j2
+        dest: acl_conf.cfg
+      delegate_to: localhost
+
+
+- name: Configure ACL on IOS-XR
+  hosts: all
+  serial: 1
+  tags: deploy
+  tasks:
+    - name: Backup Config
+      iosxr_config:
+        backup:
+          
+    - name: Deploy ACLs
+      iosxr_config:
+        src: acl_conf.cfg
+        match: line

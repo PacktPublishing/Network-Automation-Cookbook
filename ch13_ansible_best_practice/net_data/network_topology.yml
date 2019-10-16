@@ -1,0 +1,28 @@
+core:
+  syd-core01:
+    GigabitEthernet0/0/0/0: {peer: syd-core02, pport: GigabitEthernet0/0/0/0, link_id: 1, prefix_id: 1}
+    GigabitEthernet0/0/0/1: {peer: den-core01, pport: GigabitEthernet0/0/0/1, link_id: 2, prefix_id: 1}
+  syd-core02:
+    GigabitEthernet0/0/0/0: {peer: syd-core01, pport: GigabitEthernet0/0/0/0, link_id: 1, prefix_id: 2}
+    GigabitEthernet0/0/0/1: {peer: str-core01, pport: GigabitEthernet0/0/0/1, link_id: 3, prefix_id: 1}
+  str-core01:
+    GigabitEthernet0/0/0/0: {peer: str-core02, pport: GigabitEthernet0/0/0/0, link_id: 4, prefix_id: 1}
+    GigabitEthernet0/0/0/1: {peer: syd-core02, pport: GigabitEthernet0/0/0/1, link_id: 3, prefix_id: 2}
+  str-core02:
+    GigabitEthernet0/0/0/0: {peer: str-core01, pport: GigabitEthernet0/0/0/0, link_id: 4, prefix_id: 2}
+    GigabitEthernet0/0/0/1: {peer: den-core02, pport: GigabitEthernet0/0/0/1, link_id: 6, prefix_id: 1}
+  den-core01:
+    GigabitEthernet0/0/0/0: {peer: den-core02, pport: GigabitEthernet0/0/0/0, link_id: 5, prefix_id: 1}
+    GigabitEthernet0/0/0/1: {peer: syd-core01, pport: GigabitEthernet0/0/0/1, link_id: 2, prefix_id: 2}
+  den-core02:
+    GigabitEthernet0/0/0/0: {peer: den-core01, pport: GigabitEthernet0/0/0/0, link_id: 5, prefix_id: 2}
+    GigabitEthernet0/0/0/1: {peer: str-core02, pport: GigabitEthernet0/0/0/1, link_id: 6, prefix_id: 2}
+
+mgmt_net:
+   syd-core01: MgmtEth0/RP0/CPU0/0
+   syd-core02: MgmtEth0/RP0/CPU0/0 
+   den-core01: MgmtEth0/0/CPU0/0 
+   den-core02: MgmtEth0/0/CPU0/0 
+   str-core01: MgmtEth0/0/CPU0/0 
+   str-core02: MgmtEth0/0/CPU0/0 
+

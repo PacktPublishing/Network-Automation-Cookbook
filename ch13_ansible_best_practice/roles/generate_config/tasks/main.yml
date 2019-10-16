@@ -1,0 +1,33 @@
+---
+- name: Create Temp Directory
+  file: path={{tmp_dir}}/{{ inventory_hostname }} state=directory
+
+# - name: SYS >> Create Temp Directory per Node
+#   file: path={{tmp_dir}} state=directory
+#   run_once: yes
+  
+- name: "Generate System Configuration"
+  template:
+    src: "{{ansible_network_os}}/mgmt.j2"
+    dest: "{{tmp_dir}}/{{ inventory_hostname }}/00_mgmt.cfg"
+
+- name: "Interface Configuration"
+  template:
+    src: "{{ansible_network_os}}/intf.j2"
+    dest: "{{tmp_dir}}/{{ inventory_hostname }}/01_intf.cfg"
+
+- name: "OSPF Configuration"
+  template:
+    src: "{{ansible_network_os}}/ospf.j2"
+    dest: "{{tmp_dir}}/{{ inventory_hostname }}/02_ospf.cfg"
+
+- name: "MPLS Configuration"
+  template:
+    src: "{{ansible_network_os}}/mpls.j2"
+    dest: "{{tmp_dir}}/{{ inventory_hostname }}/03_mpls.cfg"
+
+# - name: "BGP Configuration"
+#   template:
+#     src: "{{ansible_network_os}}/bgp.j2"
+#     dest: "{{tmp_dir}}/{{ inventory_hostname }}/04_bgp.cfg"
+

@@ -1,0 +1,19 @@
+---
+  - name: Test Custom Filter
+    hosts: all
+    vars:
+      ansible_connection: local
+    tasks:
+      - name: Read ACL data
+        include_vars: ACLs.yml
+        run_once: yes
+
+      - name: Apply Our Custom Filter
+        set_fact:
+          standard_acl: "{{ ACLs | acl_state }}"
+          final_acl: "{{ ACLs | custom_acl('dports') }}"
+        run_once: yes
+
+      - name: Display Output After Filter
+        debug: var=final_acl
+

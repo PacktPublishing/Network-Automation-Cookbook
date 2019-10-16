@@ -1,7 +1,0 @@
----
-# tasks file for generate_underlay_bgp
-- name: "Generate BGP Specific Data"
-  blockinfile:
-    block: "{{ lookup('template','bgp.j2') }}" 
-    path: "host_vars/{{ inventory_hostname }}/underlay_bgp.yml"
-    create: yes

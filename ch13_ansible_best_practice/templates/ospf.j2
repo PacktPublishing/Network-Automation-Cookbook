@@ -1,0 +1,15 @@
+!
+router ospf {{ common.OSPF_PID }}
+ router-id {{lo_ip[inventory_hostname].split('/')[0]}}
+ address-family ipv4 unicast
+ area {{ common.OSPF_AREA }}
+  interface Loopback0
+   passive enable
+  !
+{% for intf in p2p_ip[inventory_hostname] | sort(attribute='port') %}
+  interface {{intf.port.split('.')[0]}}
+   cost {{intf.cost | default(100)}}
+   network point-to-point
+  !
+{% endfor %}
+ !

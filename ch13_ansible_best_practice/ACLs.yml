@@ -1,0 +1,16 @@
+ACLs:
+  INFRA_ACL:
+    - src: 10.1.1.0/24
+      dst: any
+      dport: ssh
+      state: present
+    - src: 10.2.1.0/24
+      dst: any
+      app: udp
+      dport: snmp
+      state: present
+    - src: 10.3.2.0/24
+      dst: 10.2.2.0/24
+      dport: dns
+      app: udp
+      state: present

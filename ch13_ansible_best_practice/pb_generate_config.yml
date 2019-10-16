@@ -1,0 +1,64 @@
+---
+- name: Generate Device Config
+  hosts: all
+  gather_facts: no
+  vars:
+    ansible_connection: local
+  roles:
+    - generate_config
+
+  post_tasks:
+    - name: Create Configs Folder
+      file: 
+        path: "{{config_dir}}"
+        state: directory
+      run_once: yes
+
+    - name: Remove Old Assembled Config
+      file: 
+        path: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+        state: absent
+
+    - name: Assemble The Final configuration
+      assemble:
+        src: "{{tmp_dir}}/{{ inventory_hostname }}"
+        dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+
+    - name: Remove Temp Folder
+      file: path={{tmp_dir}}  state=absent
+      run_once: yes
+
+    # - debug: msg={{config_dir}}/{{ inventory_hostname }}.cfg
+    #   tags: configs
+    # - debug:
+    #     msg: "{{ lookup('template','{{config_dir}}/{{ inventory_hostname }}.cfg') }}"
+    #   tags: configs
+
+    # - name: Push interface config
+    #   iosxr_config:
+    #     src: "{{tmp_dir}}/{{ inventory_hostname }}/00_mgmt.cfg"
+    #   register: conf
+    #   tags: config
+    # - debug: var=conf
+    #   tags: config
+
+#    - name: Push Config to Devices
+#      iosxr_config:
+#        src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+#        replace: config
+#        timeout: 60
+#        match: none
+#      vars:
+#        ansible_command_timeout: 60
+#      tags: configs
+#
+    # - name: "P1T5: Deploy Configuration"
+    #   napalm_install_config:
+    #     hostname: "{{ ansible_host }}"
+    #     username: "{{ ansible_user }}"
+    #     password: "{{ ansible_ssh_pass }}"
+    #     dev_os: "{{ ansible_network_os }}"
+    #     config_file: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+    #     commit_changes: "{{commit | default('yes')}}"
+    #     replace_config: yes
+    #   tags: configs

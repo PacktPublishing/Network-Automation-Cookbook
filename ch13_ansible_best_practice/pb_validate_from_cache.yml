@@ -1,0 +1,16 @@
+---
+- name: Validate Cache Data
+  vars:
+    ansible_connection: local
+  hosts: all
+  tasks:
+    - name: Validate all Interfaces
+      assert:
+        that:
+          - item.value.operstatus == 'up'
+      with_dict: "{{ ansible_net_interfaces }}"
+    - name: Validate Custom Fact
+      assert:
+        that:
+          - site == 'Egypt'
+      

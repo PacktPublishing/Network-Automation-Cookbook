@@ -1,0 +1,28 @@
+---
+- name: Build Folder Structure
+  hosts: all
+  gather_facts: no
+  vars:
+    ansible_connection: local
+  vars_files:
+      - net_data/network_topology.yml
+  pre_tasks:
+    - name: SYS >> Read Common Parameters File
+      set_fact:
+        common: "{{ lookup('file','net_data/common.yml') | from_yaml }}"
+      run_once: yes
+
+    - name: SYS >> Create group_vars Folder
+      file: path=group_vars state=directory
+      run_once: yes
+
+    - name: SYS >> Create host_vars Folder
+      file: path=host_vars state=directory
+      run_once: yes
+
+    - name: SYS >> Create host Folders in host_vars
+      file: path=host_vars/{{ inventory_hostname }} state=directory
+      delegate_to: localhost
+
+  roles:
+    - build_datamodel

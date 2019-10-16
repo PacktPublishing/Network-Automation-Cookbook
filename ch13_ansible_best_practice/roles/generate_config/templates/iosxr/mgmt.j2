@@ -1,0 +1,32 @@
+!
+hostname {{inventory_hostname}}
+telnet vrf default ipv4 server max-servers 100
+!
+{% for user in common.USERS if user.passwd is defined %}
+username {{user.username}}
+ group sysadmin
+ group root-lr
+ group cisco-support
+ password 7 {{user.passwd}}
+{% endfor %}
+!
+interface {{mgmt_net[inventory_hostname].intf}}
+ ipv4 address {{mgmt_net[inventory_hostname].ip| ipaddr('address')}} {{mgmt_net[inventory_hostname].ip| ipaddr('netmask')}}
+!
+router static
+ address-family ipv4 unicast
+{%  for route in common.MGMT_PREFIXES %}
+  {{route}} {{common.MGMT_GW}}
+{% endfor %}
+ !
+!
+xml agent tty
+ iteration off
+!
+xml agent
+!
+ssh server v2
+ssh server vrf default
+ssh server logging
+ssh server rate-limit 600
+!

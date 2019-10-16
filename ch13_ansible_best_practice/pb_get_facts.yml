@@ -1,0 +1,22 @@
+---
+- name: get facts
+  hosts: all
+  tasks:
+    - name: Collect Facts Using Built-in Fact
+      iosxr_facts:
+        gather_subset:
+          - interfaces
+
+    - name: Collect Using NAPALM Facts
+      napalm_get_facts:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        dev_os: "{{ ansible_network_os }}"
+        filter:
+          - interfaces
+
+    - name: Set and Cache Custom Fact
+      set_fact:
+          site: Egypt
+          cacheable: yes

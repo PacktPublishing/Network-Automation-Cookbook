@@ -1,16 +1,23 @@
-[leaf]
-leaf01    ansible_host=172.20.1.41
-leaf02    ansible_host=172.20.1.42
-leaf03    ansible_host=172.20.1.43
-leaf04    ansible_host=172.20.1.44
+[core]
+syd-core01    ansible_host=172.20.2.2
+syd-core02    ansible_host=172.20.2.3
+den-core01    ansible_host=172.20.2.4
+den-core02    ansible_host=172.20.2.5
+str-core01    ansible_host=172.20.2.6
+str-core02    ansible_host=172.20.2.7
 
-[spine]
-spine01     ansible_host=172.20.1.35
-spine02     ansible_host=172.20.1.36
+[syd]
+syd-core01
+syd-core02
+[den]
+den-core01
+den-core02
+[str]
+str-core01
+str-core02
 
-[arista:children]
-leaf     
-spine
+[iosxr:children]
+core
 
 
 

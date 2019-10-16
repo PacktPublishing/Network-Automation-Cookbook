@@ -1,0 +1,32 @@
+common: 
+{{ common | to_nice_yaml| indent(2,true) }}
+
+p2p_ip:
+{% for node, links in core.items()|sort %}
+  {{ node }}:
+{%      for port,portinfo in links.items()|sort %}
+{%          set link_id = links[port].link_id %}
+{%          set network = common.CORE_SUBNET | ipsubnet (common.P2P_PREFIX, link_id - 1) %}
+{%          set prefix_id = links[port].prefix_id %}
+{%          set peer_id = 2 if prefix_id == 1 else 1 %}
+{%          if common.P2P_PREFIX == 31 %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id - 1)| ipaddr('address') + '/' + common.P2P_PREFIX|string}} , peer: {{links[port].peer}}, pport: {{ links[port].pport }}, peer_ip: {{network | ipv4(peer_id - 1)| ipaddr('address') + '/' + common.P2P_PREFIX|string}}}
+{%          else %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id)| ipaddr('address') + '/' + common.P2P_PREFIX|string}} , peer: {{links[port].peer}}, pport: {{ links[port].pport }}, peer_ip: {{network | ipv4(peer_id)| ipaddr('address') + '/' + common.P2P_PREFIX|string}}}
+{%          endif %}
+{%      endfor %}
+{% endfor %}
+
+lo_ip:
+{%  for host in play_hosts|sort %}
+{#{%    set hst_id = host[-2:]|int if 'pe' in host else (255 - host[-2:]|int) %}#}
+  {{ host }}: {{ common.LOOPBACK_SUBNET | ipv4(loop.index) | ipaddr('address') + '/32' }}
+{%  endfor %}
+
+mgmt_net:
+{% for host in play_hosts|sort %}
+  {{ host}} : { intf: {{ mgmt_net[host]}}, ip: {{ hostvars[host].ansible_host  + '/' + common.MGMT_SUBNET.split('/')[1]|string }} }
+{% endfor %}
+
+{#bgp_topo:
+{{ bgp_topo | to_nice_yaml | indent(2,true) }}#}
