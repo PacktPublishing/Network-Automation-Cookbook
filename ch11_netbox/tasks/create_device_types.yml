@@ -1,0 +1,34 @@
+- name: NetBox Device  // Get Existing Device Types
+  uri:
+    url: "{{ netbox_url }}/api/dcim/device-types/?model={{ item.type | lower}}" 
+    method: GET
+    headers:
+      Authorization: "Token {{ netbox_token }}"
+      Accept: 'application/json'
+    return_content: yes
+    body_format: json
+    # body:
+    #   model: "{{ item.type }}"
+    status_code: [200, 201]
+  register: netbox_device_types
+  run_once: yes
+  tags: device_types
+
+- name: NetBox Device  // Create New Device Types
+  uri:
+    url: "{{ netbox_url }}/api/dcim/device-types/"
+    method: POST
+    headers:
+      Authorization: "Token {{ netbox_token }}"
+      Accept: 'application/json'
+    return_content: yes
+    body_format: json
+    body:
+      model: "{{ item.type }}"
+      manufacturer: { name: "{{ item.vendor }}"}
+      slug: "{{ item.type | regex_replace('-','_') | lower  }}"
+    status_code: [200, 201]
+  when: netbox_device_types.json.count == 0
+  register: netbox_device_types
+  run_once: yes
+  tags: device_types

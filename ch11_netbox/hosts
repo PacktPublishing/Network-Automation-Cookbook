@@ -1,0 +1,22 @@
+[dc1]
+dc1-spine01     ansible_host=172.20.1.41
+dc1-spine02     ansible_host=172.20.1.42
+dc1-leaf01      ansible_host=172.20.1.35
+dc1-leaf02      ansible_host=172.20.1.36
+
+[dc2]
+dc2-spine01     ansible_host=172.20.2.41
+dc2-spine02     ansible_host=172.20.2.42
+dc2-leaf01      ansible_host=172.20.2.35
+dc2-leaf02      ansible_host=172.20.2.36
+
+[leaf]
+dc[1:2]-leaf0[1:2]
+
+[spine]
+dc[1:2]-spine0[1:2]
+
+
+
+
+

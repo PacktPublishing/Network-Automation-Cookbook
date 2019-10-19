@@ -1,0 +1,75 @@
+global:
+    p2p_prefix: 31
+    mgmt_prefix: 28
+    mgmt_gw: 172.20.1.33
+    bgp_asn: 65000
+    mgmt_vrf: MGMT
+    users:
+      - name: ansible
+        privilege: 15
+        role: network-admin
+        password: ansible123
+    mgmt_prefixes:
+      - 10.8.0.0/24
+      - 172.20.1.0/24
+      - 192.168.0.0/24
+
+subnets:
+    - prefix: 172.10.1.0/24
+      site: dc1
+      role: p2p_subnet
+    - prefix: 172.11.1.0/24
+      site: dc2
+      role: p2p_subnet
+    - prefix: 10.100.1.0/24
+      site: dc1
+      role: loopback_subnet
+    - prefix: 10.100.2.0/24
+      site: dc2
+      role: loopback_subnet
+    - prefix: 172.20.1.0/24
+      site: dc1
+      role: oob_mgmt_subnet
+    - prefix: 172.20.2.0/24
+      site: dc2
+      role: oob_mgmt_subnet
+
+fabric:
+  dc1-spine01:
+    Ethernet1: {peer: dc1-leaf01, pport: Ethernet8, link_id: 1, prefix_id: 1}
+    Ethernet2: {peer: dc1-leaf02, pport: Ethernet8, link_id: 2, prefix_id: 1}
+    Ethernet6: {peer: dc1-spine02, pport: Ethernet6, link_id: 5, prefix_id: 1}
+  dc1-spine02:
+    Ethernet1: {peer: dc1-leaf01, pport: Ethernet9, link_id: 3, prefix_id: 1}
+    Ethernet2: {peer: dc1-leaf02, pport: Ethernet9, link_id: 4, prefix_id: 1}
+    Ethernet6: {peer: dc1-spine01, pport: Ethernet6, link_id: 5, prefix_id: 2}
+  dc1-leaf01:
+    Ethernet8: {peer: dc1-spine01, pport: Ethernet1, link_id: 1, prefix_id: 2}
+    Ethernet9: {peer: dc1-spine02, pport: Ethernet1, link_id: 3, prefix_id: 2}
+  dc1-leaf02:
+    Ethernet8: {peer: dc1-spine01, pport: Ethernet2, link_id: 2, prefix_id: 2}
+    Ethernet9: {peer: dc1-spine02, pport: Ethernet2, link_id: 4, prefix_id: 2}
+  dc2-spine01:
+    Ethernet1: {peer: dc2-leaf01, pport: Ethernet8, link_id: 1, prefix_id: 1}
+    Ethernet2: {peer: dc2-leaf02, pport: Ethernet8, link_id: 2, prefix_id: 1}
+    Ethernet6: {peer: dc2-spine02, pport: Ethernet6, link_id: 5, prefix_id: 1}
+  dc2-spine02:
+    Ethernet1: {peer: dc2-leaf01, pport: Ethernet9, link_id: 3, prefix_id: 1}
+    Ethernet2: {peer: dc2-leaf02, pport: Ethernet9, link_id: 4, prefix_id: 1}
+    Ethernet6: {peer: dc2-spine01, pport: Ethernet6, link_id: 5, prefix_id: 2}
+  dc2-leaf01:
+    Ethernet8: {peer: dc2-spine01, pport: Ethernet1, link_id: 1, prefix_id: 2}
+    Ethernet9: {peer: dc2-spine02, pport: Ethernet1, link_id: 3, prefix_id: 2}
+  dc2-leaf02:
+    Ethernet8: {peer: dc2-spine01, pport: Ethernet2, link_id: 2, prefix_id: 2}
+    Ethernet9: {peer: dc2-spine02, pport: Ethernet2, link_id: 4, prefix_id: 2}
+
+mgmt_net:
+  dc1-leaf01: Management1
+  dc1-leaf02: Management1
+  dc1-spine01: Management1
+  dc1-spine02: Management1
+  dc2-leaf01: Management1
+  dc2-leaf02: Management1
+  dc2-spine01: Management1
+  dc2-spine02: Management1

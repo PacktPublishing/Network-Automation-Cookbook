@@ -1,0 +1,11 @@
+---
+- name: Create group_vars Folder
+  file: path=group_vars state=directory
+  run_once: yes
+
+- name: Create host_vars Folder
+  file: path=host_vars state=directory
+  run_once: yes
+
+- name: Create Per Host Folder
+  file: path=host_vars/{{ inventory_hostname }} state=directory

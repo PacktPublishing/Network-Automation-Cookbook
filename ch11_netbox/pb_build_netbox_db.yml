@@ -1,0 +1,150 @@
+---
+- name: Populate NetBox DataBase
+  connection: local
+  hosts: all
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /Users/kokasha/Documents/ansible_projects/.venv/bin/python
+  tasks:
+    - name: New Fact // Create Sites List
+      set_fact: sites={{ sites | default([]) +  [item.key] }}
+      with_dict: "{{ groups }}"
+      when: "'dc' in item.key"
+      run_once: yes
+
+    - name: Create NetBox Device Vendors
+      include_tasks: tasks/create_device_vendors.yml
+      loop: "{{ devices | map(attribute='vendor') | list | unique}}"
+      run_once: yes
+      tags: device_vendors
+
+    - name: Create NetBox Device Types
+      include_tasks: tasks/create_device_types.yml
+      loop: "{{ devices }}"
+      run_once: yes
+      tags: device_types
+
+    - name: Create NetBox Device Roles
+      include_tasks: tasks/create_device_roles.yml
+      loop: "{{ devices }}"
+      run_once: yes
+      tags: device_roles
+
+    - name: Netbox Devices // Create all Devices
+      netbox_device:
+        data:
+          name: "{{ inventory_hostname }}"
+          device_role: "{{ device_role }}"
+          device_type: "{{ device_model }}"
+          state: Active
+          site: "{{ group_names | intersect(sites) | first }}"
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        state: present
+
+    - name: Create Fabric Interfaces on Devices
+      netbox_interface:
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        data:
+          device: "{{ inventory_hostname }}"
+          name: "{{ item.port }}"
+          enabled: true
+          form_factor: 1000Base-t (1GE)
+          mgmt_only: false
+          mode: Access
+        state: present
+      loop: "{{ p2p_ip[inventory_hostname] }}"
+      tags: netbox_intfs
+      
+    - name: Create Managment Interfaces on Devices
+      netbox_interface:
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        data:
+          device: "{{ inventory_hostname }}"
+          description: "Managment Interface"
+          name: "{{ item.value }}"
+          enabled: true
+          form_factor: 1000Base-t (1GE)
+          mgmt_only: true
+          mode: Access
+        state: present
+      loop: "{{ mgmt_net[inventory_hostname] | dict2items | 
+                selectattr('key','equalto','port') | list }}"
+      tags: netbox_mgmt_intfs
+
+    - name: Create Loopback Interfaces on Devices
+      netbox_interface:
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        data:
+          device: "{{ inventory_hostname }}"
+          description: "Loopback Interface"
+          name: "Loopback0"
+          enabled: true
+          # form_factor: 1000Base-t (1GE)
+          mgmt_only: false
+          mode: Access
+        state: present
+      tags: netbox_lo_intfs
+
+    - name: Create IP Prefixes
+      netbox_prefix:
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        data:
+          # family: 4
+          prefix: "{{ item.prefix }}"
+          # role: "{{ item.role }}"
+          site: "{{ item.site }}"
+          status: Active
+        state: present
+        validate_certs: no
+      loop: "{{ subnets }}"
+      loop_control:
+        label: "{{ item.prefix }}"
+      run_once: yes        
+      tags: netbox_prefix
+
+    - name: Create Fabric IPs
+      netbox_ip_address:
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        data:
+          address: "{{ item.ip }}"
+          interface:
+            name: "{{ item.port }}"
+            device: "{{ inventory_hostname }}"
+        state: present
+      loop: "{{ p2p_ip[inventory_hostname] }}"
+      tags: netbox_ip
+
+    - name: Create Loopback IPs
+      netbox_ip_address:
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        data:
+          address: "{{ item.key.ip }}"
+          interface:
+            name: "Loopback0"
+            device: "{{ inventory_hostname }}"
+        state: present
+      with_dict: "{{ lo_ip[inventory_hostname] | dict2items  }}"
+      tags: netbox_lo_ip
+
+    - name: Create Managment IPs
+      netbox_ip_address:
+        netbox_token: "{{ netbox_token }}"
+        netbox_url: "{{ netbox_url }}"
+        data:
+          address: "{{ item.value.ip }}"
+          interface:
+            name: "{{ item.value.port }}"
+            device: "{{ inventory_hostname }}"
+        state: present
+      with_dict: "{{ mgmt_net[inventory_hostname] }}"
+      tags: netbox_ip
+    - debug: msg={{ item }}
+      loop: "{{ lo_ip[inventory_hostname] | dict2items }}"
+      tags: debug

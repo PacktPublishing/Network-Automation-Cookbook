@@ -1,0 +1,31 @@
+- name: NetBox Device  // Get Existing Vendors
+  uri:
+    url: "{{ netbox_url }}/api/dcim/manufacturers/?name={{ item }}"
+    method: GET
+    headers:
+      Authorization: "Token {{ netbox_token }}"
+      Accept: 'application/json'
+    return_content: yes
+    body_format: json
+    # body:
+    #   name: "{{ item }}"
+    status_code: [200, 201]
+  register: netbox_vendors
+  run_once: yes
+
+- name: NetBox Device  // Create Device Vendors
+  uri:
+    url: "{{ netbox_url }}/api/dcim/manufacturers/"
+    method: POST
+    headers:
+      Authorization: "Token {{ netbox_token }}"
+      Accept: 'application/json'
+    return_content: yes
+    body_format: json
+    body:
+      name: "{{ item }}"
+      slug: "{{ item | lower }}"
+    status_code: [200, 201]
+  when: netbox_vendors.json.count == 0
+  register: netbox_devices
+  run_once: yes

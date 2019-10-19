@@ -1,0 +1,37 @@
+global: 
+{{ global | to_nice_yaml| indent(2,true) }}
+
+subnets:
+{{ subnets | to_nice_yaml | indent(2,true) }}
+
+p2p_ip:
+{% for node, links in fabric.items()|sort %}
+  {{ node }}:
+{%      for port,portinfo in links.items()|sort %}
+{%          set link_id = links[port].link_id %}
+{%          set site = node.split('-')[0] %}
+{%          set p2p_subnets = subnets|selectattr('role','equalto','p2p_subnet') | list %}
+{%          set fabric_subnet = p2p_subnets|selectattr('site','equalto',site) | list | first %}
+{%          set network = fabric_subnet.prefix | ipsubnet (global.p2p_prefix, link_id - 1) %}
+{%          set prefix_id = links[port].prefix_id %}
+{%          set peer_id = 2 if prefix_id == 1 else 1 %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id - 1)| ipaddr('address')}}/{{global.p2p_prefix}} , peer: {{links[port].peer}}, pport: {{ links[port].pport }}, peer_ip: {{network | ipv4(peer_id - 1)| ipaddr('address')}}/{{global.p2p_prefix}}}
+{%          else %}
+    - {port: {{ port }}, ip: {{network | ipv4(prefix_id)| ipaddr('address')}}/{{global.p2p_prefix}} , peer: {{links[port].peer}}, pport: {{ links[port].pport }}, peer_ip: {{network | ipv4(peer_id)| ipaddr('address')}}/{{global.p2p_prefix}}}
+{%      endfor %}
+{% endfor %}
+
+lo_ip:
+{%  for host in play_hosts|sort %}
+{%    set site = host.split('-')[0] %}
+{%    set lo_subnet = subnets|selectattr('role','equalto','loopback_subnet') | list %}
+{%    set site_lo_subnet = lo_subnet|selectattr('site','equalto',site) | list | first %}
+{%    set hst_id = host[-2:]|int if 'leaf' in host else (255 - host[-2:]|int) %}
+  {{ host }}: { ip: {{ site_lo_subnet.prefix | ipv4(hst_id) | ipaddr('address') + '/32' }}, state: up }
+{%  endfor %}
+
+mgmt_net:
+{% for host in play_hosts|sort %}
+   {{ host }}: { port: {{ mgmt_net[host] }} , ip: {{ hostvars[host].ansible_host }}/{{ global.mgmt_prefix }} } 
+{% endfor %}
+

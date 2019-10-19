@@ -1,0 +1,12 @@
+---
+sites:
+  - name: Equinix
+    Description: Equinix Data Center in Sydney
+  - name: GlobalSwitch
+    Description: GlobalSwitch Data Center in Munich
+
+device_types:
+  - name: Spine
+    model: Juniper QFX1002
+  - name: Leaf
+    model: 

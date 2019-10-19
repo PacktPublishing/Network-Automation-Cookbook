@@ -1,0 +1,5 @@
+---
+# tasks file for generate_fabric_ips
+- import_tasks: build_dir.yml
+
+- import_tasks: create_ip_data.yml
