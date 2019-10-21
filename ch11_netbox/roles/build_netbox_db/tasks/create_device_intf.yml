@@ -1,0 +1,50 @@
+---
+- name: Create Fabric Interfaces on Devices
+  netbox_interface:
+    netbox_token: "{{ netbox_token }}"
+    netbox_url: "{{ netbox_url }}"
+    data:
+      device: "{{ inventory_hostname }}"
+      name: "{{ item.port }}"
+      description: "{{ item.type | default('CORE') }} | {{ item.peer }}| {{ item.pport }}"
+      enabled: true
+      form_factor: 1000Base-t (1GE)
+      mgmt_only: false
+      mode: Access
+    state: "{{ netbox_state }}"
+  loop: "{{ p2p_ip[inventory_hostname] }}"
+  when: p2p_ip is defined
+  tags: netbox_intfs
+  
+- name: Create Managment Interfaces on Devices
+  netbox_interface:
+    netbox_token: "{{ netbox_token }}"
+    netbox_url: "{{ netbox_url }}"
+    data:
+      device: "{{ inventory_hostname }}"
+      name: "{{ item.value }}"
+      description: "{{'Managment Interface ' +  inventory_hostname }}"
+      enabled: true
+      form_factor: 1000Base-t (1GE)
+      mgmt_only: true
+      mode: Access
+    state: "{{ netbox_state }}"
+  loop: "{{ mgmt_net[inventory_hostname] | dict2items | 
+            selectattr('key','equalto','port') | list }}"
+  when: mgmt_net is defined
+  tags: netbox_intfs
+
+- name: Create Loopback Interfaces on Devices
+  netbox_interface:
+    netbox_token: "{{ netbox_token }}"
+    netbox_url: "{{ netbox_url }}"
+    data:
+      device: "{{ inventory_hostname }}"
+      description: "{{'Managment Interface ' +  inventory_hostname }}"
+      name: "Loopback0"
+      enabled: true
+      # form_factor: 1000Base-t (1GE)
+      mgmt_only: false
+      mode: Access
+    state: "{{ netbox_state }}"
+  tags: netbox_intfs

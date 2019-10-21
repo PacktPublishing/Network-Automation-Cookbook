@@ -1,0 +1,57 @@
+---
+- name: Get Device ID
+  netbox_device:
+    data:
+      name: "{{ inventory_hostname }}"
+      device_role: "{{ device_role }}"
+      device_type: "{{ device_model }}"
+      status: Active
+      site: "{{ inventory_hostname.split('-')[0] }}"
+    netbox_token: "{{ netbox_token }}"
+    netbox_url: "{{ netbox_url }}"
+    state: "{{ netbox_state }}"
+  register: netbox_device
+  tags: netbox_mgmt_ip
+
+# - debug: var=netbox_device
+#   run_once: yes
+#   tags: netbox_mgmt_ip
+ 
+- name: Get ID for Primary IP
+  uri:
+    url: "{{ netbox_url }}/api/ipam/ip-addresses/?address={{ mgmt_net[inventory_hostname].ip.split('/')[0] }}"
+    method: GET
+    headers:
+      Authorization: "Token {{ netbox_token }}"
+      Accept: 'application/json'
+    return_content: yes
+    body_format: json
+    status_code: [200, 201]
+  register: netbox_mgmt_ip
+  tags: netbox_mgmt_ip  
+
+# - debug: var=netbox_mgmt_ip
+#   run_once: yes
+#   tags: netbox_mgmt_ip  
+
+- name: Create Primary IP for Device
+  uri:
+    url: "{{ netbox_url }}/api/dcim/devices/{{ netbox_device.device.id }}/"
+    method: PATCH
+    headers:
+      Authorization: "Token {{ netbox_token }}"
+      Accept: 'application/json'
+    return_content: yes
+    body_format: json
+    body:
+      site: "{{ netbox_device.device.site }}"
+      device_type: "{{ netbox_device.device.device_type }}"
+      device_role: "{{ netbox_device.device.device_role }}"
+      primary_ip4: "{{ netbox_mgmt_ip.json.results[0].id }}"
+    status_code: [200, 201]
+  register: netbox_device_mgmt
+  tags: netbox_mgmt_ip
+
+# - debug: var=netbox_device_mgmt
+#   tags: netbox_mgmt_ip
+#   run_once: yes

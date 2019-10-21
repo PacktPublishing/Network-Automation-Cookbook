@@ -2,15 +2,24 @@
 netbox_url: http://172.20.100.32:8080
 netbox_token: e3afd6708f2a6cb45413c31c713ce6a146d69075
 
+sites:
+  - name: DC1
+    description: "Main Data Center in Sydney"
+    location: Sydney
+  - name: DC2
+    description: "Main Data Center in KSA"
+    location: Riyadh
+
 devices:
   - role: Leaf_Switch
     type: 7020SR
     vendor: Arista
-    color: 'f44336'
+    color: 'f44336'  # red
   - role: Spine_Switch
     type: 7050CX3
+    ru: 2
     vendor: Arista
-    color: '2196f3'
+    color: '2196f3'  # blue
 
 # BEGIN ANSIBLE MANAGED BLOCK
 global: 

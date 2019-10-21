@@ -1,0 +1,14 @@
+- name: Provision NetBox Devices
+  netbox_device:
+    data:
+      name: "{{ inventory_hostname }}"
+      device_role: "{{ device_role }}"
+      device_type: "{{ device_model }}"
+      status: Active
+      site: "{{ inventory_hostname.split('-')[0] }}"
+    netbox_token: "{{ netbox_token }}"
+    netbox_url: "{{ netbox_url }}"
+    state: "{{ netbox_state }}"
+  register: netbox_device
+  tags: netbox_devices
+

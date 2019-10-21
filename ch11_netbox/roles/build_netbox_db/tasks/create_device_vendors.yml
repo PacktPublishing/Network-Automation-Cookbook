@@ -7,11 +7,24 @@
       Accept: 'application/json'
     return_content: yes
     body_format: json
-    # body:
-    #   name: "{{ item }}"
     status_code: [200, 201]
   register: netbox_vendors
   run_once: yes
+  tags: device_vendors
+
+- name: NetBox Device  // DELETE Existing Vendors
+  uri:
+    url: "{{ netbox_url }}/api/dcim/manufacturers/{{ netbox_vendors.json.results[0].id }}/"
+    method: DELETE
+    headers:
+      Authorization: "Token {{ netbox_token }}"
+      Accept: 'application/json'
+    return_content: yes
+    body_format: json
+    status_code: [200, 201,204]
+  when: netbox_vendors.json.count != 0 and netbox_state == 'absent'
+  run_once: yes
+  tags: device_vendors
 
 - name: NetBox Device  // Create Device Vendors
   uri:
@@ -26,6 +39,8 @@
       name: "{{ item }}"
       slug: "{{ item | lower }}"
     status_code: [200, 201]
-  when: netbox_vendors.json.count == 0
-  register: netbox_devices
+  when: 
+    - netbox_vendors.json.count == 0 
+    - netbox_state != 'absent'
   run_once: yes
+  tags: device_vendors
