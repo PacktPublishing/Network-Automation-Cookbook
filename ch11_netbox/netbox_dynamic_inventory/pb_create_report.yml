@@ -1,0 +1,30 @@
+---
+- name: Create Report from Netbox Data
+  hosts: all
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Build Report
+      blockinfile:
+        block: |
+            netbox_data:
+            {% for node in play_hosts %}
+              - { node: {{ node }} , type: {{ hostvars[node].device_types[0] }} , mgmt_ip: {{ hostvars[node].ansible_host }} }
+            {% endfor %}
+        path: ./netbox_report.yaml
+        create: yes
+      delegate_to: localhost
+      run_once: yes
+
+- name: Output Spine Nodes
+  hosts: device_roles_Spine_Switch
+  gather_facts: no
+  connection: local
+  tasks:
+    - debug: var=inventory_hostname
+      delegate_to: localhost
+
+  
+          
+          
+  

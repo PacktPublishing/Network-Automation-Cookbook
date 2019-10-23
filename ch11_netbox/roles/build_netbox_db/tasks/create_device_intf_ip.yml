@@ -7,7 +7,7 @@
       interface:
         name: "{{ item.port }}"
         device: "{{ inventory_hostname }}"
-    state: present
+    state: "{{ netbox_state }}"
   loop: "{{ p2p_ip[inventory_hostname] }}"
   tags: netbox_ip
 
@@ -20,7 +20,7 @@
       interface:
         name: "Loopback0"
         device: "{{ inventory_hostname }}"
-    state: present
+    state: "{{ netbox_state }}"
   tags: netbox_ip
 
 - name: Create Managment IPs
@@ -32,5 +32,5 @@
       interface:
         name: "{{ mgmt_net[inventory_hostname].port }}"
         device: "{{ inventory_hostname }}"
-    state: present
+    state: "{{ netbox_state }}"
   tags: netbox_ip

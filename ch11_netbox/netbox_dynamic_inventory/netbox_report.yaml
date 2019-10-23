@@ -1,0 +1,11 @@
+# BEGIN ANSIBLE MANAGED BLOCK
+netbox_data:
+  - { node: dc1-leaf01 , type: 7020SR , mgmt_ip: 172.20.1.35 }
+  - { node: dc1-leaf02 , type: 7020SR , mgmt_ip: 172.20.1.36 }
+  - { node: dc2-leaf01 , type: 7020SR , mgmt_ip: 172.20.2.35 }
+  - { node: dc2-leaf02 , type: 7020SR , mgmt_ip: 172.20.2.36 }
+  - { node: dc1-spine01 , type: 7050CX3 , mgmt_ip: 172.20.1.41 }
+  - { node: dc1-spine02 , type: 7050CX3 , mgmt_ip: 172.20.1.42 }
+  - { node: dc2-spine01 , type: 7050CX3 , mgmt_ip: 172.20.2.41 }
+  - { node: dc2-spine02 , type: 7050CX3 , mgmt_ip: 172.20.2.42 }
+# END ANSIBLE MANAGED BLOCK

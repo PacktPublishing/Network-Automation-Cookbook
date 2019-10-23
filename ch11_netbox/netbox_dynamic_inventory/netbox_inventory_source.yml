@@ -1,0 +1,10 @@
+---
+plugin: netbox
+api_endpoint: http://172.20.100.32:8080
+token: e3afd6708f2a6cb45413c31c713ce6a146d69075
+group_by:
+  - device_roles
+  - sites
+# query_filters:
+#   - site: dc1
+  

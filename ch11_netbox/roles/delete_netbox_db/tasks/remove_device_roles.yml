@@ -23,23 +23,3 @@
     status_code: [200, 201,204]
   when: netbox_device_role.json.count != 0 and netbox_state == 'absent'
   tags: device_roles
-
-- name: NetBox Device  // Create New Device Roles
-  uri:
-    url: "{{ netbox_url }}/api/dcim/device-roles/"
-    method: POST
-    headers:
-      Authorization: "Token {{ netbox_token }}"
-      Accept: 'application/json'
-    return_content: yes
-    body_format: json
-    body:
-      name: "{{ device.role }}"
-      slug: "{{ device.role | lower }}"
-      color: "{{ device.color }}"
-    status_code: [200, 201]
-  when:
-    - netbox_device_role.json.count == 0 
-    - netbox_state != 'absent'
-  register: netbox_device_role
-  tags: device_roles

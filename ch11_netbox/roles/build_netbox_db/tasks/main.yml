@@ -16,18 +16,24 @@
 - name: Create NetBox Device Vendors
   include_tasks: create_device_vendors.yml
   loop: "{{ devices | map(attribute='vendor') | list | unique}}"
+  loop_control:
+    loop_var: device
   run_once: yes
   tags: device_vendors
 
 - name: Create NetBox Device Types
   include_tasks: create_device_types.yml
   loop: "{{ devices }}"
+  loop_control:
+    loop_var: device
   run_once: yes
   tags: device_types
 
 - name: Create NetBox Device Roles
   include_tasks: create_device_roles.yml
   loop: "{{ devices }}"
+  loop_control:
+    loop_var: device
   run_once: yes
   tags: device_roles
 

@@ -12,10 +12,6 @@
     state: "{{ netbox_state }}"
   register: netbox_device
   tags: netbox_mgmt_ip
-
-# - debug: var=netbox_device
-#   run_once: yes
-#   tags: netbox_mgmt_ip
  
 - name: Get ID for Primary IP
   uri:
@@ -28,11 +24,7 @@
     body_format: json
     status_code: [200, 201]
   register: netbox_mgmt_ip
-  tags: netbox_mgmt_ip  
-
-# - debug: var=netbox_mgmt_ip
-#   run_once: yes
-#   tags: netbox_mgmt_ip  
+  tags: netbox_mgmt_ip   
 
 - name: Create Primary IP for Device
   uri:
@@ -51,7 +43,3 @@
     status_code: [200, 201]
   register: netbox_device_mgmt
   tags: netbox_mgmt_ip
-
-# - debug: var=netbox_device_mgmt
-#   tags: netbox_mgmt_ip
-#   run_once: yes

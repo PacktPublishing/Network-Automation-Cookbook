@@ -12,21 +12,16 @@
   run_once: yes
   tags: device_vendors
 
-- name: NetBox Device  // Create Device Vendors
+- name: NetBox Device  // DELETE Existing Vendors
   uri:
-    url: "{{ netbox_url }}/api/dcim/manufacturers/"
-    method: POST
+    url: "{{ netbox_url }}/api/dcim/manufacturers/{{ netbox_vendors.json.results[0].id }}/"
+    method: DELETE
     headers:
       Authorization: "Token {{ netbox_token }}"
       Accept: 'application/json'
     return_content: yes
     body_format: json
-    body:
-      name: "{{ device }}"
-      slug: "{{ device | lower }}"
-    status_code: [200, 201]
-  when: 
-    - netbox_vendors.json.count == 0 
-    - netbox_state == 'present'
+    status_code: [204]
+  when: netbox_vendors.json.count != 0 and netbox_state == 'absent'
   run_once: yes
   tags: device_vendors
