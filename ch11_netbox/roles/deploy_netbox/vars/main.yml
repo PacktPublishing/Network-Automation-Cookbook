@@ -1,0 +1,3 @@
+netbox_repo: https://github.com/netbox-community/netbox-docker.git
+netbox_repo_dir: netbox_src
+netbox_version: master

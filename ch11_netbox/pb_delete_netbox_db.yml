@@ -1,0 +1,11 @@
+---
+- name: Populate NetBox DataBase
+  hosts: all
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /Users/kokasha/Documents/ansible_projects/.venv/bin/python
+    ansible_connection: local
+    netbox_state: absent
+  tasks:
+    - import_role: 
+        name: delete_netbox_db

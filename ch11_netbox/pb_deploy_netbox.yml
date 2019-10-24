@@ -1,0 +1,15 @@
+---
+- name: Deploy NetBox
+  hosts: netbox
+  become: yes
+  tasks:
+    - name: Install Docker
+      import_role:  
+        name: deploy_docker
+      tags: docker
+
+    - name: Install NetBox
+      import_role:
+        name: deploy_netbox
+      tags: netbox
+

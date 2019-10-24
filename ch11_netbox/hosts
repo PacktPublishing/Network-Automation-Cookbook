@@ -16,6 +16,9 @@ dc[1:2]-leaf0[1:2]
 [spine]
 dc[1:2]-spine0[1:2]
 
+[netbox]
+netbox  ansible_host=172.20.100.32
+
 
 
 

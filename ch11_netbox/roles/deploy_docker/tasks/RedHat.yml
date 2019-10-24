@@ -1,0 +1,42 @@
+- name: Update APT cache
+  yum:
+    update_cache: yes
+
+- name: Install Docker Prerequisites
+  yum:
+    name: "{{ docker_required_packages[ansible_os_family] }}"
+    state: present
+
+
+- name: Add Docker Repo
+  shell: yum-config-manager \
+         --add-repo {{ centos_docker_repo }}
+
+- name: Install Docker Packages
+  yum:
+    name: "{{ docker_packages }}"
+
+- name: Start Docker Service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Check if Docker Compose is Installed
+  stat:
+    path: /usr/local/bin/docker-compose
+  register: is_compose_installed
+  tags: compose
+
+
+- name: Install Docker Compose
+  shell: curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m) \
+          -o /usr/local/bin/docker-compose
+  when: not is_compose_installed.stat.exists
+  tags: compose
+
+- name: Update permissions for Docker compose
+  file:
+    path: /usr/local/bin/docker-compose
+    mode: u+x,g+x,o+x
+  tags: compose

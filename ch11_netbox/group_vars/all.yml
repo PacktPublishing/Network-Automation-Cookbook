@@ -42,10 +42,10 @@ global:
 subnets:
   -   prefix: 172.10.1.0/24
       role: p2p_subnet
-      site: dc1
+      # site: dc1
   -   prefix: 172.11.1.0/24
       role: p2p_subnet
-      site: dc2
+      # site: dc2
   -   prefix: 10.100.1.0/24
       role: loopback_subnet
       site: dc1

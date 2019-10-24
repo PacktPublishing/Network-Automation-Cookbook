@@ -1,0 +1,28 @@
+- name: Ensure Git is Installed
+  yum:
+    name: git
+    state: present
+
+- name: Check if awx Repo is already cloned
+  stat:
+    path: "{{ netbox_repo_dir }}"
+  register: netbox_repo_exists
+
+- name: Clone Netbox into configured directory.
+  git:
+    repo: "{{ netbox_repo }}"
+    dest: "{{ netbox_repo_dir }}"
+    version: "{{ netbox_version }}"
+    force: true
+    accept_hostkey: true
+  when: not netbox_repo_exists.stat.exists
+
+- name: Pull Docker Images
+  command: /usr/local/bin/docker-compose pull
+  args:
+    chdir: "{{ netbox_repo_dir }}"
+
+- name: Start All Containers
+  command: /usr/local/bin/docker-compose up -d
+  args:
+    chdir: "{{ netbox_repo_dir }}"

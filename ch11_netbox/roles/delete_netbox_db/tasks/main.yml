@@ -11,25 +11,16 @@
 
 - name: Delete NetBox Device Types
   include_tasks: remove_device_types.yml
-  loop: "{{ devices }}"
-  loop_control:
-    loop_var: device
   run_once: yes
   tags: device_types
 
 - name: Delete NetBox Device Roles
   include_tasks: remove_device_roles.yml
-  loop: "{{ devices }}"
-  loop_control:
-    loop_var: device
   run_once: yes
   tags: device_roles
 
 - name: Delete NetBox Device Vendors
   include_tasks: remove_device_vendors.yml
-  loop: "{{ devices | map(attribute='vendor') | list | unique}}"
-  loop_control:
-    loop_var: device
   run_once: yes
   tags: device_vendors
 

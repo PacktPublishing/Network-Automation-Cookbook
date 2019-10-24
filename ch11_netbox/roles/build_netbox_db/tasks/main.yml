@@ -53,6 +53,9 @@
   include_tasks: create_primary_ip.yml
   tags: netbox_mgmt_ip
 
+- debug: var=discovered_interpreter_python
+  tags: netbox_prefix
+
 - name: Create IP Prefixes
   netbox_prefix:
     netbox_token: "{{ netbox_token }}"

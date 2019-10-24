@@ -1,6 +1,6 @@
 - name: NetBox Device  // Get Existing Device Types
   uri:
-    url: "{{ netbox_url }}/api/dcim/device-types/?model={{ device.type }}" 
+    url: "{{ netbox_url }}/api/dcim/device-types/" 
     method: GET
     headers:
       Authorization: "Token {{ netbox_token }}"
@@ -9,12 +9,13 @@
     body_format: json
     status_code: [200, 201]
   register: netbox_device_types
-  run_once: yes
   tags: device_types
+# - debug: var=netbox_device_types
+#   tags: device_types
 
 - name: NetBox Device  // DELETE Existing Device Types
   uri:
-    url: "{{ netbox_url }}/api/dcim/device-types/{{ netbox_device_types.json.results[0].id }}/" 
+    url: "{{ netbox_url }}/api/dcim/device-types/{{ device.id }}/" 
     method: DELETE
     headers:
       Authorization: "Token {{ netbox_token }}"
@@ -22,28 +23,9 @@
     # return_content: yes
     # body_format: json
     status_code: [200, 201,204]
-  run_once: yes
+  loop: "{{ netbox_device_types.json.results }}"
+  loop_control:
+    loop_var: device
   when: netbox_device_types.json.count != 0 and netbox_state == 'absent'
   tags: device_types
 
-- name: NetBox Device  // Create New Device Types
-  uri:
-    url: "{{ netbox_url }}/api/dcim/device-types/"
-    method: POST
-    headers:
-      Authorization: "Token {{ netbox_token }}"
-      Accept: 'application/json'
-    return_content: yes
-    body_format: json
-    body:
-      model: "{{ device.type }}"
-      manufacturer: { name: "{{ device.vendor }}"}
-      slug: "{{ device.type | regex_replace('-','_') | lower  }}"
-      u_height: "{{ device.ru | default(1) }}"
-    status_code: [200, 201]
-  when:
-    - netbox_device_types.json.count == 0 
-    - netbox_state == 'present'
-  register: netbox_device_types
-  run_once: yes
-  tags: device_types
