@@ -2,4 +2,6 @@
 .vagrant/
 .vagrant
 ~$*
-
+**/venv/
+**/.venv/
+**/.vscode/

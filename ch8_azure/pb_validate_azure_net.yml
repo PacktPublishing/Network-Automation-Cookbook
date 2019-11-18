@@ -1,0 +1,41 @@
+---
+- name: Build Azure Network Infrastructure
+  hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Get Resource Facts
+      azure_rm_resourcegroup_facts:
+        name: "{{ rg_name }}"
+      register: rg_facts
+      tags: rg_facts
+    - debug: var=azure_resourcegroups
+      tags: rg_facts
+    - name: Validate Resource Group is Deployed
+      assert:
+        that:
+          - rg.name == rg_name
+          - rg.properties.provisioningState == 'Succeeded'
+          - rg.location == region
+      loop: "{{ azure_resourcegroups }}"
+      loop_control:
+        loop_var: rg
+      tags: rg_facts
+
+    - name: Validate Virtual Network is Deployed
+      azure_rm_virtualnetwork_facts:
+        resource_group: "{{ rg_name }}"
+      register: vnet_facts
+      tags: vnet_facts
+
+    - name: Validate Virtual Networks are Deployed
+      assert:
+        that:
+          - vnet.name == vnet_name
+          - vnet.properties.provisioningState == 'Succeeded'
+          - vnet.properties.addressSpace.addressPrefixes | length == 1
+          - vnet.properties.addressSpace.addressPrefixes[0] == vnet_cidr
+      loop: "{{ azure_virtualnetworks }}"
+      loop_control:
+        loop_var: vnet
+      tags: vnet_facts

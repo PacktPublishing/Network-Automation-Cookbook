@@ -1,0 +1,48 @@
+---
+region: 'westeurope'
+
+rg_name: "rg_{{ inventory_hostname }}"
+
+vnet_name: "vn_{{ inventory_hostname }}"
+vnet_cidr: 10.1.0.0/16
+
+subnets:
+  - name: web_tier
+    cidr: 10.1.1.0/24
+  - name: db_tier
+    cidr: 10.1.2.0/24
+
+route_tables:
+  - name: db_tier_rt
+    subnet: db_tier
+    routes:
+      - name: Default Route
+        prefix: 0.0.0.0/0
+        nh: none
+
+acls:
+  - name: Inbound_Web_Tier
+    subnet: web_tier
+    rules:
+      - name: Allow_HTTP_Internet
+        destination_address_prefix: 10.1.1.0/24
+        direction: Inbound
+        access: Allow
+        protocol: Tcp
+        destination_port_range:
+          - 80
+          - 443
+        priority: 101
+
+      # - name: Allow_SQL_from_DB_Tier
+      #   source_address_prefix: 10.1.2.0/24
+      #   destination_address_prefix: 10.1.1.0/24
+      #   direction: Inbound
+      #   access: Allow
+      #   protocol: Tcp
+      #   destination_port_range:
+      #     - 3389
+      #     - 22
+      #   priority: 102
+
+

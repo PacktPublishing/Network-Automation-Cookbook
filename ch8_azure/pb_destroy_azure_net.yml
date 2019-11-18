@@ -1,0 +1,156 @@
+---
+- name: Build Azure Network Infrastructure
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars: 
+    state: absent
+  vars_files:
+    - azure_secret.yml
+  tasks:
+    - name: Create Resource group
+      azure_rm_resourcegroup:
+        tenant: "{{ tenant_id }}"
+        client_id: "{{ client_id }}"
+        secret: "{{ secret }}"
+        location: "{{ region }}"
+        subscription_id: "{{ subscription_id }}"
+        name: "{{ rg_name }}"
+        force_delete_nonempty: yes 
+        state: "{{ state | default('present') }}"
+
+    # - name: Create Virtual Networks
+    #   azure_rm_virtualnetwork:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     location: "{{ region }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #     name: "{{ vnet_name }}"
+    #     address_prefixes_cidr: "{{ vnet_cidr }}"
+    #     state: "{{ state | default('present') }}"
+
+    # - name: Create Subnets
+    #   azure_rm_subnet:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #     name: "{{ item.name}}"
+    #     virtual_network_name:  "{{ vnet_name }}"
+    #     address_prefix_cidr: "{{ item.cidr }}"
+    #     state: "{{ state | default('present') }}"
+    #   loop: "{{ subnets }}"
+    #   loop_control:
+    #     label: "{{ item.name }}"
+
+    # - name: Create Custom Route Table
+    #   azure_rm_routetable:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #     name: "{{ item.name}}"
+    #     state: "{{ state | default('present') }}"
+    #   loop: "{{ route_tables }}"
+    #   tags: routing
+
+    # # - debug: msg=" rt_name is {{ item.0.name }} subnet is {{ item.0.subnet }} route is {{ item.1.prefix }} "
+    # #   tags: debug
+    # #   with_subelements:
+    # #     - "{{ route_tables }}"
+    # #     - routes
+
+
+    # - name: Provision Routes
+    #   azure_rm_route:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #     route_table_name: "{{ item.0.name }}"
+    #     name: "{{ item.1.name}}"
+    #     address_prefix: "{{ item.1.prefix }}"
+    #     next_hop_type: "{{ item.1.nh }}"
+    #     state: "{{ state | default('present') }}"
+    #   with_subelements:
+    #     - "{{ route_tables }}"
+    #     - routes
+    #   tags: routing
+
+    # - name: Attach Route Table to Subnet
+    #   azure_rm_subnet:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #     name: "{{ item.subnet}}"
+    #     virtual_network_name:  "{{ vnet_name }}"
+    #     route_table: "{{ item.name }}"
+    #     state: "{{ state | default('present') }}"
+    #   loop: "{{ route_tables }}"
+    #   loop_control:
+    #     label: "{{ item.name }}"
+    #   tags: routing
+
+    # - name: Create new Security Group
+    #   azure_rm_securitygroup:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #     name: "{{ item.name }}"
+    #     purge_rules: yes
+    #     rules: "{{ item.rules }}" 
+    #   loop: "{{ acls }}"
+    #   register: output_sg_create
+    #   tags: security
+
+    # - name: Attach Securtiy Group to Subnet
+    #   azure_rm_subnet:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #     name: "{{ item.subnet}}"
+    #     virtual_network_name:  "{{ vnet_name }}"
+    #     security_group: "{{ item.name }}"
+    #     state: "{{ state | default('present') }}"
+    #   loop: "{{ acls }}"
+    #   tags: security
+
+    # - debug: var=output_sg_create
+    #   tags: sg_debug
+
+           
+    # - name: Get Default Security Group
+    #   azure_rm_securitygroup_facts:
+    #     tenant: "{{ tenant_id }}"
+    #     client_id: "{{ client_id }}"
+    #     secret: "{{ secret }}"
+    #     subscription_id: "{{ subscription_id }}"
+    #     resource_group: "{{ rg_name}}"
+    #   register: sg_output
+    #   tags: sg_debug
+
+    # - debug: var=sg_output
+    #   tags: sg_debug        
+    # # - name: Get Routing Info
+    # #   azure_rm_routetable_facts:
+    # #     tenant: "{{ tenant_id }}"
+    # #     client_id: "{{ client_id }}"
+    # #     secret: "{{ secret }}"
+    # #     subscription_id: "{{ subscription_id }}"
+    # #     resource_group: "{{ rg_name}}"
+    # #   register: rt_output
+    # #   tags: rt_debug
+    
+    # # - debug: var=rt_output
+    # #   tags: rt_debug
