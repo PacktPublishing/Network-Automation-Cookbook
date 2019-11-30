@@ -1,0 +1,29 @@
+---
+- name: Delete Default VPC
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars_files:
+    - gcp_account_info.yml
+  tasks:
+    - name: Delete Default Firewall Rules
+      gcp_compute_firewall:
+        name: "{{ item }}"
+        state: absent
+        auth_kind: "{{ auth_kind }}"
+        project: "{{ project }}"
+        service_account_file: "{{ service_account_file }}"
+      loop:
+        - default-allow-icmp
+        - default-allow-internal
+        - default-allow-rdp
+        - default-allow-ssh
+
+    - name: Delete Default VPC
+      gcp_compute_network:
+        name: "default"
+        state: absent
+        auth_kind: "{{ auth_kind }}"
+        project: "{{ project }}"
+        service_account_file: "{{ service_account_file }}"
+

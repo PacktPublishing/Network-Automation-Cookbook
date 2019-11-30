@@ -1,0 +1,186 @@
+{
+    "changed": false,
+    "msg": "All items completed",
+    "results": [
+        {
+            "ansible_loop_var": "subnet",
+            "changed": false,
+            "creationTimestamp": "2019-11-26T20:01:19.909-08:00",
+            "failed": false,
+            "fingerprint": "iRMVK3aED9I=",
+            "gatewayAddress": "10.1.1.1",
+            "id": "4635589317521066976",
+            "invocation": {
+                "module_args": {
+                    "auth_kind": "serviceaccount",
+                    "description": null,
+                    "enable_flow_logs": null,
+                    "ip_cidr_range": "10.1.1.0/24",
+                    "name": "anz-web",
+                    "network": {
+                        "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc"
+                    },
+                    "private_ip_google_access": null,
+                    "project": "gcp-ansible-demo",
+                    "region": "australia-southeast1",
+                    "scopes": [
+                        "https://www.googleapis.com/auth/compute"
+                    ],
+                    "secondary_ip_ranges": null,
+                    "service_account_contents": null,
+                    "service_account_email": null,
+                    "service_account_file": "./gcp-ansible-secret.json",
+                    "state": "present"
+                }
+            },
+            "ipCidrRange": "10.1.1.0/24",
+            "kind": "compute#subnetwork",
+            "name": "anz-web",
+            "network": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc",
+            "privateIpGoogleAccess": false,
+            "purpose": "PRIVATE",
+            "region": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/australia-southeast1",
+            "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/australia-southeast1/subnetworks/anz-web",
+            "subnet": {
+                "cidr": "10.1.1.0/24",
+                "name": "anz-web",
+                "region": "australia-southeast1"
+            }
+        },
+        {
+            "ansible_loop_var": "subnet",
+            "changed": false,
+            "creationTimestamp": "2019-11-26T20:01:37.238-08:00",
+            "failed": false,
+            "fingerprint": "mtuGxn6F3nk=",
+            "gatewayAddress": "10.1.2.1",
+            "id": "7819399018713205710",
+            "invocation": {
+                "module_args": {
+                    "auth_kind": "serviceaccount",
+                    "description": null,
+                    "enable_flow_logs": null,
+                    "ip_cidr_range": "10.1.2.0/24",
+                    "name": "anz-db",
+                    "network": {
+                        "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc"
+                    },
+                    "private_ip_google_access": null,
+                    "project": "gcp-ansible-demo",
+                    "region": "australia-southeast1",
+                    "scopes": [
+                        "https://www.googleapis.com/auth/compute"
+                    ],
+                    "secondary_ip_ranges": null,
+                    "service_account_contents": null,
+                    "service_account_email": null,
+                    "service_account_file": "./gcp-ansible-secret.json",
+                    "state": "present"
+                }
+            },
+            "ipCidrRange": "10.1.2.0/24",
+            "kind": "compute#subnetwork",
+            "name": "anz-db",
+            "network": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc",
+            "privateIpGoogleAccess": false,
+            "purpose": "PRIVATE",
+            "region": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/australia-southeast1",
+            "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/australia-southeast1/subnetworks/anz-db",
+            "subnet": {
+                "cidr": "10.1.2.0/24",
+                "name": "anz-db",
+                "region": "australia-southeast1"
+            }
+        },
+        {
+            "ansible_loop_var": "subnet",
+            "changed": false,
+            "creationTimestamp": "2019-11-26T20:01:54.446-08:00",
+            "failed": false,
+            "fingerprint": "_MW-SPNqKaw=",
+            "gatewayAddress": "10.2.1.1",
+            "id": "802181029878057949",
+            "invocation": {
+                "module_args": {
+                    "auth_kind": "serviceaccount",
+                    "description": null,
+                    "enable_flow_logs": null,
+                    "ip_cidr_range": "10.2.1.0/24",
+                    "name": "eu-web",
+                    "network": {
+                        "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc"
+                    },
+                    "private_ip_google_access": null,
+                    "project": "gcp-ansible-demo",
+                    "region": "europe-west1",
+                    "scopes": [
+                        "https://www.googleapis.com/auth/compute"
+                    ],
+                    "secondary_ip_ranges": null,
+                    "service_account_contents": null,
+                    "service_account_email": null,
+                    "service_account_file": "./gcp-ansible-secret.json",
+                    "state": "present"
+                }
+            },
+            "ipCidrRange": "10.2.1.0/24",
+            "kind": "compute#subnetwork",
+            "name": "eu-web",
+            "network": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc",
+            "privateIpGoogleAccess": false,
+            "purpose": "PRIVATE",
+            "region": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/europe-west1",
+            "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/europe-west1/subnetworks/eu-web",
+            "subnet": {
+                "cidr": "10.2.1.0/24",
+                "name": "eu-web",
+                "region": "europe-west1"
+            }
+        },
+        {
+            "ansible_loop_var": "subnet",
+            "changed": false,
+            "creationTimestamp": "2019-11-26T20:02:13.839-08:00",
+            "failed": false,
+            "fingerprint": "xPWvaOrtv1Y=",
+            "gatewayAddress": "10.2.2.1",
+            "id": "9002428768051022762",
+            "invocation": {
+                "module_args": {
+                    "auth_kind": "serviceaccount",
+                    "description": null,
+                    "enable_flow_logs": null,
+                    "ip_cidr_range": "10.2.2.0/24",
+                    "name": "eu-db",
+                    "network": {
+                        "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc"
+                    },
+                    "private_ip_google_access": null,
+                    "project": "gcp-ansible-demo",
+                    "region": "europe-west1",
+                    "scopes": [
+                        "https://www.googleapis.com/auth/compute"
+                    ],
+                    "secondary_ip_ranges": null,
+                    "service_account_contents": null,
+                    "service_account_email": null,
+                    "service_account_file": "./gcp-ansible-secret.json",
+                    "state": "present"
+                }
+            },
+            "ipCidrRange": "10.2.2.0/24",
+            "kind": "compute#subnetwork",
+            "name": "eu-db",
+            "network": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/global/networks/ansible-demo-vpc",
+            "privateIpGoogleAccess": false,
+            "purpose": "PRIVATE",
+            "region": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/europe-west1",
+            "selfLink": "https://www.googleapis.com/compute/v1/projects/gcp-ansible-demo/regions/europe-west1/subnetworks/eu-db",
+            "subnet": {
+                "cidr": "10.2.2.0/24",
+                "name": "eu-db",
+                "region": "europe-west1"
+            }
+        }
+    ]
+}

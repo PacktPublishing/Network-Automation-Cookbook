@@ -10,7 +10,7 @@
       
     - name: Get Data from Netbox
       uri:
-        url: "{{ netbox_url }}/api/dcim/interfaces/"
+        url: "{{ netbox_url }}/api/dcim/interfaces/?device={{ inventory_hostname }}"
         method: GET
         headers:
           Authorization: "Token {{ netbox_token }}"
@@ -22,16 +22,12 @@
       delegate_to: localhost
       run_once: yes
 
-    - name: Get the Interfaces for each Node
-      set_fact:
-        node_interfaces: "{{ netbox_interfaces.json.results | selectattr('device.name','eq',inventory_hostname) | list }}"
-
     - name: Push Config
       eos_config:
         lines:
           - description {{ port.description }} 
         parent: interface {{ port.name }}
-      loop: "{{ node_interfaces }}"
+      loop: "{{ netbox_interfaces.json.results }}"
       loop_control: 
         loop_var: port
       vars:

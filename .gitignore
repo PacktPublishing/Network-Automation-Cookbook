@@ -2,6 +2,9 @@
 .vagrant/
 .vagrant
 ~$*
+.DS_Store
+.cookbook/
+/**/.DS_Store
 **/venv/
 **/.venv/
 **/.vscode/

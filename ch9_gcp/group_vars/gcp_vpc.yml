@@ -1,0 +1,106 @@
+---
+vpc_name: ansible-demo-vpc
+
+subnets:
+  - name: anz-web
+    cidr: 10.1.1.0/24
+    region: australia-southeast1
+
+  - name: anz-db
+    cidr: 10.1.2.0/24
+    region: australia-southeast1
+
+  - name: anz-bastion
+    cidr: 10.1.3.0/24
+    region: australia-southeast1
+
+  # - name: eu-web
+  #   cidr: 10.2.1.0/24
+  #   region: europe-west1
+
+  # - name: eu-db
+  #   cidr: 10.2.2.0/24
+  #   region: europe-west1
+
+fw_rules:
+  - name: allow_sql_from_anz-web_to_anz-db
+    type: allow
+    direction: ingress
+    priority: 10
+    apply_to: anz-db
+    src_tag: anz-web
+    dest_tag: 
+    protocol: tcp
+    port: 3389
+    state: present
+
+  - name: allow_internet_to-anz-web
+    type: allow
+    direction: ingress
+    priority: 10
+    src: 0.0.0.0/0
+    apply_to: anz-web
+    protocol: tcp
+    port: 80,443
+    state: present
+
+  - name: allow_ssh_to_anz-bastion
+    type: allow
+    direction: ingress
+    priority: 10
+    src: 0.0.0.0/0
+    apply_to: anz-bastion
+    protocol: tcp
+    port: 22
+    state: present
+
+  - name: allow_ssh_from_bastion_only
+    type: allow
+    direction: ingress
+    priority: 10
+    src_tag: anz-bastion
+    apply_to: anz-web,anz-db
+    protocol: tcp
+    port: 22
+    state: present
+
+  - name: deny_everything_from-anz-db
+    type: deny
+    direction: egress
+    apply_to: anz-db
+    dest: 0.0.0.0/0
+    state: present
+
+compute_node_images: projects/centos-cloud/global/images/family/centos-7
+compute_node_image_size: 10  # This number is in Gigabyte
+compute_nodes:
+  - name: web-server-1
+    network: anz-web
+    has_internet: yes
+    zone: australia-southeast1-a
+
+  - name: web-server-2
+    network: anz-web
+    has_internet: yes
+    zone: australia-southeast1-b
+
+  - name: db-server-1
+    network: anz-db
+    has_internet: no
+    zone: australia-southeast1-a
+
+  - name: db-server-2
+    network: anz-db
+    has_internet: no
+    zone: australia-southeast1-b
+
+  - name: bastion-host
+    network: anz-bastion
+    ip: 10.1.3.253
+    has_internet: yes
+    ip_forwarding: yes
+    zone: australia-southeast1-a
+
+route:
+  nh: 10.1.3.253
+  tags: anz-db
