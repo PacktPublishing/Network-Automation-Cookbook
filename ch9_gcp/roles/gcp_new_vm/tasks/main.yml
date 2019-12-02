@@ -23,7 +23,6 @@
                       selectattr('name','equalto',node.network) |
                       list | first }}"
     metadata:
-      env: prod
       tier: "{{ node.name.split('-')[0] }}"
     tags:
       items: "{{ node.network }}"
@@ -37,7 +36,7 @@
 - name: create an {{ node.name }} instance with Internet
   gcp_compute_instance:
     name: "{{ node.name | regex_replace('_','-') }}"
-    machine_type: f1-micro
+    machine_type: "{{ compute_node_flavor }}"
     can_ip_forward: "{{ node.ip_forwarding if node.ip_forwarding is defined else 'no' }}"
     disks:
     - source: "{{ gcp_vm_disk }}"
@@ -52,7 +51,6 @@
       - name: External NAT
         type: ONE_TO_ONE_NAT
     metadata:
-      env: prod
       tier: "{{ node.name.split('-')[0] }}"
     zone: "{{ node.zone }}"
     tags:

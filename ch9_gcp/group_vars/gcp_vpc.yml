@@ -14,13 +14,6 @@ subnets:
     cidr: 10.1.3.0/24
     region: australia-southeast1
 
-  # - name: eu-web
-  #   cidr: 10.2.1.0/24
-  #   region: europe-west1
-
-  # - name: eu-db
-  #   cidr: 10.2.2.0/24
-  #   region: europe-west1
 
 fw_rules:
   - name: allow_sql_from_anz-web_to_anz-db
@@ -71,6 +64,7 @@ fw_rules:
     dest: 0.0.0.0/0
     state: present
 
+compute_node_flavor: f1-micro
 compute_node_images: projects/centos-cloud/global/images/family/centos-7
 compute_node_image_size: 10  # This number is in Gigabyte
 compute_nodes:
@@ -101,6 +95,9 @@ compute_nodes:
     ip_forwarding: yes
     zone: australia-southeast1-a
 
-route:
-  nh: 10.1.3.253
-  tags: anz-db
+custom_routes:
+  - name: default-route-db
+    description: Default Route for DB nodes
+    dest: '0.0.0.0/0'
+    nh: '10.1.3.253'
+    apply_to: anz-db

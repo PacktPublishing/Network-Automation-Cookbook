@@ -17,54 +17,42 @@
     - gcp_fw_rules
     - gcp_route
 
-- name: Create Subnets
-  gcp_compute_subnetwork:
-    name: "{{ subnet.name }}"
-    ip_cidr_range: "{{ subnet.cidr }}"
-    network: {selfLink: "{{ gcp_vpc.selfLink }}"}
-    region: "{{ subnet.region }}"
-    state: present
-    auth_kind: "{{ auth_kind }}"
-    project: "{{ project }}"
-    service_account_file: "{{ service_account_file }}"
-  loop: "{{ subnets }}"
-  loop_control:
-    loop_var: subnet
-  register: gcp_subnets
+# - name: Create Subnets
+#   gcp_compute_subnetwork:
+#     name: "{{ subnet.name }}"
+#     ip_cidr_range: "{{ subnet.cidr }}"
+#     network: {selfLink: "{{ gcp_vpc.selfLink }}"}
+#     region: "{{ subnet.region }}"
+#     state: present
+#     auth_kind: "{{ auth_kind }}"
+#     project: "{{ project }}"
+#     service_account_file: "{{ service_account_file }}"
+#   loop: "{{ subnets }}"
+#   loop_control:
+#     loop_var: subnet
+#   register: gcp_subnets
 
-- name: Create the Route
-  gcp_compute_route:
-    name: route-for-db
-    dest_range: '0.0.0.0/0'
-    network: "{{ gcp_vpc }}"
-    next_hop_ip: "{{ route.nh }}" 
-    tags: "{{ route.tags }}"
-    state: present
-    auth_kind: "{{ auth_kind }}"
-    project: "{{ project }}"
-    service_account_file: "{{ service_account_file }}"
-  tags: gcp_route 
 
-- name: Create Allow Firewall Rules
-  gcp_compute_firewall:
-    name: "{{ rule.name | regex_replace('_','-') }}"
-    network: {selfLink: "{{ gcp_vpc.selfLink }}"}
-    priority: "{{ rule.priority | default(omit) }}"
-    direction: "{{ rule.direction | upper | mandatory }}"
-    allowed:
-      - ip_protocol: "{{ rule.protocol }}"
-        ports: "{{ (rule.port|string).split(',') }}"
-    source_ranges: "{{ rule.src | default(omit) }}"
-    source_tags: "{{ omit if rule.src_tag is not defined else rule.src_tag.split(',') }}"
-    destination_ranges: "{{ rule.dest | default(omit) }}"
-    target_tags: "{{ omit if rule.apply_to is not defined else rule.apply_to.split(',') }}"
-    auth_kind: "{{ auth_kind }}"
-    project: "{{ project }}"
-    service_account_file: "{{ service_account_file }}"
-  loop: "{{ fw_rules | selectattr('type','equalto','allow') | list }}"
-  loop_control:
-    loop_var: rule
-  tags: gcp_fw_rules
+# - name: Create Allow Firewall Rules
+#   gcp_compute_firewall:
+#     name: "{{ rule.name | regex_replace('_','-') }}"
+#     network: {selfLink: "{{ gcp_vpc.selfLink }}"}
+#     priority: "{{ rule.priority | default(omit) }}"
+#     direction: "{{ rule.direction | upper | mandatory }}"
+#     allowed:
+#       - ip_protocol: "{{ rule.protocol }}"
+#         ports: "{{ (rule.port|string).split(',') }}"
+#     source_ranges: "{{ rule.src | default(omit) }}"
+#     source_tags: "{{ omit if rule.src_tag is not defined else rule.src_tag.split(',') }}"
+#     destination_ranges: "{{ rule.dest | default(omit) }}"
+#     target_tags: "{{ omit if rule.apply_to is not defined else rule.apply_to.split(',') }}"
+#     auth_kind: "{{ auth_kind }}"
+#     project: "{{ project }}"
+#     service_account_file: "{{ service_account_file }}"
+#   loop: "{{ fw_rules | selectattr('type','equalto','allow') | list }}"
+#   loop_control:
+#     loop_var: rule
+#   tags: gcp_fw_rules
 
 # - name: Create Deny Firewall Rules
 #   # debug:

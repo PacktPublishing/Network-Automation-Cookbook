@@ -22,6 +22,28 @@
       loop_control:
         loop_var: node
 
+    - name: Create the Route
+      gcp_compute_route:
+        name: "{{ route.name }}"
+        description: "{{ route.description | default(omit) }}"
+        dest_range: "{{ route.dest}}"
+        network: "{{ gcp_vpc }}"
+        next_hop_ip: "{{ route.nh }}" 
+        tags: "{{ route.apply_to.split(',') | default(omit) }}"
+        state: present
+        auth_kind: "{{ auth_kind }}"
+        project: "{{ project }}"
+        service_account_file: "{{ service_account_file }}"
+      loop: "{{ custom_routes }}"
+      loop_control:
+        loop_var: route
+      when: 
+      - custom_routes is defined
+      - route.nh is defined
+      tags: 
+        - gcp_route
+        - gcp_vpc
+     
 
     # - name: Get Facts
     #   gcp_compute_network_facts:
