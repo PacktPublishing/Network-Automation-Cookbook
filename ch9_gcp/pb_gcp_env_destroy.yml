@@ -1,0 +1,87 @@
+---
+- name: Build GCP network
+  hosts: all
+  connection: local
+  gather_facts: no
+  environment:
+    GCP_SERVICE_ACCOUNT_FILE: './gcp-ansible-secret.json'
+    GCP_AUTH_KIND: 'serviceaccount'
+  vars:
+    project:  "gcp-ansible-demo"
+  tasks:
+    - name: Get VPC Facts
+      gcp_compute_network_facts:
+        project: "{{ project }}"
+      register: gcp_vpc
+      tags: 
+        - gcp_route
+        - gcp_subnet
+        - gcp_fw_rules
+
+    - name: Delete disks for {{ node.name }}
+      gcp_compute_disk:
+        name: "{{ node.name | regex_replace('_','-') }}-disk"
+        zone: "{{ node.zone }}"
+        project: "{{ project }}"
+        state: absent
+      loop: "{{ compute_nodes }}"
+      loop_control:
+        loop_var: node
+
+    - name: Delete Instance {{ node.name }}
+      gcp_compute_instance:
+        name: "{{ node.name | regex_replace('_','-') }}"
+        zone: "{{ node.zone }}"
+        project: "{{ project }}"
+        state: absent
+      loop: "{{ compute_nodes }}"
+      loop_control:
+        loop_var: node
+
+    - name: Delete All Firewall Rules
+      gcp_compute_firewall:
+        name: "{{ rule.name | regex_replace('_','-') }}"
+        network: "{{ gcp_vpc }}"
+        project: "{{ project }}"
+        state: absent
+      loop: "{{ fw_rules }}"
+      loop_control:
+        loop_var: rule
+      tags: gcp_fw_rules
+
+    - name: Delete all Routes
+      gcp_compute_route:
+        name: "{{ route.name }}"
+        dest_range: "{{ route.dest}}"
+        network: "{{ gcp_vpc }}"
+        project: "{{ project }}"
+        state: absent
+      loop: "{{ custom_routes }}"
+      loop_control:
+        loop_var: route
+      when: 
+      - custom_routes is defined
+      tags: 
+        - gcp_route
+
+    - name: Delete GCP Subnets
+      gcp_compute_subnetwork:
+        name: "{{ subnet.name }}"
+        ip_cidr_range: "{{ subnet.cidr }}"
+        network: "{{ gcp_vpc }}"
+        region: "{{ subnet.region }}"
+        project: "{{ project }}"
+        state: absent
+      loop: "{{ subnets }}"
+      loop_control:
+        loop_var: subnet
+      tags: 
+        - gcp_subnet
+
+    - name: Delete GCP VPC
+      gcp_compute_network:
+        name: "{{ vpc_name | regex_replace('_','-') }}"
+        project: "{{ project }}"
+        state: absent
+      tags:
+        - gcp_vpc

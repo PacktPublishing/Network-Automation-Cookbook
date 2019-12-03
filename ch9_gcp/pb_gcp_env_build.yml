@@ -1,16 +1,13 @@
 ---
-- name: Build GCP network
+- name: Build GCP Environment
   hosts: all
   connection: local
   gather_facts: no
   vars_files:
     - gcp_account_info.yml
-  vars:
-    ip_forwarding: yes
+
   tasks:
-    # - set_fact:
-    #     test: "{{ 'name' if (ip_forwarding is defined and ip_forwarding) else omit }}"
-    # - debug: var=test
+    # - include_vars: "{{ gcp_account_file }}"
     - name: Build GCP Network
       import_role:
         name: gcp_net_build
@@ -43,12 +40,3 @@
       tags: 
         - gcp_route
         - gcp_vpc
-     
-
-    # - name: Get Facts
-    #   gcp_compute_network_facts:
-    #     auth_kind: "{{ auth_kind }}"
-    #     project: "{{ project }}"
-    #     service_account_file: "{{ service_account_file }}"
-    #   register: gcp_network
-    # - debug: var=gcp_network 

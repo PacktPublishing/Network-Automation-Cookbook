@@ -57,12 +57,12 @@ fw_rules:
     port: 22
     state: present
 
-  - name: deny_everything_from-anz-db
-    type: deny
-    direction: egress
-    apply_to: anz-db
-    dest: 0.0.0.0/0
-    state: present
+  # - name: deny_everything_from-anz-db
+  #   type: deny
+  #   direction: egress
+  #   apply_to: anz-db
+  #   dest: 0.0.0.0/0
+  #   state: present
 
 compute_node_flavor: f1-micro
 compute_node_images: projects/centos-cloud/global/images/family/centos-7

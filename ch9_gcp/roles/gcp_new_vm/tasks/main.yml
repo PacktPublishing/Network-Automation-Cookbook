@@ -7,7 +7,7 @@
     auth_kind: "{{ auth_kind }}"
     project: "{{ project }}"
     service_account_file: "{{ service_account_file }}"
-    state: present
+    state: "{{ status | default('present')}}"
   register: gcp_vm_disk
 
 - name: create a {{ node.name }} instance with no Internet
@@ -30,7 +30,7 @@
     auth_kind: "{{ auth_kind }}"
     project: "{{ project }}"
     service_account_file: "{{ service_account_file }}"
-    state: present
+    state: "{{ status | default('present')}}"
   when: not node.has_internet
 
 - name: create an {{ node.name }} instance with Internet
@@ -61,6 +61,3 @@
     state: present
   register: vm_data
   when: node.has_internet
-
-- debug: var=vm_data
-  when: '"bastion" in node.name'

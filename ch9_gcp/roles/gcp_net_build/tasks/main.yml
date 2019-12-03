@@ -17,20 +17,20 @@
     - gcp_fw_rules
     - gcp_route
 
-# - name: Create Subnets
-#   gcp_compute_subnetwork:
-#     name: "{{ subnet.name }}"
-#     ip_cidr_range: "{{ subnet.cidr }}"
-#     network: {selfLink: "{{ gcp_vpc.selfLink }}"}
-#     region: "{{ subnet.region }}"
-#     state: present
-#     auth_kind: "{{ auth_kind }}"
-#     project: "{{ project }}"
-#     service_account_file: "{{ service_account_file }}"
-#   loop: "{{ subnets }}"
-#   loop_control:
-#     loop_var: subnet
-#   register: gcp_subnets
+- name: Create Subnets
+  gcp_compute_subnetwork:
+    name: "{{ subnet.name }}"
+    ip_cidr_range: "{{ subnet.cidr }}"
+    network: {selfLink: "{{ gcp_vpc.selfLink }}"}
+    region: "{{ subnet.region }}"
+    state: present
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ service_account_file }}"
+  loop: "{{ subnets }}"
+  loop_control:
+    loop_var: subnet
+  register: gcp_subnets
 
 
 # - name: Create Allow Firewall Rules
