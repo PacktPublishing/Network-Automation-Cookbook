@@ -18,9 +18,9 @@
         - gcp_subnet
         - gcp_fw_rules
 
-    - name: Delete disks for {{ node.name }}
-      gcp_compute_disk:
-        name: "{{ node.name | regex_replace('_','-') }}-disk"
+    - name: Delete Instance {{ node.name }}
+      gcp_compute_instance:
+        name: "{{ node.name | regex_replace('_','-') }}"
         zone: "{{ node.zone }}"
         project: "{{ project }}"
         state: absent
@@ -28,9 +28,9 @@
       loop_control:
         loop_var: node
 
-    - name: Delete Instance {{ node.name }}
-      gcp_compute_instance:
-        name: "{{ node.name | regex_replace('_','-') }}"
+    - name: Delete disks for {{ node.name }}
+      gcp_compute_disk:
+        name: "{{ node.name | regex_replace('_','-') }}-disk"
         zone: "{{ node.zone }}"
         project: "{{ project }}"
         state: absent
