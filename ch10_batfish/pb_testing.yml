@@ -1,0 +1,7 @@
+---
+- name: testing
+  hosts: all
+  gather_facts: no
+  tasks:
+    - debug: msg="{{ item }}"
+      loop: "{{ lo_ip | dict2items }}"

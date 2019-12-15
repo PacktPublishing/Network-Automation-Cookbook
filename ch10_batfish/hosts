@@ -12,5 +12,9 @@ spine02     ansible_host=172.20.1.36
 leaf     
 spine
 
+[all:vars]
+ansible_python_interpreter=/bin/python3
+
+
 
 
