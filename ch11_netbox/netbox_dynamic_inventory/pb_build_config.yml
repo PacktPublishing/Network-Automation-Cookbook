@@ -4,6 +4,9 @@
   gather_facts: no
   connection: local
   tasks:
+    # - debug: var=play_hosts
+    #   run_once: yes
+
     - name: Read netbox Data
       include_vars: netbox_data.yml
       run_once: yes
@@ -21,6 +24,9 @@
       register: netbox_interfaces
       delegate_to: localhost
       run_once: yes
+
+    # - debug: var=netbox_interfaces
+    #   run_once: yes
 
     - name: Push Config
       eos_config:

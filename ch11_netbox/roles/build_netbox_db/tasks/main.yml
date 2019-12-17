@@ -19,7 +19,9 @@
   loop_control:
     loop_var: device
   run_once: yes
-  tags: device_vendors
+  tags: 
+    - device_vendors
+    - netbox_device
 
 - name: Create NetBox Device Types
   include_tasks: create_device_types.yml
@@ -27,7 +29,9 @@
   loop_control:
     loop_var: device
   run_once: yes
-  tags: device_types
+  tags: 
+    - device_types
+    - netbox_device
 
 - name: Create NetBox Device Roles
   include_tasks: create_device_roles.yml
@@ -35,7 +39,9 @@
   loop_control:
     loop_var: device
   run_once: yes
-  tags: device_roles
+  tags: 
+    - device_roles
+    - netbox_device
 
 - name: Create NetBox Device 
   include_tasks: create_device.yml
@@ -53,8 +59,8 @@
   include_tasks: create_primary_ip.yml
   tags: netbox_mgmt_ip
 
-- debug: var=discovered_interpreter_python
-  tags: netbox_prefix
+# - debug: var=discovered_interpreter_python
+#   tags: netbox_prefix
 
 - name: Create IP Prefixes
   netbox_prefix:
