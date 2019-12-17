@@ -21,7 +21,6 @@
   run_once: yes
   tags: 
     - device_vendors
-    - netbox_device
 
 - name: Create NetBox Device Types
   include_tasks: create_device_types.yml
@@ -31,7 +30,6 @@
   run_once: yes
   tags: 
     - device_types
-    - netbox_device
 
 - name: Create NetBox Device Roles
   include_tasks: create_device_roles.yml
@@ -41,7 +39,6 @@
   run_once: yes
   tags: 
     - device_roles
-    - netbox_device
 
 - name: Create NetBox Device 
   include_tasks: create_device.yml
