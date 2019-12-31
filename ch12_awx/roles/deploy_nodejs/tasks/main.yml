@@ -23,7 +23,6 @@
   apt: update_cache=yes
   # when: node_repo.changed
   become: yes
-  # tags: ['skip_ansible_lint']
 
 - name: Install Nodejs and NPM.
   apt: #"name=nodejs={{ nodejs_version|regex_replace('x', '') }}* state=present"

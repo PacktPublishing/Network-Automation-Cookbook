@@ -1,4 +1,4 @@
-pip_package: python-pip
+pip_package: python3-pip
 
 python_packages:
   - docker

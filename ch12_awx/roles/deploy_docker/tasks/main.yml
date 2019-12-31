@@ -22,7 +22,7 @@
 - name: Update APT cache
   apt:
     update_cache: yes
-    cache_valid_time: 600
+    force: yes
   become: yes
 
 - name: Install Docker Packages
