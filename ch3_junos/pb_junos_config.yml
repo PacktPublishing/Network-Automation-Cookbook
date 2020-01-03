@@ -1,0 +1,36 @@
+---
+- name: Configure Juniper Devices
+  hosts: junos
+  tasks:
+    - name: "Conifgure Basic System config"
+      junos_system:
+        hostname: "{{ inventory_hostname }}"
+        name_servers: "{{ global.dns }}"
+        state: present
+      tags: system
+
+    - name: "Configure Users"
+      junos_user:
+        name: "{{ item.username }}"
+        role: "{{ item.role }}"
+        sshkey: "{{ lookup ('file', item.ssh_key) }}"
+        state: present
+      with_items: "{{ global.users | selectattr('ssh_key','defined') | list }}"
+      tags: system
+
+    - name: "Configure the Physical Interfaces"
+      junos_interface:
+        name: "{{ item.port }}"
+        enabled: true
+        description: "peer:{{item.peer}} remote_port:{{item.pport }}"
+        mtu: "{{ global.mtu | default(1500) }}"
+      with_items: "{{p2p_ip[inventory_hostname]}}"
+      tags: intf
+
+    - name: "Configure IP Addresses"
+      junos_l3_interface:
+        name: "{{ item.port }}"
+        ipv4: "{{ item.ip }}/{{ global.p2p_prefix }}"
+        state: present
+      with_items: "{{ p2p_ip[inventory_hostname] }}"
+      tags: intf

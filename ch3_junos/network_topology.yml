@@ -3,9 +3,9 @@ global:
       - 172.20.1.1
       - 172.20.1.15
     users:
-      - username: vagrant
+      - username: admin
         role: super-user
-        ssh_key: '~/.ssh/id_rsa.pub'
+        ssh_key: 'ansible_ssh_key.pub'
       - username: ansible
         passwd: 14161C180506262E757A60 # ansible123
         hash: "$1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1"  # ansible123

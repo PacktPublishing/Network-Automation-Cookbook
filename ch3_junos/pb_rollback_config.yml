@@ -1,7 +1,0 @@
----
-- name: " Play 1: Rollback Config on JunOS"
-  hosts: junos
-  tasks:
-    - name: "Rollback config"
-      junos_config:
-        rollback: 1
