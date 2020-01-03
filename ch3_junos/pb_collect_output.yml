@@ -1,11 +1,10 @@
 ---
-- name: "Play 1: Execute Operational Commands"
+- name: Collect Network Logs
   hosts: junos
   vars:
     log_folder: "logs"
-    op_folder: "op_data"
     op_cmds:
-      - show configuration
+      - show ospf neighbor 
   tasks:
     - name: "P1T1: Build Directories to Store Data"
       block:
@@ -18,13 +17,19 @@
 
     - name: "P1T2: Get Running configs from Devices"
       junos_command:
-        commands: "{{ op_cmds }}"
-      register: show_run
-    
+        commands: "{{ item }}"
+      loop: "{{ op_cmds }}"
+      register: logs_output
+
+    - debug: var=logs_output
+      delegate_to: localhost
+
     - name: "P1T3: Save Running Config per Device"
       copy:
-        content: "{{ show_run.stdout[0] }}"
-        dest: "{{ log_folder }}/{{ inventory_hostname }}.cfg"
+        content: "{{ item.stdout[0] }}"
+        dest: "{{ log_folder }}/{{inventory_hostname}}_{{ item.item | regex_replace(' ','_') }}.txt"
+      loop: "{{ logs_output.results }}"
+      delegate_to: localhost
     
 
 
