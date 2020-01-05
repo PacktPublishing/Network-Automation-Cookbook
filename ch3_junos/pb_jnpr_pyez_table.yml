@@ -1,0 +1,22 @@
+---
+- name: Validate BGP State using PyEZ Tables
+  hosts: junos
+  roles:
+    - Juniper.junos
+  tasks:
+    - name: Retrieve BGP Neighbor Information Using PyEZ Table
+      juniper_junos_table:
+        file: "bgp.yml"
+      register: jnpr_pyez_bgp
+
+    - name: Validate all BGP Peers are operational
+      assert:
+        that: 
+          - item.peer in jnpr_pyez_bgp.resource | map(attribute='peer_id') | list
+        fail_msg: " BGP Peer {{ item.peer }} is Not Operational"
+      loop: "{{ bgp_peers }}"
+
+    - name: Debug for Verbosity
+      debug:
+        var: jnpr_pyez_bgp
+    
