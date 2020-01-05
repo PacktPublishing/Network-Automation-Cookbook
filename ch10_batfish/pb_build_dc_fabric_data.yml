@@ -3,9 +3,9 @@
   hosts: all
   connection: local
   gather_facts: no
-  # vars_files: network_topology.yml
   pre_tasks:
     - include_vars: network_topology.yml
+      run_once: yes
   roles:
     - generate_fabric_ips
 
@@ -13,11 +13,8 @@
   hosts: all
   connection: local
   gather_facts: no
-  #vars_files: network_topology.yml
   pre_tasks:
     - include_vars: network_topology.yml
-      run_once: yes
-    - debug: var=hostvars['leaf01']
       run_once: yes
   roles:
     - generate_underlay_bgp

@@ -10,3 +10,24 @@
       with_dict: "{{lo_ip}}"
       vars:
         ansible_connection: network_cli
+      register: ping_rst
+      ignore_errors: yes
+    - debug: var=ping_rst
+    - name: Create Ping Report
+      blockinfile:
+        block: |
+            Node | Destination | Packet Loss | Delay |
+            -----| ------------| ------------| ------|
+            {%  for node in play_hosts %}
+            {%    for result in hostvars[node].ping_rst.results %}
+            {%      if result.rtt is defined %}
+            {{ node }} | {{ result.item.value }} | {{ result.packet_loss }} | {{ result.rtt.avg }}
+            {%      else %}
+            {{ node }} | {{ result.item.value }} | {{ result.packet_loss }} | 'N/A'
+            {%      endif %}
+            {%    endfor %}
+            {%  endfor %}
+        path: ./ping_report.md
+        create: yes
+        run_once: yes
+        

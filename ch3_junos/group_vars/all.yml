@@ -24,8 +24,8 @@ global:
   setup: isp
   users:
   -   role: super-user
-      ssh_key: ~/.ssh/id_rsa.pub
-      username: vagrant
+      ssh_key: ansible_ssh_key.pub
+      username: admin
   -   hash: $1$mR940Z9C$ipX9sLKTRDeljQXvWFfJm1
       passwd: 14161C180506262E757A60
       role: super-user

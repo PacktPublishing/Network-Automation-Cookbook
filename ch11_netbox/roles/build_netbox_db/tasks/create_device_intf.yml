@@ -8,8 +8,6 @@
       name: "{{ item.port }}"
       description: "{{ item.type | default('CORE') }} | {{ item.peer }}| {{ item.pport }}"
       enabled: true
-      form_factor: 1000Base-t (1GE)
-      mgmt_only: false
       mode: Access
     state: "{{ netbox_state }}"
   loop: "{{ p2p_ip[inventory_hostname] }}"
@@ -25,7 +23,6 @@
       name: "{{ item.value }}"
       description: "{{'Managment Interface ' +  inventory_hostname }}"
       enabled: true
-      form_factor: 1000Base-t (1GE)
       mgmt_only: true
       mode: Access
     state: "{{ netbox_state }}"
@@ -43,8 +40,6 @@
       description: "{{'Managment Interface ' +  inventory_hostname }}"
       name: "Loopback0"
       enabled: true
-      # form_factor: 1000Base-t (1GE)
-      mgmt_only: false
       mode: Access
     state: "{{ netbox_state }}"
   tags: netbox_intfs

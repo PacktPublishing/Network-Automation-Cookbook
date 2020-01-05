@@ -13,9 +13,31 @@
     accept_hostkey: true
   when: not awx_repo_exists.stat.exists
 
+- name: Ensure python3 is the Active Python
+  stat:
+    path: /usr/bin/python
+  register: python3_active
+
+- name: Remove Link to Python2
+  file:
+    path: /usr/bin/python
+    state: absent
+  when: 
+    - python3_active.stat.exists
+    - python3_active.stat.lnk_target != '/usr/bin/python3'
+
+- name: Create Soft Link to python3
+  file:
+    src: /usr/bin/python3
+    dest: /usr/bin/python
+    state: link
+  when: (not python3_active.stat.exists) or python3_active.stat.lnk_target != '/usr/bin/python3'
+
+
 - name: Run the Install AWX playbook
   command: "ansible-playbook -i inventory install.yml -e 'postgres_data_dir={{ postgres_data_dir }},
                                                           docker_compose_dir={{ docker_compose_dir }}'"
   args:
     chdir: "{{ awx_repo_dir }}/installer"
     creates: "{{ awx_repo_dir }}/awx_playbook_complete"
+  become: yes

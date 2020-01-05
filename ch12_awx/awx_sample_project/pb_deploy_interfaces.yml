@@ -1,6 +1,6 @@
 ---
 - name: get facts
-  hosts: iosxr
+  hosts: all
   gather_facts: no
   tasks:
     - name: Enable Interface

@@ -6,21 +6,12 @@ mxpe02    ansible_host=172.20.1.4
 mxp01     ansible_host=172.20.1.2
 mxp02     ansible_host=172.20.1.6
 
-[batfish]
-batfish   ansible_host=192.168.0.112
-
 [junos]
-mxpe01
-mxpe02
-mxp01
-mxp02
-
-
+mxpe[01:02]
+mxp[01:02]
 
 [core:children]
 pe
 p
 
-[junos:vars]
-transport=netconf
 

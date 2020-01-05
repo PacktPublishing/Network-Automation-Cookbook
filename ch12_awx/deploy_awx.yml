@@ -2,23 +2,21 @@
 - name: Deploy Ansible AWX
   hosts: awx
   become: yes
-  pre_tasks:
-    - name: Make Sure Ansible is Installed
-      apt:
-        name: ansible
-        state: present
-      register: ansible_present
-  tags: required
-
   tasks:
-    - name: Install Docker
+    - name: Install Ansible
       import_role:  
-        name: deploy_docker
+        name: deploy_ansible
+      tags: ansible
 
     - name: Install Python PIP
       import_role:  
         name: deploy_pip
       tags: pip
+
+    - name: Install Docker
+      import_role:  
+        name: deploy_docker
+      tags: docker
 
     - name: Install Nodjs
       import_role:  

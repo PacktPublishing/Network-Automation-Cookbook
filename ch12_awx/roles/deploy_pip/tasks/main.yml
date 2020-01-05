@@ -1,12 +1,12 @@
 ---
-- name: Install Python PIP System Package
-  package:
-    name: "{{ pip_package }}"
-    state: present
-  become: yes
+- name: Upgrade PIP package
+  pip:
+    executable: pip3
+    name: pip
+    extra_args: --upgrade
 
 - name: Install Python packages
   pip:
+    executable: pip3
     name: "{{ item }}"
   loop: "{{ python_packages }}"
-  #become: yes

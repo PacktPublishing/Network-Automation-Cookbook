@@ -19,6 +19,7 @@ global:
       privilege: 15
       role: network-admin
 
+
 p2p_ip:
   leaf01:
     - {port: Ethernet8, ip: 172.31.1.1 , peer: spine01, pport: Ethernet1, peer_ip: 172.31.1.0}

@@ -3,7 +3,7 @@
   hosts: all
   gather_facts: no
   vars:
-    ansible_python_interpreter: /Users/kokasha/Documents/ansible_projects/.venv/bin/python
+    ansible_python_interpreter: /usr/bin/python3
     ansible_connection: local
     netbox_state: absent
   tasks:
