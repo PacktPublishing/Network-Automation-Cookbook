@@ -1,3 +1,7 @@
+---
+ansible_user: ansible
+ansible_ssh_pass: ansible123
+
 tmp_dir: ./tmp
 config_dir: ./configs
 config_diff_dir: ./config_diff

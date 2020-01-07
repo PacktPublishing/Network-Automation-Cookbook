@@ -1,0 +1,11 @@
+---
+- name: Generate Configuration for JunOS Devices
+  hosts: junos
+  vars:
+    ansible_connection: local
+  tasks:
+    - name: Build Device Configuration 
+      import_role:
+        name: build_router_config 
+
+

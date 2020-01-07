@@ -1,6 +1,6 @@
 ---
 - name: " Validation Traffic Forwarding with NAPALM"
-  hosts: pe
+  hosts: junos:&pe
   vars:
     rr: 10.100.1.254
     max_delay: 5   # This is 5 msec 

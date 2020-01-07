@@ -1,4 +1,3 @@
 ansible_network_os: iosxr
 ansible_connection: network_cli
-ansible_user: ansible
-ansible_ssh_pass: ansible123
+
