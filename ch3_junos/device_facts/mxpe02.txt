@@ -1,0 +1,6 @@
+# BEGIN ANSIBLE MANAGED BLOCK
+device_name: mxpe02
+model: junos vmx
+os_version: 14.1R4.8
+serial_number: VM5701F131C6
+# END ANSIBLE MANAGED BLOCK

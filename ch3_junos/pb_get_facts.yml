@@ -1,6 +1,0 @@
----
-- name: get facts
-  hosts: junos
-  tasks:
-    - junos_facts:
-    - debug: var=ansible_facts

@@ -1,0 +1,59 @@
+[edit]
+- version 14.1R4.8;
+[edit system login]
+-    user admin {
+-        uid 2001;
+-        class super-user;
+-        authentication {
+-            ssh-rsa "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0/wvdC5ycAanRorlfMYDMAv5OTcYAALlE2bdboajsQPQNEw1Li3N0J50OJBWXX+FFQuF7JKpM32vNQjQN7BgyaBWQGxv+Nj0ViVP+8X8Wuif0m6bFxBYSaPbIbGogDjPu4qU90Iv48NGOZpcPLqZthtuN7yZKPshX/0YJtXd2quUsVhzVpJnncXZMb4DZQeOin7+JVRRrDz6KP6meIylf35mhG3CV5VqpoMjYTzkDiHwIrFWVMydd4C77RQu27N2HozUtZgJy9KD8qIJYVdP6skzvp49IdInwhjOA+CugFQuhYhHSoQxRxpws5RZlvrN7/0h0Ahc3OwHaUWD+P7lz ansible@centos7.localdomain"; ## SECRET-DATA
+-        }
+-    }
+[edit system login user ansible]
+-    uid 2002;
+[edit system login]
++    user vagrant {
++        class super-user;
++        authentication {
++            ssh-rsa "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5OiLlLKepdI6Xvmt5yfB1EMFDCI4HafyxCn/HQCGbhgMjudkJ+vBCcwB7S2rWEYxldp0RdeviELE9oXY1oMi/mqxhqNMxkLS8qGkqsctJz8vvBTUm/MHkILY2GQFec+RKbBGwJE6GWrf4Q7t2NBirRKpdYtDr1/b6Z6e+vWxihSTv+BzuJ18afq7FJI5JAF1qG0/RlFPHiMiABR4Hv89jICTsEVQZv0/0csiy91GctgVeKVGuGKLHYkp3W3jXi3PbQ55gY/cj+y65Pqy2puUyrn7PbZJXJb5hyE5ri63vNihQgSgpjyUHCMUqtdBIJqAw/T70IC4GSlhoxgUT3QQh ansible@centos7.localdomain"; ## SECRET-DATA
++        }
++    }
+[edit interfaces ge-0/0/0]
+-   mtu 1500;
+[edit interfaces ge-0/0/1]
+-   mtu 1500;
+[edit interfaces]
+-   ge-0/0/3 {
+-       vlan-tagging;
+-       unit 10 {
+-           vlan-id 10;
+-           family inet {
+-               address 172.10.1.1/24;
+-           }
+-       }
+-       unit 20 {
+-           vlan-id 20;
+-           family inet {
+-               address 172.20.1.1/24;
+-           }
+-       }
+-   }
+[edit routing-options static]
+     route 10.8.0.0/24 { ... }
++    route 172.20.1.0/24 next-hop 172.20.1.1;
+[edit]
+-  routing-instances {
+-      vpna {
+-          instance-type vrf;
+-          interface ge-0/0/3.10;
+-          route-distinguisher 1:10;
+-          vrf-target target:65400:10;
+-          vrf-table-label;
+-      }
+-      vpnb {
+-          instance-type vrf;
+-          interface ge-0/0/3.20;
+-          route-distinguisher 1:20;
+-          vrf-target target:65400:20;
+-          vrf-table-label;
+-      }
+-  }

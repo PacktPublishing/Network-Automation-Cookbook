@@ -6,6 +6,10 @@
 - name: Create Temp Directory per Node
   file: path={{tmp_dir}}/{{inventory_hostname}}  state=directory
 
+- name: "Create Config Diff Directory"
+  file: path={{config_diff_dir}}   state=directory
+  run_once: yes
+
 - name: SET FACT >> Build Directory
   set_fact:
     build_dir: "{{tmp_dir}}/{{inventory_hostname}}"

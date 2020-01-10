@@ -1,0 +1,6 @@
+# BEGIN ANSIBLE MANAGED BLOCK
+device_name: mxp02
+model: junos vmx
+os_version: 17.1R1.8
+serial_number: VM5D112EFB39
+# END ANSIBLE MANAGED BLOCK
