@@ -1,0 +1,31 @@
+---
+- name: "System Configuration"
+  template:
+    src: "{{ansible_network_os}}/mgmt.j2"
+    dest: "{{build_dir}}/00_mgmt.cfg"
+  tags: mgmt
+
+- name: "Interface Configuration"
+  template:
+    src: "{{ansible_network_os}}/intf.j2"
+    dest: "{{build_dir}}/01_intf.cfg"
+  tags: intf
+
+- name: "Underlay BGP Configuration"
+  template:
+    src: "{{ansible_network_os}}/underlay_bgp.j2"
+    dest: "{{build_dir}}/03_bgp.cfg"
+  tags: bgp
+
+- name: "Overlay BGP EVPN Configuration"
+  template:
+    src: "{{ansible_network_os}}/overlay_bgp.j2"
+    dest: "{{build_dir}}/04_evpn.cfg"
+  tags: bgp
+
+- name: "VLAN/VXLAN Configuration"
+  template:
+    src: "{{ansible_network_os}}/vxlan.j2"
+    dest: "{{build_dir}}/02_vxlan.cfg"
+  when: inventory_hostname in access_interfaces.keys()
+  tags: vxlan

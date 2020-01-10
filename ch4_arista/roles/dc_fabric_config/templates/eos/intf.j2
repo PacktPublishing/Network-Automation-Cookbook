@@ -1,0 +1,13 @@
+{% set node_intfs = p2p_ip[inventory_hostname] %}
+{% for p in node_intfs| sort(attribute='port') %}
+!
+interface {{p.port}}
+   description "{{global.site}} | Rpeer: {{p.peer}} | Rport: {{p.pport}}"
+   no switchport
+   ip address {{p.ip}}/{{global.p2p_prefix}}
+{%  endfor %}
+!
+!
+interface Loopback0
+   ip address {{lo_ip[inventory_hostname]}}
+!
