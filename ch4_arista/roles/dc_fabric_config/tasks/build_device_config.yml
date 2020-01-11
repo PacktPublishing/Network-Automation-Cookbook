@@ -23,9 +23,9 @@
     dest: "{{build_dir}}/04_evpn.cfg"
   tags: bgp
 
-- name: "VLAN/VXLAN Configuration"
-  template:
-    src: "{{ansible_network_os}}/vxlan.j2"
-    dest: "{{build_dir}}/02_vxlan.cfg"
-  when: inventory_hostname in access_interfaces.keys()
-  tags: vxlan
+# - name: "VLAN/VXLAN Configuration"
+#   template:
+#     src: "{{ansible_network_os}}/vxlan.j2"
+#     dest: "{{build_dir}}/02_vxlan.cfg"
+#   when: inventory_hostname in access_interfaces.keys()
+#   tags: vxlan

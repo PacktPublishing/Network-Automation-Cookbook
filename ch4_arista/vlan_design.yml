@@ -1,0 +1,29 @@
+vlan_data:
+  leaf01:
+    - id: 10
+      description: DB
+      ports:
+        - Ethernet1
+  leaf02:
+    - id: 20
+      description: web
+      ports:
+        - Ethernet1
+  leaf03:
+    - id: 10
+      description: DB
+      ports:
+        - Ethernet1
+    - id: 20
+      description: web
+      ports:
+        - Ethernet2 
+  leaf04:
+    - id: 10
+      description: DB
+      ports:
+        - Ethernet1
+    - id: 20
+      description: web
+      ports:
+        - Ethernet2

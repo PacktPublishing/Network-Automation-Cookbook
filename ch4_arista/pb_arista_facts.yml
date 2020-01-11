@@ -1,0 +1,22 @@
+---
+- name: Collect and Validate Arista DC Fabric Facts
+  hosts: arista
+  tasks:
+    - name: Collect Arista Device Facts
+      eos_facts:
+
+    - debug: var=hostvars[inventory_hostname]
+
+    - name: Validate all DC Fabric Interface are Operational
+      assert:
+        that:
+          - ansible_net_interfaces[item.port].lineprotocol == 'up'
+        fail_msg: "Interface {{item.port}} is not Operational "
+      loop: "{{ p2p_ip[inventory_hostname] }}"
+
+    - name: Validate all DC Fabric Interface are has Correct IP
+      assert:
+        that:
+          - ansible_net_interfaces[item.port].ipv4.address == item.ip
+        fail_msg: "Interface {{item.port}} has Wrong IP Address"
+      loop: "{{ p2p_ip[inventory_hostname] }}"

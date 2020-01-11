@@ -13,6 +13,7 @@
       eos_config:
         src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
         replace: config
+        save_when: changed
       tags: deploy
 
 
