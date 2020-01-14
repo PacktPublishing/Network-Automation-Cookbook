@@ -1,17 +1,24 @@
 ---
-- name: Build GCP network
+- name: Decommision GCP Resources
   hosts: all
   connection: local
   gather_facts: no
-  environment:
-    GCP_SERVICE_ACCOUNT_FILE: './gcp-ansible-secret.json'
-    GCP_AUTH_KIND: 'serviceaccount'
-  vars:
-    project:  "gcp-ansible-demo"
+  force_handlers: True
+  vars_files:
+    - gcp_account_info.yml
   tasks:
+    - name: Read the Vault Encrypted JSON File
+      copy:
+        content: "{{ lookup('file','gcp-ansible-secret.json') }}"
+        dest: "{{ service_account_file }}"
+      notify: Clean tmp Decrypted Files
+      tags: always
+
     - name: Get VPC Facts
       gcp_compute_network_facts:
+        auth_kind: "{{ auth_kind }}"
         project: "{{ project }}"
+        service_account_file: "{{ service_account_file }}"
       register: gcp_vpc
       tags: 
         - gcp_route
@@ -85,3 +92,9 @@
         state: absent
       tags:
         - gcp_vpc
+
+  handlers:
+    - name: Clean tmp Decrypted Files
+      file: 
+        path: "{{ service_account_file }}"  
+        state: absent

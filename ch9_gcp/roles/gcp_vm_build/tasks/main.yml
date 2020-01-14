@@ -13,7 +13,7 @@
 - name: create a {{ node.name }} instance with no Internet
   gcp_compute_instance:
     name: "{{ node.name | regex_replace('_','-') }}"
-    machine_type: f1-micro
+    machine_type: "{{ compute_node_flavor }}"
     disks:
     - source: "{{ gcp_vm_disk }}"
       boot: 'true'

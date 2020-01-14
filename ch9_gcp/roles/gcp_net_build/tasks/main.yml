@@ -33,46 +33,46 @@
   register: gcp_subnets
 
 
-# - name: Create Allow Firewall Rules
-#   gcp_compute_firewall:
-#     name: "{{ rule.name | regex_replace('_','-') }}"
-#     network: {selfLink: "{{ gcp_vpc.selfLink }}"}
-#     priority: "{{ rule.priority | default(omit) }}"
-#     direction: "{{ rule.direction | upper | mandatory }}"
-#     allowed:
-#       - ip_protocol: "{{ rule.protocol }}"
-#         ports: "{{ (rule.port|string).split(',') }}"
-#     source_ranges: "{{ rule.src | default(omit) }}"
-#     source_tags: "{{ omit if rule.src_tag is not defined else rule.src_tag.split(',') }}"
-#     destination_ranges: "{{ rule.dest | default(omit) }}"
-#     target_tags: "{{ omit if rule.apply_to is not defined else rule.apply_to.split(',') }}"
-#     auth_kind: "{{ auth_kind }}"
-#     project: "{{ project }}"
-#     service_account_file: "{{ service_account_file }}"
-#   loop: "{{ fw_rules | selectattr('type','equalto','allow') | list }}"
-#   loop_control:
-#     loop_var: rule
-#   tags: gcp_fw_rules
+- name: Create Allow Firewall Rules
+  gcp_compute_firewall:
+    name: "{{ rule.name | regex_replace('_','-') }}"
+    network: {selfLink: "{{ gcp_vpc.selfLink }}"}
+    priority: "{{ rule.priority | default(omit) }}"
+    direction: "{{ rule.direction | upper | mandatory }}"
+    allowed:
+      - ip_protocol: "{{ rule.protocol }}"
+        ports: "{{ (rule.port|string).split(',') }}"
+    source_ranges: "{{ rule.src | default(omit) }}"
+    source_tags: "{{ omit if rule.src_tag is not defined else rule.src_tag.split(',') }}"
+    destination_ranges: "{{ rule.dest | default(omit) }}"
+    target_tags: "{{ omit if rule.apply_to is not defined else rule.apply_to.split(',') }}"
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ service_account_file }}"
+  loop: "{{ fw_rules | selectattr('type','equalto','allow') | list }}"
+  loop_control:
+    loop_var: rule
+  tags: gcp_fw_rules
 
-# - name: Create Deny Firewall Rules
-#   # debug:
-#   #   msg: "{{ item }}"
-#   gcp_compute_firewall:
-#     name: "{{ rule.name | regex_replace('_','-') }}"
-#     network: {selfLink: "{{ gcp_vpc.selfLink }}"}
-#     priority: "{{ rule.priority | default(omit) }}"
-#     direction: "{{ rule.direction | upper | mandatory }}"
-#     denied:
-#       - ip_protocol: "{{ rule.protocol | default('all') }}"
-#         ports: "{{ omit if rule.port is not defined }}"
-#     source_ranges: "{{ rule.src | default(omit) }}"
-#     source_tags: "{{ omit if rule.src_tag is not defined else rule.src_tag.split(',') }}"
-#     destination_ranges: "{{ rule.dest | default(omit) }}"
-#     target_tags: "{{ omit if rule.apply_to is not defined else rule.apply_to.split(',') }}"
-#     auth_kind: "{{ auth_kind }}"
-#     project: "{{ project }}"
-#     service_account_file: "{{ service_account_file }}"
-#   loop: "{{ fw_rules | selectattr('type','equalto','deny') | list }}"
-#   loop_control:
-#     loop_var: rule
-#   tags: gcp_fw_rules
+- name: Create Deny Firewall Rules
+  # debug:
+  #   msg: "{{ item }}"
+  gcp_compute_firewall:
+    name: "{{ rule.name | regex_replace('_','-') }}"
+    network: {selfLink: "{{ gcp_vpc.selfLink }}"}
+    priority: "{{ rule.priority | default(omit) }}"
+    direction: "{{ rule.direction | upper | mandatory }}"
+    denied:
+      - ip_protocol: "{{ rule.protocol | default('all') }}"
+        ports: "{{ omit if rule.port is not defined }}"
+    source_ranges: "{{ rule.src | default(omit) }}"
+    source_tags: "{{ omit if rule.src_tag is not defined else rule.src_tag.split(',') }}"
+    destination_ranges: "{{ rule.dest | default(omit) }}"
+    target_tags: "{{ omit if rule.apply_to is not defined else rule.apply_to.split(',') }}"
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ service_account_file }}"
+  loop: "{{ fw_rules | selectattr('type','equalto','deny') | list }}"
+  loop_control:
+    loop_var: rule
+  tags: gcp_fw_rules
