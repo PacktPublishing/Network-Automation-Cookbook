@@ -4,6 +4,9 @@
   connection: local
   gather_facts: no
   force_handlers: True
+  environment:
+    GCP_SERVICE_ACCOUNT_FILE: "{{ service_account_file }}"
+    GCP_AUTH_KIND: 'serviceaccount'
   vars_files:
     - gcp_account_info.yml
   tasks:
@@ -16,26 +19,14 @@
 
     - name: Get VPC Facts
       gcp_compute_network_facts:
-        auth_kind: "{{ auth_kind }}"
         project: "{{ project }}"
-        service_account_file: "{{ service_account_file }}"
       register: gcp_vpc
       tags: 
         - gcp_route
         - gcp_subnet
         - gcp_fw_rules
 
-    - name: Delete disks for {{ node.name }}
-      gcp_compute_disk:
-        name: "{{ node.name | regex_replace('_','-') }}-disk"
-        zone: "{{ node.zone }}"
-        project: "{{ project }}"
-        state: absent
-      loop: "{{ compute_nodes }}"
-      loop_control:
-        loop_var: node
-
-    - name: Delete Instance {{ node.name }}
+    - name: Delete Instances
       gcp_compute_instance:
         name: "{{ node.name | regex_replace('_','-') }}"
         zone: "{{ node.zone }}"
@@ -44,6 +35,18 @@
       loop: "{{ compute_nodes }}"
       loop_control:
         loop_var: node
+        label: "{{node.name}}"
+
+    - name: Delete disks for Instances
+      gcp_compute_disk:
+        name: "{{ node.name | regex_replace('_','-') }}-disk"
+        zone: "{{ node.zone }}"
+        project: "{{ project }}"
+        state: absent
+      loop: "{{ compute_nodes }}"
+      loop_control:
+        loop_var: node
+        label: "{{node.name}}"
 
     - name: Delete All Firewall Rules
       gcp_compute_firewall:
