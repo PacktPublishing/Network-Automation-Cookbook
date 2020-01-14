@@ -1,6 +1,6 @@
 ---
 website: dev.internet.net
-vip: 10.1.100.10
+vip: 10.1.100.100
 vip_port: 443
 pool_members:
   - ip: 10.1.10.10

@@ -4,12 +4,25 @@
   connection: local
   vars_files: web_app.yml
   tasks:
-    - name: Collect Device Facts from BIG-IP
+    - name: Collect Virtual Server Facts from BIG-IP
       bigip_device_facts:
         gather_subset:
           - virtual-servers
         provider: "{{ conn_parameters }}"
       register: bigip_app_facts
+
+    # - debug: var=bigip_app_facts.virtual_servers
+
+    - name: Create Virtual Server Name Fact
+      set_fact:
+        vs_name: "{{ website }}_{{ vip_port }}_VS"
+
+    - name: Create App Virtual Servers
+      set_fact:
+        app_vs: "{{ app_vs | default([]) + 
+                    bigip_app_facts.virtual_servers | selectattr('name','equalto',vs_name) | list }}" 
+
+    # - debug: var=app_vs
 
     - name: Validate Virtual Address Status
       assert:
@@ -18,6 +31,5 @@
           - item.destination_address == vip
           - item.destination_port == vip_port
         fail_msg: " {{ item.name }} is No Setup Correctly"  
-      loop: "{{bigip_app_facts.virtual_servers}}"
+      loop: "{{app_vs}}"
 
-    - debug: var=bigip_app_facts

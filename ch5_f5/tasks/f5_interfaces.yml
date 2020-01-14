@@ -24,7 +24,7 @@
 - name: Provision IP addresses on BIG-IP
   bigip_selfip:
     address: "{{ item.ip | ipv4('address') }}"
-    name: "VL{{ item.vlan }}"
+    name: "VL{{ item.vlan }}_IP"
     netmask: "{{ item.ip | ipv4('netmask') }}"
     vlan: "VL{{ item.vlan }}"
     provider: "{{ conn_parameters }}"

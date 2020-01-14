@@ -9,12 +9,20 @@
           - interfaces
         provider: "{{ conn_parameters }}"
       register: bigip_facts
-    
+
+    - name: Set Device Links
+      set_fact:
+        net_intfs: "{{ net_intfs | default([]) + 
+                         bigip_facts.interfaces | selectattr('name','equalto',item|string) | list }}"
+      loop: "{{ phy_interfaces }}"
+
+    # - debug: var=net_devices
+
     - name: Validate All Interface are operational
       assert:
         that:
           - item.enabled == 'yes'
         fail_msg: " Interface {{ item.name }} is Down"  
-      loop: "{{bigip_facts.interfaces}}"
+      loop: "{{net_intfs}}"
 
-    - debug: var=bigip_facts
+    # - debug: var=bigip_facts.interfaces
