@@ -4,13 +4,14 @@
   connection: local
   gather_facts: no
   tasks:
-    - name: Get Resource Facts
+    - name: Get Resource Group Facts
       azure_rm_resourcegroup_facts:
         name: "{{ rg_name }}"
       register: rg_facts
       tags: rg_facts
     - debug: var=azure_resourcegroups
       tags: rg_facts
+      
     - name: Validate Resource Group is Deployed
       assert:
         that:
@@ -22,7 +23,7 @@
         loop_var: rg
       tags: rg_facts
 
-    - name: Validate Virtual Network is Deployed
+    - name: Get Virtual Network Facts 
       azure_rm_virtualnetwork_facts:
         resource_group: "{{ rg_name }}"
       register: vnet_facts
