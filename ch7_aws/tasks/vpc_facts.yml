@@ -9,7 +9,7 @@
     - subnet
     - rt
 
-- debug: var=vpc_facts
+# - debug: var=vpc_facts
 
 - block:
     - name: Extract VPC ID

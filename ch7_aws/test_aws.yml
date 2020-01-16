@@ -6,7 +6,9 @@
     AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
     AWS_REGION: "{{ aws_region }}"
   tasks:
-    - debug: var=aws_region
+    # - debug: var=aws_region
     - name: get AZ
-      aws_az_facts:
+      ec2_vpc_subnet_facts:
+      register: subnet_facts
+    - debug: var=subnet_facts
       
