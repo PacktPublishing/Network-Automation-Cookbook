@@ -34,29 +34,29 @@
       with_items: "{{vpc_subnet_facts.subnets}}"
       tags: subnet
 
-    - name: Get IGW facts
-      ec2_vpc_igw_facts:
-        filters:
-          attachment.vpc-id: "{{ vpc_id }}"
-      register: vpc_igw_facts
-      tags: igw
-    - name: Extract IGW ID
-      set_fact:
-        igw_id: "{{ vpc_igw_facts.internet_gateways[0].internet_gateway_id }}"
-      tags: igw
+    # - name: Get IGW facts
+    #   ec2_vpc_igw_facts:
+    #     filters:
+    #       attachment.vpc-id: "{{ vpc_id }}"
+    #   register: vpc_igw_facts
+    #   tags: igw
+    # - name: Extract IGW ID
+    #   set_fact:
+    #     igw_id: "{{ vpc_igw_facts.internet_gateways[0].internet_gateway_id }}"
+    #   tags: igw
 
-    - name: Get Route Table facts
-      ec2_vpc_route_table_facts:
-        filters:
-          vpc-id: "{{ vpc_id }}"
-      register: vpc_route_table_facts
-      tags: rt
-    - debug: var=vpc_route_table_facts
-      tags: rt
+    # - name: Get Route Table facts
+    #   ec2_vpc_route_table_facts:
+    #     filters:
+    #       vpc-id: "{{ vpc_id }}"
+    #   register: vpc_route_table_facts
+    #   tags: rt
+    # - debug: var=vpc_route_table_facts
+    #   tags: rt
 
-    - name: Extract Route Table IDs
-      set_fact:
-        rt_id: "{{vpc_route_table_facts.route_tables[0].id }}"
-      tags: rt
+    # - name: Extract Route Table IDs
+    #   set_fact:
+    #     rt_id: "{{vpc_route_table_facts.route_tables[0].id }}"
+    #   tags: rt
 
   when: vpc_facts.vpcs != []

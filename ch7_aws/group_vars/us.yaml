@@ -1,1 +1,3 @@
 aws_region: us-east-1
+ami_id: ami-09d069a04349dc3cb  # Amazon AMI
+

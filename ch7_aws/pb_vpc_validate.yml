@@ -22,7 +22,6 @@
           - vpc_facts.vpcs[0].tags.Name == vpc_name
 
     - block:
-
         - name: Extract VPC ID
           set_fact:
             vpc_id: "{{ vpc_facts.vpcs[0].id }}"
@@ -34,7 +33,7 @@
           register: vpc_subnet_facts
           tags: subnet
 
-        - debug: var=vpc_subnet_facts
+        # - debug: var=vpc_subnet_facts
 
         - name: Validate VPC Subnets Info
           assert:
