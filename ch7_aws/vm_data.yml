@@ -1,0 +1,24 @@
+---
+
+security_groups:
+  - name: web_servers_sg
+    description: "Web Servers SG"
+    rules:
+      - proto: tcp
+        ports: 22
+        cidr_ip: 59.100.169.33/32
+      - proto: tcp
+        ports: [80,443]
+        cidr_ip: 0.0.0.0/0
+    tags:
+      Name: Web Servers SG
+
+ssh_key: "ansible_demo_key"
+machine_type: t2.micro
+
+compute_nodes:
+  - name: web_servers_az1
+    has_internet: yes
+  - name: web_servers_az2
+    has_internet: yes
+
