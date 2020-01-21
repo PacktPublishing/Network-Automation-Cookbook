@@ -7,14 +7,9 @@
     AWS_REGION: "{{ aws_region }}"
   vars_files: vm_data.yml
   tasks:
-<<<<<<< HEAD
     # - debug: var=aws_region
     - name: get AZ
       ec2_vpc_subnet_facts:
       register: subnet_facts
     - debug: var=subnet_facts
-=======
-    - debug: var=network_acls
-
->>>>>>> ch7
       
