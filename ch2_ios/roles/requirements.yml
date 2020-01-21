@@ -1,3 +1,0 @@
-- src: https://github.com/CiscoDevNet/ansible-pyats
-  scm: git
-  name: ansible-pyats
