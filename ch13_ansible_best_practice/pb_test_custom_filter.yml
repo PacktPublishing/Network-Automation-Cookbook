@@ -11,7 +11,7 @@
       - name: Apply Our Custom Filter
         set_fact:
           standard_acl: "{{ ACLs | acl_state }}"
-          final_acl: "{{ ACLs | custom_acl('dports') }}"
+          final_acl: "{{ ACLs | custom_acl('dport') }}"
         run_once: yes
 
       - name: Display Output After Filter
