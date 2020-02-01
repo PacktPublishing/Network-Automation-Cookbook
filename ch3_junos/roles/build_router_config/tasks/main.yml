@@ -1,7 +1,7 @@
 ---
 - name: Build Required Directories
   import_tasks: build_config_dir.yml
-  tags: always
+  tags: [mgmt,intf,ospf,mpls,bgp]
 
 - name: Build Device Configuration
   import_tasks: build_device_config.yml
@@ -10,15 +10,15 @@
   file: 
     path: "{{config_dir}}/{{ inventory_hostname }}.cfg"
     state: absent
-  tags: always
+  tags: [mgmt,intf,ospf,mpls,bgp]
 
 - name: Build Final Device Configuration
   assemble:
     src: "{{ build_dir }}"
     dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-  tags: always
+  tags: [mgmt,intf,ospf,mpls,bgp]
 
 - name: Remove Build Directory
   file: path={{ tmp_dir }}  state=absent
   run_once: yes
-  tags: always
+  tags: [mgmt,intf,ospf,mpls,bgp]

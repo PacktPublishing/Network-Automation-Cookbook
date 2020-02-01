@@ -2,57 +2,27 @@
 - name: " Generate and Deploy Configuration on All Devices"
   hosts: sp_core
   tasks:
-    # - name: "P1T1: Enable NETCONF"
-    #   junos_netconf:
-    #     netconf_port: 830
-    #     state: present
-    #   vars:
-    #     ansible_connection: network_cli
-    #   tags: netconf
+    - name: Build Device Configuration 
+      import_role:
+        name: build_router_config
+      delegate_to: localhost
+      tags: build  
         
-    - name: "P1T1: Build Config Directory Strcuture"
-      import_tasks: "tasks/build_req_dir.yml"
-      delegate_to: localhost
-      tags: config
-
-    - name: "P1T2: Build Devices configuration"
-      import_tasks: "tasks/build_config.yml"
-      delegate_to: localhost
-      tags: config
-
-    - name: "P1T3: Remove Old Assembled Config"
-      file: 
-        path: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-        state: absent
-      delegate_to: localhost
-      tags: config
-
-    - name: "P1T4: Assemble The Final configuration"
-      assemble:
-        src: "{{tmp_dir}}/{{ inventory_hostname }}"
-        dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-      delegate_to: localhost
-      tags: config
-    
-    - name: "P1T5: Deploy Configuration"
+    - name: "Deploy Configuration"
       napalm_install_config:
         hostname: "{{ ansible_host }}"
         username: "{{ ansible_user }}"
         password: "{{ ansible_ssh_pass }}"
         dev_os: "{{ ansible_network_os }}"
         config_file: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-        #diff_file: "{{ config_diff_dir}}/{{ inventory_hostname }}_diff.txt"
+        diff_file: "{{ config_diff_dir}}/{{ inventory_hostname }}_diff.txt"
         commit_changes: "{{commit | default('no')}}"
         replace_config: yes
       register: napalm_config
       tags: deploy, never
 
-    - debug: var=napalm_config
-      tags: deploy, never
+    # - debug: var=napalm_config
+    #   tags: deploy, never
 
-
-
-    # - import_tasks: "tasks/junos_interfaces.yml"
-    #   tags: intf, never
 
 

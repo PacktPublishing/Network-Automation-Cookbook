@@ -3,21 +3,30 @@
   hosts: all
   connection: local
   gather_facts: no
+  force_handlers: True
   vars_files:
     - gcp_account_info.yml
 
   tasks:
-    # - include_vars: "{{ gcp_account_file }}"
+    - name: Read the Vault Encrypted JSON File
+      copy:
+        content: "{{ lookup('file','gcp-ansible-secret.json') }}"
+        dest: "{{ service_account_file }}"
+      notify: Clean tmp Decrypted Files
+      tags: always
+
     - name: Build GCP Network
       import_role:
         name: gcp_net_build
+      tags: gcp_net_build
       
     - name: Build VM Instances
       include_role:
-        name: gcp_new_vm
+        name: gcp_vm_build
       loop: "{{ compute_nodes }}"
       loop_control:
         loop_var: node
+      tags: gcp_vm_build
 
     - name: Create the Route
       gcp_compute_route:
@@ -39,4 +48,9 @@
       - route.nh is defined
       tags: 
         - gcp_route
-        - gcp_vpc
+
+  handlers:
+    - name: Clean tmp Decrypted Files
+      file: 
+        path: "{{ service_account_file }}"  
+        state: absent

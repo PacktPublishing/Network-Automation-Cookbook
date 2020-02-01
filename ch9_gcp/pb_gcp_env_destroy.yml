@@ -1,14 +1,22 @@
 ---
-- name: Build GCP network
+- name: Decommision GCP Resources
   hosts: all
   connection: local
   gather_facts: no
+  force_handlers: True
   environment:
-    GCP_SERVICE_ACCOUNT_FILE: './gcp-ansible-secret.json'
+    GCP_SERVICE_ACCOUNT_FILE: "{{ service_account_file }}"
     GCP_AUTH_KIND: 'serviceaccount'
-  vars:
-    project:  "gcp-ansible-demo"
+  vars_files:
+    - gcp_account_info.yml
   tasks:
+    - name: Read the Vault Encrypted JSON File
+      copy:
+        content: "{{ lookup('file','gcp-ansible-secret.json') }}"
+        dest: "{{ service_account_file }}"
+      notify: Clean tmp Decrypted Files
+      tags: always
+
     - name: Get VPC Facts
       gcp_compute_network_facts:
         project: "{{ project }}"
@@ -18,7 +26,11 @@
         - gcp_subnet
         - gcp_fw_rules
 
+<<<<<<< HEAD
     - name: Delete Instance {{ node.name }}
+=======
+    - name: Delete Instances
+>>>>>>> ch01
       gcp_compute_instance:
         name: "{{ node.name | regex_replace('_','-') }}"
         zone: "{{ node.zone }}"
@@ -27,8 +39,13 @@
       loop: "{{ compute_nodes }}"
       loop_control:
         loop_var: node
+        label: "{{node.name}}"
 
+<<<<<<< HEAD
     - name: Delete disks for {{ node.name }}
+=======
+    - name: Delete disks for Instances
+>>>>>>> ch01
       gcp_compute_disk:
         name: "{{ node.name | regex_replace('_','-') }}-disk"
         zone: "{{ node.zone }}"
@@ -37,6 +54,7 @@
       loop: "{{ compute_nodes }}"
       loop_control:
         loop_var: node
+        label: "{{node.name}}"
 
     - name: Delete All Firewall Rules
       gcp_compute_firewall:
@@ -85,3 +103,9 @@
         state: absent
       tags:
         - gcp_vpc
+
+  handlers:
+    - name: Clean tmp Decrypted Files
+      file: 
+        path: "{{ service_account_file }}"  
+        state: absent

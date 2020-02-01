@@ -6,8 +6,18 @@
     AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
     AWS_REGION: "{{ aws_region }}"
   tasks:
-    - name: Collect VPC Facts
-      include_tasks: tasks/vpc_facts.yml
+    - name: Get VPC facts
+      ec2_vpc_net_facts:
+        filters:
+          "tag:Name": "{{ vpc_name }}"
+      register: vpc_facts
+      
+    - name: Extract VPC ID
+      set_fact:
+        vpc_id: "{{ vpc_facts.vpcs[0].id }}"
+
+    # - name: Collect VPC Facts
+    #   include_tasks: tasks/vpc_facts.yml
       
     - name: Start Delete VPC Resources
       block: 
@@ -17,6 +27,13 @@
             vpc_id: "{{ vpc_id }}" 
             state: absent
           with_dict: "{{ vpc_subnets }}"
+
+        - name: Delete NACLs
+          ec2_vpc_nacl:
+            name: "{{ item.name }}"
+            vpc_id: "{{ vpc_id }}"
+            state: absent
+          loop: "{{ network_acls }}"
 
         - name: Delete IGW
           ec2_vpc_igw:

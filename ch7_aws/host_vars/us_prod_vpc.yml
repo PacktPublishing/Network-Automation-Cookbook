@@ -25,6 +25,15 @@ route_table:
       - us-prod-public-a
       - us-prod-public-b
 
+network_acls:
+  - name: US_Prod_ACLs
+    subnets: "{{ vpc_subnets.keys() | list }}"
+    ingress_rules:
+      - [100,'tcp','allow','0.0.0.0/0',null,null,80,80]
+      - [200,'tcp','allow','0.0.0.0/0',null,null,443,443]
+    egress_rules:
+      - [100,'all', 'allow', '0.0.0.0/0', null, null, null, null]
+
 vpc_tags:
   role: prod
   region: US

@@ -16,14 +16,14 @@
           name: "{{ vpc_name }}"
           state: "{{ vpc_state | default('present') }}"
           tags: "{{ vpc_tags }}"
-        tags: [vpc,subnet,igw,rt]
+        tags: always
         register: create_vpc
         notify: Create VPC
 
       - name: "set fact: VPC ID"
         set_fact:
           vpc_id: "{{ create_vpc.vpc.id }}"
-        tags: [vpc,subnet,igw,rt]
+        tags: always
 
       - name: create VPC subnets
         ec2_vpc_subnet:
@@ -85,6 +85,18 @@
           tags: "{{ vpc_tags | combine(route_table.tags) }}"
         tags:
           - rt
+
+      - name: Create Network ACLs
+        ec2_vpc_nacl:
+          region: "{{ aws_region }}"
+          vpc_id: "{{ vpc_id }}"
+          name: "{{ item.name }}"
+          subnets: "{{ item.subnets }}"
+          ingress: "{{ item.ingress_rules }}"
+          egress: "{{ item.egress_rules }}"
+          tags: "{{ vpc_tags | combine({'Name':item.name}) }}"
+        loop: "{{ network_acls }}"
+        tags: nacl
 
   handlers:
     - name: Create VPC

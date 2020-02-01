@@ -1,51 +1,20 @@
 ---
-- name: " Play 1: Deploy Config on All Arista Switches"
+- name: "Build Arista DC Fabirc"
   hosts: arista
   vars_files: vxlan.yml
   tasks:
-    - name: "P1T1: Enable eAPI"
-      eos_eapi:
-        https_port: 443
-        https: yes
-        state: started
-        vrf: "{{global.mgmt_vrf}}"
-      vars:
-        ansible_connection: network_cli
-      tags: eapi
-        
-    - name: "P1T2: Build Config Directory Strcuture"
-      import_tasks: "tasks/build_config_dir.yml"
+    - name: Generate DC Fabric Configuration
+      import_role:
+        name: dc_fabric_config
       delegate_to: localhost
-      tags: config
-
-    - name: "P1T3: Build Devices configuration"
-      import_tasks: "tasks/build_config.yml"
-      delegate_to: localhost
-      tags: config
-
-    - name: "Remove Old Assembled Config"
-      file: 
-        path: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-        state: absent
-      delegate_to: localhost
-      tags: config
-
-    - name: "Assemble config"
-      assemble:
-        src: "{{config_dir}}/{{ inventory_hostname }}"
-        dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
-      delegate_to: localhost
-      tags: config
+      tags: build      
     
     - name: "Deploy Configuration"
       eos_config:
         src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
         replace: config
+        save_when: changed
       tags: deploy
 
-
-
-    # - import_tasks: "tasks/junos_interfaces.yml"
-    #   tags: intf, never
 
 

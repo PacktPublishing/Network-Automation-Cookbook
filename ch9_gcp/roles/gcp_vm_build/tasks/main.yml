@@ -1,0 +1,63 @@
+- name: create a disk for {{ node.name }}
+  gcp_compute_disk:
+    name: "{{ node.name | regex_replace('_','-') }}-disk"
+    size_gb: "{{compute_node_image_size }}"
+    source_image: "{{ compute_node_images }}"
+    zone: "{{ node.zone }}"
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ service_account_file }}"
+    state: "{{ status | default('present')}}"
+  register: gcp_vm_disk
+
+- name: create a {{ node.name }} instance with no Internet
+  gcp_compute_instance:
+    name: "{{ node.name | regex_replace('_','-') }}"
+    machine_type: "{{ compute_node_flavor }}"
+    disks:
+    - source: "{{ gcp_vm_disk }}"
+      boot: 'true'
+    network_interfaces:
+    - network: "{{ gcp_vpc }}"
+      subnetwork: "{{ gcp_subnets.results |
+                      selectattr('name','equalto',node.network) |
+                      list | first }}"
+    metadata:
+      tier: "{{ node.name.split('-')[0] }}"
+    tags:
+      items: "{{ node.network }}"
+    zone: "{{ node.zone }}"
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ service_account_file }}"
+    state: "{{ status | default('present')}}"
+  when: not node.has_internet
+
+- name: create an {{ node.name }} instance with Internet
+  gcp_compute_instance:
+    name: "{{ node.name | regex_replace('_','-') }}"
+    machine_type: "{{ compute_node_flavor }}"
+    can_ip_forward: "{{ node.ip_forwarding if node.ip_forwarding is defined else 'no' }}"
+    disks:
+    - source: "{{ gcp_vm_disk }}"
+      boot: 'true'
+    network_interfaces:
+    - network: "{{ gcp_vpc }}"
+      network_ip: "{{ node.ip if node.ip is defined else omit }}"
+      subnetwork: "{{ gcp_subnets.results |
+                      selectattr('name','equalto',node.network) |
+                      list | first }}"
+      access_configs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+    metadata:
+      tier: "{{ node.name.split('-')[0] }}"
+    zone: "{{ node.zone }}"
+    tags:
+      items: "{{ node.network }}"
+    auth_kind: "{{ auth_kind }}"
+    project: "{{ project }}"
+    service_account_file: "{{ service_account_file }}"
+    state: present
+  register: vm_data
+  when: node.has_internet

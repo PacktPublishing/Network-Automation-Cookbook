@@ -15,8 +15,9 @@
         subscription_id: "{{ subscription_id }}"
         name: "{{ rg_name }}"
         state: "{{ state | default('present') }}"
+      tags: rg_build
 
-    - name: Create Virtual Networks
+    - name: Create Azure Virtual Networks
       azure_rm_virtualnetwork:
         tenant: "{{ tenant_id }}"
         client_id: "{{ client_id }}"
@@ -27,8 +28,9 @@
         name: "{{ vnet_name }}"
         address_prefixes_cidr: "{{ vnet_cidr }}"
         state: "{{ state | default('present') }}"
+      tags: vn_build
 
-    - name: Create Subnets
+    - name: Create Azure Subnets
       azure_rm_subnet:
         tenant: "{{ tenant_id }}"
         client_id: "{{ client_id }}"
@@ -42,8 +44,9 @@
       loop: "{{ subnets }}"
       loop_control:
         label: "{{ item.name }}"
+      tags: subnet_build
 
-    - name: Create Custom Route Table
+    - name: Create Azure Custom Route Table
       azure_rm_routetable:
         tenant: "{{ tenant_id }}"
         client_id: "{{ client_id }}"

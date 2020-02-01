@@ -1,4 +1,4 @@
 ---
-service_account_file: ./gcp-ansible-secret.json
+service_account_file: gcp_credentials.json
 project:  "gcp-ansible-demo"
 auth_kind: serviceaccount

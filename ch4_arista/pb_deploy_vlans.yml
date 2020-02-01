@@ -1,0 +1,9 @@
+---
+- name: Provision VLANs on DC Fabric
+  hosts: arista
+  vars_files: vxlan.yml
+  tasks:
+    - name: Deploy Vlans on DC Fabric
+      import_role:
+        name: provision_vlans
+      when: inventory_hostname in vlan_data.keys()

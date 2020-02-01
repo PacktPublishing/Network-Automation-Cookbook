@@ -1,4 +1,7 @@
 global:
+    dns:
+      - 172.20.1.1
+      - 172.20.1.15
     p2p_prefix: 31
     mgmt_prefix: 28
     mgmt_gw: 172.20.1.33
@@ -9,7 +12,7 @@ global:
     mgmt_vrf: MGMT
     site: DC1
     users:
-      - name: ansible
+      - username: ansible
         privilege: 15
         role: network-admin
         password: ansible123

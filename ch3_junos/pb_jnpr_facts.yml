@@ -1,0 +1,31 @@
+---
+- name: Collect and Validate Juniper Facts
+  hosts: junos
+  tasks:
+    - name: Collect Juniper Facts
+      junos_facts:
+
+    # - debug: var=hostvars[inventory_hostname]
+
+    - name: Create Facts Folder
+      file: path=device_facts state=directory
+      run_once: yes
+
+    - name: Create Basic Device Facts Report
+      blockinfile:
+        path: "device_facts/{{ inventory_hostname }}.txt"
+        block: |
+          device_name: {{ ansible_net_hostname }}
+          model: {{ ansible_net_system }} {{ ansible_net_model }}
+          os_version: {{ ansible_net_version }}
+          serial_number: {{ ansible_net_serialnum }}
+        create: yes
+
+    - name: Validate all Core Interface are Operational
+      assert:
+        that:
+          - ansible_net_interfaces[item.port]['oper-status'] == 'up'
+        fail_msg: "Interface {{item.port}} is not Operational "
+      loop: "{{ p2p_ip[inventory_hostname] }}"
+
+

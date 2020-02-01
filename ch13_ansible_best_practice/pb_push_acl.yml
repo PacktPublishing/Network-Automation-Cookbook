@@ -16,7 +16,6 @@
         dest: acl_conf.cfg
       delegate_to: localhost
 
-
 - name: Configure ACL on IOS-XR
   hosts: all
   serial: 1
@@ -25,8 +24,11 @@
     - name: Backup Config
       iosxr_config:
         backup:
+      when: not ansible_check_mode
           
     - name: Deploy ACLs
       iosxr_config:
         src: acl_conf.cfg
         match: line
+      when: not ansible_check_mode
+

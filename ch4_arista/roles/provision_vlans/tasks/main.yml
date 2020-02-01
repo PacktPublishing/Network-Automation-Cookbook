@@ -1,0 +1,31 @@
+---
+- name: Deploy Vlans on DC Fabric
+  eos_vlan:
+    name: "VLAN_{{vlan.id}}_{{ vlan.description }}"
+    vlan_id: "{{ vlan.id }}"
+    state: present
+    interfaces: "{{ vlan.ports }}"
+  loop: "{{ vlan_data[inventory_hostname] }}"
+  loop_control:
+    loop_var: vlan
+  tags: vlans
+
+- name: Create VXLAN Configs Folder
+  file: path={{config_dir}} state=directory
+  run_once: yes
+  delegate_to: localhost
+  tags: vxlan
+
+- name: "Create VXLAN Configuration"
+  template:
+    src: "{{ansible_network_os}}/vxlan.j2"
+    dest: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+  delegate_to: localhost
+  tags: vxlan
+
+- name: "Deploy Configuration"
+  eos_config:
+    src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+    save_when: changed
+  tags: vxlan
+

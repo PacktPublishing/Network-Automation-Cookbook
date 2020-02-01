@@ -1,0 +1,37 @@
+---
+- name: Network Validation with PyATS
+  hosts: wan
+  roles:
+    - ansible-pyats
+  vars:
+    ansible_connection: local
+  tasks:
+
+    - pyats_parse_command:
+        command: show ip ospf neighbor
+      register: ospf_output
+      vars:
+        ansible_connection: network_cli
+
+    - debug: var=ospf_output
+
+    - name: "FACT >> Pyats OSPF Info"
+      set_fact:
+        pyats_ospf_data: "{{ ospf_output.structured.interfaces }}"
+        
+
+    - name: " FACT >> Set OSPF peers"
+      set_fact:
+        OSPF_PEERS: "{{ wan_l3_links[inventory_hostname] | selectattr('ospf','equalto',true) | list }}"
+
+    - name: Validate Number of OSPF Peers
+      assert:
+        that:
+          - pyats_ospf_data | length == OSPF_PEERS | length
+      loop: "{{ OSPF_PEERS }}"
+
+    - name: Validate All Peers are in Full State
+      assert:
+        that:
+          -   pyats_ospf_data[item.name] | json_query('neighbors.*.state') | first == 'FULL/  -' 
+      loop: "{{ OSPF_PEERS }}"

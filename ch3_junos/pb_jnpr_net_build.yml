@@ -1,0 +1,28 @@
+---
+- name: Build Juniper SP Network
+  hosts: junos
+  tasks:
+    - name: "Enable NETCONF"
+      junos_netconf:
+        netconf_port: 830
+        state: present
+      vars:
+        ansible_connection: network_cli
+      tags: netconf
+
+    - name: Build Device Configuration 
+      import_role:
+        name: build_router_config
+      vars:
+          ansible_connection: local
+      tags: build
+
+    - name: "Deploy Configuration"
+      junos_config:
+        src: "{{config_dir}}/{{ inventory_hostname }}.cfg"
+      tags: deploy
+
+    - name: "Rollback config"
+      junos_config:
+        rollback: "{{ rollback | default('1') | int }}"
+      tags: rollback, never

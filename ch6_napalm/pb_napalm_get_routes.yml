@@ -15,7 +15,10 @@
           route_to:
             destination: "{{ item.route }}"
       loop: "{{ route_validation[inventory_hostname] }}"
+      when: inventory_hostname in route_validation
 
+    - debug: var=napalm_route_to
+    
     - name: Validate Active Routing Protocol
       assert:
         that: napalm_route_to[item.route] |

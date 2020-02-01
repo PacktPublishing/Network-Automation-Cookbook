@@ -15,7 +15,7 @@
     - name: Create Compliance Report Folder
       file: path=compliance_folder state=directory
 
-    - name: Create Compliance Report File per Node
+    - name: Clean last compliance Report
       file: path=compliance_folder/{{inventory_hostname}}.txt state=absent
 
     - name: Create Compliance Report

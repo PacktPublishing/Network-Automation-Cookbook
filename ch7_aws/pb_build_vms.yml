@@ -1,0 +1,58 @@
+- name: Build EC2 Instances
+  hosts: prod_vpcs
+  environment:
+    AWS_ACCESS_KEY: "{{ aws_access_key }}"
+    AWS_SECRET_KEY: "{{ aws_secret_key_id }}"
+    AWS_REGION: "{{ aws_region }}"
+  vars_files:
+    - vm_data.yml
+  tasks:
+    - name: Collect VPC Facts
+      import_tasks: tasks/vpc_facts.yml
+      tags: always
+
+    - debug: var=vpc_id
+
+    # - name: Get VPC ID
+    #   ec2_vpc_net_facts:
+    #     filters:
+    #       "tag:Name": "{{ vpc_name }}"
+    #   register: vpc_id
+
+    - name: Create security group
+      ec2_group:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        vpc_id: "{{ vpc_id }}" #"{{ vpc_id.vpcs[0].id }}" #vpc_id
+        rules: "{{ item.rules }}"
+        tags: "{{ item.tags }}"
+      register: sec_grp
+      loop: "{{ security_groups }}"
+
+    - name: Upload public key to AWS
+      ec2_key:
+        name: "{{ ssh_key }}"
+        key_material: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        state: present
+
+    - debug:
+        msg: "{{ subnet_ids[item.key]}}"
+      with_dict: "{{ vpc_subnets }}"
+
+    - name: Build the EC2 instances
+      ec2:
+        key_name: "{{ ssh_key }}"
+        assign_public_ip: "{{ item.1.has_internet }}"
+        group: "{{ security_groups | map(attribute='name') | list }}"
+        image: "{{ ami_id }}"
+        instance_type: "{{ machine_type }}"
+        vpc_subnet_id: "{{ subnet_ids[item.0.key]}}"
+        wait: true
+        count: 1
+      with_nested:
+        - "{{ vpc_subnets | dict2items }}"
+        - "{{ compute_nodes }}"
+      register: vm_nodes
+      tags: [never,ec2]
+    
+    - debug: var=vm_nodes

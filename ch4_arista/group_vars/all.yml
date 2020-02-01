@@ -1,8 +1,12 @@
 config_dir: configs
+tmp_dir: tmp
 
 # BEGIN ANSIBLE MANAGED BLOCK
 global: 
   bgp_asn: 65000
+  dns:
+  - 172.20.1.1
+  - 172.20.1.15
   fabric_subnet: 172.31.1.0/24
   loopback_subnet: 10.100.1.0/24
   mgmt_gw: 172.20.1.33
@@ -16,10 +20,10 @@ global:
   p2p_prefix: 31
   site: DC1
   users:
-  -   name: ansible
-      password: ansible123
+  -   password: ansible123
       privilege: 15
       role: network-admin
+      username: ansible
 
 
 p2p_ip:

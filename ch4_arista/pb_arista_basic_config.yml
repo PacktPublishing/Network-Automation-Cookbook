@@ -1,0 +1,18 @@
+---
+- name: "Configure Basic Configuration on Arista Fabric"
+  hosts: arista
+  tasks:
+    - name: "Conifgure Basic System config"
+      eos_system:
+        hostname: " {{global.site|lower}}-{{inventory_hostname}}"
+        name_servers: "{{ global.dns }}"
+        state: present
+
+    - name: "Configure Users"
+      eos_user:
+        name: "{{ item.username }}"
+        role: "{{ item.role | default('network-admin') }}"
+        privilege: "{{ item.privilege | default(15)}}"
+        configured_password: "{{ item.password }}"
+        state: present
+      loop: "{{ global.users }}" 

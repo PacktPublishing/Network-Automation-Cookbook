@@ -1,15 +1,17 @@
 ---
-- name: Gather SSH keys
+- name: "Play1: Gather Public SSH keys"
   hosts: all
+  tags: collect
   tasks:
-    - name: scan ssh keys
+    - name: Capture SSH Public Keys for Remote Nodes
       command: ssh-keyscan {{ ansible_host }}
       delegate_to: localhost
       register: ssh_keys
+
     - debug: var=ssh_keys
       delegate_to: localhost
 
-- name: Record Keys in in ssh known files
+- name: "Play2: Record Keys in Known Hosts file"
   hosts: localhost
   vars:
     #- hosts_file: "~/.ssh/known_hosts"
