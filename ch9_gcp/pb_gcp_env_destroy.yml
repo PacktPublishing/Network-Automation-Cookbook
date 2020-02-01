@@ -26,11 +26,7 @@
         - gcp_subnet
         - gcp_fw_rules
 
-<<<<<<< HEAD
-    - name: Delete Instance {{ node.name }}
-=======
     - name: Delete Instances
->>>>>>> ch01
       gcp_compute_instance:
         name: "{{ node.name | regex_replace('_','-') }}"
         zone: "{{ node.zone }}"
@@ -41,11 +37,7 @@
         loop_var: node
         label: "{{node.name}}"
 
-<<<<<<< HEAD
-    - name: Delete disks for {{ node.name }}
-=======
     - name: Delete disks for Instances
->>>>>>> ch01
       gcp_compute_disk:
         name: "{{ node.name | regex_replace('_','-') }}-disk"
         zone: "{{ node.zone }}"
