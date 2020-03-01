@@ -1,0 +1,38 @@
+-  interface GigabitEthernet0/0/0/2
+-   shutdown
+-  !
+-  interface GigabitEthernet0/0/0/3
+-   shutdown
+-  !
+-  interface GigabitEthernet0/0/0/4
+-   shutdown
+-  !
++  router ospf 1
++   address-family ipv4 unicast
++   area 0
++    interface Loopback0
++     passive enable
++    !
++    interface GigabitEthernet0/0/0/0
++     cost 100
++     network point-to-point
++    !
++    interface GigabitEthernet0/0/0/1
++     cost 100
++     network point-to-point
++    !
++   !
++  !
++  router bgp 65400
++   address-family ipv4 unicast
++   !
++   address-family vpnv4 unicast
++   !
++   neighbor 10.100.1.254
++    remote-as 65400
++    local address 10.100.1.3
++    address-family ipv4 unicast
++    !
++    address-family vpnv4 unicast
++    !
++   !

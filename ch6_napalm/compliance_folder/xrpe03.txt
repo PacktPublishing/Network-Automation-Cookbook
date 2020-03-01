@@ -12,7 +12,7 @@ get_interfaces_ip:
     extra: []
     missing: []
     present:
-        ge-0/0/0.0:
+        GigabitEthernet0/0/0/0:
             complies: true
             nested: true
 skipped: []

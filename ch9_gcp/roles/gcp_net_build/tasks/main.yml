@@ -16,6 +16,8 @@
     - gcp_subnets
     - gcp_fw_rules
     - gcp_route
+    - gcp_vm_build
+    - gcp_route
 
 - name: Create Subnets
   gcp_compute_subnetwork:
@@ -30,7 +32,9 @@
   loop: "{{ subnets }}"
   loop_control:
     loop_var: subnet
+    label: "{{ subnet.cidr }}"
   register: gcp_subnets
+  tags: gcp_vm_build
 
 
 - name: Create Allow Firewall Rules
@@ -52,6 +56,7 @@
   loop: "{{ fw_rules | selectattr('type','equalto','allow') | list }}"
   loop_control:
     loop_var: rule
+    label: "{{ rule.name }}"
   tags: gcp_fw_rules
 
 - name: Create Deny Firewall Rules
@@ -73,4 +78,5 @@
   loop: "{{ fw_rules | selectattr('type','equalto','deny') | list }}"
   loop_control:
     loop_var: rule
+    label: "{{ rule.name }}"
   tags: gcp_fw_rules

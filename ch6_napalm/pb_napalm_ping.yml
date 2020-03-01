@@ -22,16 +22,3 @@
           - rr_ping.ping_results['success'].packet_loss == 0
           - rr_ping.ping_results['success'].rtt_avg < max_delay
 
-    # - name: Validate Active Routing Protocol
-    #   assert:
-    #     that: napalm_route_to[item.route] |
-    #           selectattr('protocol','equalto',item.protocol) |
-    #           map(attribute='current_active') | list | first == true 
-    #   loop: "{{ route_validation[inventory_hostname] }}"
-
-    # - name: Validate Correct Number of Next-Hops
-    #   assert:
-    #     that: napalm_route_to[item.route] |
-    #           selectattr('protocol','equalto',item.protocol) | 
-    #           list | length ==  item.next_hop | length
-    #   loop: "{{ route_validation[inventory_hostname] }}"

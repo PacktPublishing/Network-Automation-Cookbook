@@ -1,7 +1,7 @@
 ---
 - name: "Build Arista DC Fabirc"
   hosts: arista
-  vars_files: vxlan.yml
+  vars_files: vlan_design.yml
   tasks:
     - name: Generate DC Fabric Configuration
       import_role:

@@ -9,6 +9,7 @@
     service_account_file: "{{ service_account_file }}"
     state: "{{ status | default('present')}}"
   register: gcp_vm_disk
+  tags: gcp_vm_build
 
 - name: create a {{ node.name }} instance with no Internet
   gcp_compute_instance:
@@ -32,6 +33,7 @@
     service_account_file: "{{ service_account_file }}"
     state: "{{ status | default('present')}}"
   when: not node.has_internet
+  tags: gcp_vm_build
 
 - name: create an {{ node.name }} instance with Internet
   gcp_compute_instance:
@@ -61,3 +63,4 @@
     state: present
   register: vm_data
   when: node.has_internet
+  tags: gcp_vm_build

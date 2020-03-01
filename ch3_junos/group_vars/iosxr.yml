@@ -1,3 +1,0 @@
-ansible_network_os: iosxr
-ansible_connection: network_cli
-ce_intf: Loopback

@@ -33,19 +33,6 @@
       tags: loopbacks  
 
 
-- hosts: localhost
-  vars:
-    subnets: ['10.1.1.0/24', '10.1.2.0/24']
-    prefix: '10.1.1.0/24'
-  tags: test
-  tasks:
-    - debug: msg={{ subnets | ipaddr(1) }} #NotWorking
-    - debug: msg={{ subnets | ipaddr('1') }} #NotWorking
-    - debug: msg={{ subnets | ipaddr(-1) }} #Working
-    - debug: msg={{ subnets | ipaddr('-1') }} #Working
-    - debug: msg={{ prefix | ipaddr(1) }} #Working
-    - debug: msg={{ prefix | ipaddr('1') }} #Working
-    - debug: msg={{ prefix | ipaddr('-1') }} #Working
 
 
 

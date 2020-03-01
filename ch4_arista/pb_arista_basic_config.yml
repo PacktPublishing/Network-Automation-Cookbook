@@ -7,6 +7,7 @@
         hostname: " {{global.site|lower}}-{{inventory_hostname}}"
         name_servers: "{{ global.dns }}"
         state: present
+      tags: system
 
     - name: "Configure Users"
       eos_user:
@@ -15,4 +16,21 @@
         privilege: "{{ item.privilege | default(15)}}"
         configured_password: "{{ item.password }}"
         state: present
-      loop: "{{ global.users }}" 
+      loop: "{{ global.users }}"
+      tags: system 
+
+    - name: "Configure the Physical Interfaces"
+      eos_interface:
+        name: "{{ item.port }}"
+        enabled: true
+        description: "{{global.site}} | Rpeer:{{item.peer}} | Rport:{{item.pport}}"
+      with_items: "{{p2p_ip[inventory_hostname]}}"
+      tags: intf
+
+    - name: "Configure IP Addresses"
+      eos_l3_interface:
+        name: "{{ item.port }}"
+        ipv4: "{{ item.ip }}/{{ global.p2p_prefix }}"
+        state: present
+      with_items: "{{ p2p_ip[inventory_hostname] }}"
+      tags: intf

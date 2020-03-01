@@ -15,8 +15,10 @@
           - item.peer in jnpr_pyez_bgp.resource | map(attribute='peer_id') | list
         fail_msg: " BGP Peer {{ item.peer }} is Not Operational"
       loop: "{{ bgp_peers }}"
+      when: bgp_peers is defined
 
     - name: Debug for Verbosity
       debug:
         var: jnpr_pyez_bgp
+      run_once: yes
     

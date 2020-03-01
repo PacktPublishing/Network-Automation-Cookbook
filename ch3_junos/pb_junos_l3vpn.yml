@@ -14,32 +14,33 @@
       with_dict: "{{l3vpns}}"
       delegate_to: localhost
 
-    - debug: var=l3vpn_intfs
-      delegate_to: localhost
-    # - name: "Configure Interfaces for L3VPN Sites"
-    #   junos_config:
-    #     lines:
-    #       - set interfaces {{ item.port.split('.')[0]}} vlan-tagging
-    #       - set interfaces {{ item.port}} vlan-id {{ item.port.split('.')[1] }}
-    #   loop: "{{ l3vpn_intfs }}"
+    # - debug: var=l3vpn_intfs
+    #   delegate_to: localhost
     
-    # - name: "Configure IP address for L3VPN Interfaces"
-    #   junos_l3_interface:
-    #     name: "{{ item.port.split('.')[0]}}"
-    #     ipv4: "{{ item.ip }}"
-    #     unit: "{{ item.port.split('.')[1] }}"
-    #   loop: "{{l3vpn_intfs}}"
-    #   tags: intf_ip
+    - name: "Configure Interfaces for L3VPN Sites"
+      junos_config:
+        lines:
+          - set interfaces {{ item.port.split('.')[0]}} vlan-tagging
+          - set interfaces {{ item.port}} vlan-id {{ item.port.split('.')[1] }}
+      loop: "{{ l3vpn_intfs }}"
+    
+    - name: "Configure IP address for L3VPN Interfaces"
+      junos_l3_interface:
+        name: "{{ item.port.split('.')[0]}}"
+        ipv4: "{{ item.ip }}"
+        unit: "{{ item.port.split('.')[1] }}"
+      loop: "{{l3vpn_intfs}}"
+      tags: intf_ip
 
-    # - name: "Configure L3VPNs"
-    #   junos_vrf:
-    #     name: "{{ item.key }}"
-    #     rd: "{{item.value.rd}}"
-    #     target: "{{ item.value.rt }}"
-    #     interfaces: "{{ l3vpns[item.key].sites |
-    #                     map(attribute='port') | list }}"
-    #     state: "{{ item.value.state }}"
-    #   with_dict: "{{l3vpns}}"
-    #   when: inventory_hostname in (l3vpns[item.key].sites | map(attribute='node') | list)
-    #   tags: l3vpn 
+    - name: "Configure L3VPNs"
+      junos_vrf:
+        name: "{{ item.key }}"
+        rd: "{{item.value.rd}}"
+        target: "{{ item.value.rt }}"
+        interfaces: "{{ l3vpns[item.key].sites |
+                        map(attribute='port') | list }}"
+        state: "{{ item.value.state }}"
+      with_dict: "{{l3vpns}}"
+      when: inventory_hostname in (l3vpns[item.key].sites | map(attribute='node') | list)
+      tags: l3vpn 
 

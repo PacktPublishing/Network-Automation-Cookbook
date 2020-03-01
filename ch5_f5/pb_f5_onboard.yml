@@ -1,12 +1,12 @@
 ---
-- name: debug
-  hosts: ltm01
-  connection: local
-  tags: never,debug
-  tasks:
-    - debug:
-        msg: " IP: {{item.dst.split('/')[0]}} mask: {{ item.dst | ipv4('netmask') }}"
-      with_items: "{{ routes }}"
+# - name: debug
+#   hosts: ltm01
+#   connection: local
+#   tags: never,debug
+#   tasks:
+#     - debug:
+#         msg: " IP: {{item.dst.split('/')[0]}} mask: {{ item.dst | ipv4('netmask') }}"
+#       with_items: "{{ routes }}"
 
 - name: Onboarding a New LTM
   hosts: ltm01

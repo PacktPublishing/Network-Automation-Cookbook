@@ -5,7 +5,7 @@
     - name: Collect Arista Device Facts
       eos_facts:
 
-    - debug: var=hostvars[inventory_hostname]
+    # - debug: var=hostvars[inventory_hostname]
 
     - name: Validate all DC Fabric Interface are Operational
       assert:

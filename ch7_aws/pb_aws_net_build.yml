@@ -20,7 +20,7 @@
         register: create_vpc
         notify: Create VPC
 
-      - name: "set fact: VPC ID"
+      - name: SET VPC ID
         set_fact:
           vpc_id: "{{ create_vpc.vpc.id }}"
         tags: always
@@ -52,7 +52,7 @@
         tags:
           - igw
 
-      - debug: var=vpc_igw_create
+      # - debug: var=vpc_igw_create
 
       - name: Extract VPC IGW ID
         set_fact:
@@ -66,7 +66,7 @@
         register: vpc_route_table_facts
         tags: rt
         
-      - debug: var=vpc_route_table_facts
+      # - debug: var=vpc_route_table_facts
 
       - name: Extract Route Table IDs
         set_fact:

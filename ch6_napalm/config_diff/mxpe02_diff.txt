@@ -2,14 +2,14 @@
 - version 14.1R4.8;
 [edit system login]
 -    user admin {
--        uid 2001;
+-        uid 2002;
 -        class super-user;
 -        authentication {
 -            ssh-rsa "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0/wvdC5ycAanRorlfMYDMAv5OTcYAALlE2bdboajsQPQNEw1Li3N0J50OJBWXX+FFQuF7JKpM32vNQjQN7BgyaBWQGxv+Nj0ViVP+8X8Wuif0m6bFxBYSaPbIbGogDjPu4qU90Iv48NGOZpcPLqZthtuN7yZKPshX/0YJtXd2quUsVhzVpJnncXZMb4DZQeOin7+JVRRrDz6KP6meIylf35mhG3CV5VqpoMjYTzkDiHwIrFWVMydd4C77RQu27N2HozUtZgJy9KD8qIJYVdP6skzvp49IdInwhjOA+CugFQuhYhHSoQxRxpws5RZlvrN7/0h0Ahc3OwHaUWD+P7lz ansible@centos7.localdomain"; ## SECRET-DATA
 -        }
 -    }
 [edit system login user ansible]
--    uid 2002;
+-    uid 2001;
 [edit system login]
 +    user vagrant {
 +        class super-user;
@@ -24,19 +24,19 @@
 +     }
 [edit interfaces]
 +   ge-0/0/0 {
-+       description "peer:mxp01 -- peer_port: ge-0/0/0";
++       description "peer:mxp01 -- peer_port: ge-0/0/1";
 +       unit 0 {
 +           family inet {
-+               address 10.1.1.3/31;
++               address 10.1.1.5/31;
 +           }
 +           family mpls;
 +       }
 +   }
 +   ge-0/0/1 {
-+       description "peer:mxp02 -- peer_port: ge-0/0/0";
++       description "peer:mxp02 -- peer_port: ge-0/0/1";
 +       unit 0 {
 +           family inet {
-+               address 10.1.1.9/31;
++               address 10.1.1.11/31;
 +           }
 +           family mpls;
 +       }
@@ -57,7 +57,7 @@
 +      bgp {
 +          group Core {
 +              type internal;
-+              local-address 10.100.1.1;
++              local-address 10.100.1.2;
 +              family inet {
 +                  unicast;
 +              }
