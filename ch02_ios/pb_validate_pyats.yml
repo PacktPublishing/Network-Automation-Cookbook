@@ -7,7 +7,8 @@
     ansible_connection: local
   tasks:
 
-    - pyats_parse_command:
+    - name: Collect OSPF Neigbors via PyATS
+      pyats_parse_command:
         command: show ip ospf neighbor
       register: ospf_output
       vars:

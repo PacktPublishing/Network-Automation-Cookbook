@@ -6,6 +6,7 @@
     - import_tasks: "tasks/erase_config.yml"
       vars:
         INTERFACES: "{{interfaces[inventory_hostname]}}"
+        VLANS: "{{ vlans }}"
 
 - name: Clear All Core config
   hosts: core

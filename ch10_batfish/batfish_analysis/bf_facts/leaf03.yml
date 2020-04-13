@@ -52,7 +52,9 @@ nodes:
     Domain_Name: null
     Hostname: leaf03
     IP6_Access_Lists: []
-    IP_Access_Lists: []
+    IP_Access_Lists:
+    - WEB_VLAN_IN
+    - WEB_VLAN_OUT
     IPsec:
       IKE_Phase1_Keys: []
       IKE_Phase1_Policies: []

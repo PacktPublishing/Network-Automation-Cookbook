@@ -9,6 +9,8 @@ Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
 
 Gateway of last resort is not set
 
+      10.0.0.0/24 is subnetted, 1 subnets
+S        10.8.0.0 [1/0] via 172.20.1.17
       172.20.0.0/16 is variably subnetted, 2 subnets, 2 masks
 C        172.20.1.16/28 is directly connected, Ethernet0/0
 L        172.20.1.19/32 is directly connected, Ethernet0/0
